@@ -1,0 +1,111 @@
+.d1 {
+	margin-top: 70px;
+	margin-left: 285px;
+	width: 800px;
+	height: 700px;
+	background-color: #FFFFCC;
+}
+
+.d1-1 {
+	margin-top: 80px;
+	margin-left: 250px;
+	width: 300px;
+	height: 380px;
+}
+
+.sp1 {
+	font-size: 200%;
+	position: relative;
+	left: 310px;
+}
+
+.sp2 {
+	color: #A8A8A8;
+}
+
+.sp3 {
+	line-height: 30px;
+	position: relative;
+	top: 6px;
+}
+
+.sp4 {
+	position: relative;
+	bottom: 65px;
+	left: 210px;
+}
+
+.in1 {
+	margin-top: 10px;
+	background-color: white;
+	border-radius: 5px;
+	height: 35px;
+	width: 210px;
+	border: 1px #CCCCCC solid;
+}
+
+.in2 {
+	position: relative;
+	left: 100px;
+}
+
+.a6 {
+	color: #8B8B7A;
+	text-decoration: none;
+	font-size: 80%;
+}
+
+.b1 {
+	margin-top: 10px;
+	background-color: #FF6700;
+	width: 300px;
+	height: 35px;
+	color: white;
+	font-size: 120%;
+	border-radius: 5px;
+	border: 1px #CCCCCC solid;
+	transition-duration: 0.3s;
+}
+
+.b1:hover{
+	background-color: #EF5B00;
+}
+.b1:focus{
+	outline: none;
+}
+#img1 {
+	margin-left: 365px;
+}
+
+#but1 {
+	background-color: white;
+	border-radius: 5px;
+	height: 35px;
+	border: 1px #CCCCCC solid;
+	color: #EF5B00;
+	transition-duration: 0.4s;
+}
+#but1:hover{
+	background-color: #EF5B00;
+	color: white;
+}
+#but1:focus{
+	outline: none;
+}
+.span1{
+	line-height: 30px;
+	position: relative;
+	top: 6px;
+	left: 93px;
+	color: red;
+}
+.span2{
+	position: relative;
+	left: 180px;
+	color: red;
+}
+.span3{
+	position: relative;
+	left: 180px;
+	color: red;
+}

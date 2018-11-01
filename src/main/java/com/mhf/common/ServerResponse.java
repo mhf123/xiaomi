@@ -1,9 +1,12 @@
 package com.mhf.common;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 /**
  * 服务端返回到前端的高复用对象
  */
 
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ServerResponse<T> {
     private int status;//状态码
     private T data;//数据

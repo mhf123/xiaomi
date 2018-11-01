@@ -3,6 +3,8 @@ package com.mhf.service;
 import com.mhf.common.ServerResponse;
 import com.mhf.pojo.User;
 
+import javax.servlet.http.HttpSession;
+
 public interface IUserService {
     /**
      * 登录接口
@@ -25,7 +27,27 @@ public interface IUserService {
     ServerResponse checkAnswer(String username,String question,String answer);
 
     /**
-     * 重置密码接口
+     * 忘记密码重置密码接口
      */
-    ServerResponse resetPassword(String username,String password,String forgetToken);
+    ServerResponse forgetResetPassword(String username,String password,String forgetToken);
+
+    /**
+     * 检查用户名和邮箱是否有效接口
+     */
+    ServerResponse checkValid(String str,String type);
+
+    /**
+     * 登录状态重置密码接口
+     */
+    ServerResponse loginResetPassword(String usernsme,String oldPassword,String newPassword);
+
+    /**
+     * 登录状态更新个人信息接口
+     */
+    ServerResponse updateInformation(User user);
+
+    /**
+     * 根据用户id查询用户信息
+     */
+    User getInformationById(Integer userId);
 }

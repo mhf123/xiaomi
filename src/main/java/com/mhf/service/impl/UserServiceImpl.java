@@ -10,6 +10,7 @@ import com.mhf.utils.TokenCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.util.UUID;
 
 @Service
@@ -34,7 +35,11 @@ public class UserServiceImpl implements IUserService {
         }
         // 3、根据用户名密码查找信息
         User user = userMapper.selectUserByUsernameAndPassword(username,MD5Utils.GetMD5Code(password));
-        user.setPassword("");
+        if(user == null){
+            return ServerResponse.serverResponseByError("用户名或密码错误");
+        }else{
+            user.setPassword("");
+        }
         // 4、返回结果
         return ServerResponse.serverResponseBySuccess(user);
     }
@@ -113,7 +118,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public ServerResponse resetPassword(String username, String password, String forgetToken) {
+    public ServerResponse forgetResetPassword(String username, String password, String forgetToken) {
         // 1、非空校验
         if(username == null || username.equals("")){
             return ServerResponse.serverResponseByError("用户名不能为空");
@@ -140,4 +145,79 @@ public class UserServiceImpl implements IUserService {
 
         return ServerResponse.serverResponseByError("密码修改失败");
     }
+
+    @Override
+    public ServerResponse checkValid(String str, String type) {
+        // 1、参数非空校验
+        if(str == null || str.equals("")){
+            return ServerResponse.serverResponseByError("用户名或邮箱不能为空");
+        }
+        if(type == null || type.equals("")) {
+            return ServerResponse.serverResponseByError("类型参数不能为空");
+        }
+        // 2、username ---- 校验用户名 str
+        //     email ------ 校验邮箱 str
+        if(type.equals("username")){
+            int result = userMapper.checkUsername(str);
+            if(result > 0){
+                return ServerResponse.serverResponseByError("用户名已存在");
+            }else{
+                return ServerResponse.serverResponseBySuccess();
+            }
+        }else if(type.equals("email")){
+            int result = userMapper.checkEmail(str);
+            if(result > 0){
+                return ServerResponse.serverResponseByError("邮箱已存在");
+            }else{
+                return ServerResponse.serverResponseBySuccess();
+            }
+        }
+        return ServerResponse.serverResponseByError("参数类型错误");
+    }
+
+
+    @Override
+    public ServerResponse loginResetPassword(String username, String oldPassword, String newPassword) {
+        // 1、参数非空校验
+        if(oldPassword == null || oldPassword.equals("")){
+            return ServerResponse.serverResponseByError("旧密码不能为空");
+        }
+        if(newPassword == null || newPassword.equals("")){
+            return ServerResponse.serverResponseByError("新密码不能为空");
+        }
+        // 2、根据用户名和旧密码进行判断
+        User user = userMapper.selectUserByUsernameAndPassword(username, MD5Utils.GetMD5Code(oldPassword));
+        if(user == null){
+            return ServerResponse.serverResponseByError("旧密码错误");
+        }
+        // 3、修改密码
+        user.setPassword(MD5Utils.GetMD5Code(newPassword));
+        int result = userMapper.updateByPrimaryKey(user);
+        if(result > 0){
+            return ServerResponse.serverResponseBySuccess("修改成功");
+        }
+        return ServerResponse.serverResponseByError("密码修改失败");
+    }
+
+    @Override
+    public ServerResponse updateInformation(User user) {
+        // 1、参数校验
+        if(user == null){
+            return ServerResponse.serverResponseByError("参数不能为空");
+        }
+        // 2、更新用户信息
+        int result = userMapper.updateInformation(user);
+        if(result > 0){
+            return ServerResponse.serverResponseBySuccess();
+        }
+        return ServerResponse.serverResponseBySuccess("更新个人信息失败");
+    }
+
+    @Override
+    public User getInformationById(Integer userId) {
+        User user = userMapper.selectByPrimaryKey(userId);
+        return user;
+    }
+
+
 }

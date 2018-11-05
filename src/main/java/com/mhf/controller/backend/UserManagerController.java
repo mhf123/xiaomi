@@ -4,7 +4,6 @@ import com.mhf.common.Const;
 import com.mhf.common.ServerResponse;
 import com.mhf.pojo.User;
 import com.mhf.service.IUserService;
-import com.mhf.utils.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

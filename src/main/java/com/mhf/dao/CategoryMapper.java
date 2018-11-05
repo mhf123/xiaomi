@@ -53,4 +53,5 @@ public interface CategoryMapper {
      * 根据类别名称查询类别是否存在
      */
     int selectByCategoryName(String categoryName);
+
 }

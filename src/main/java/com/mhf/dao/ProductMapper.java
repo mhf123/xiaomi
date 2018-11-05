@@ -1,7 +1,10 @@
 package com.mhf.dao;
 
 import com.mhf.pojo.Product;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
+import java.util.Set;
 
 public interface ProductMapper {
     /**
@@ -43,4 +46,27 @@ public interface ProductMapper {
      * @mbg.generated
      */
     int updateByPrimaryKey(Product record);
+
+    /**
+     * 更新商品
+     */
+    int updateProduct(Product product);
+
+    /**
+     * 通过id或name模糊查询
+     */
+    List<Product> findProductByIdOrName(@Param("productId") Integer productId,
+                                        @Param("productName") String productName);
+
+    /**
+     * 前台—搜索商品
+     */
+    List<Product> searchProduct(@Param("integerSet")Set<Integer> integerSet,
+                                @Param("keyword")String keyword,
+                                @Param("orderBy")String orderBy);
+
+    /**
+     * 前台—根据商品名字查询
+     */
+    int selectByName(String name);
 }

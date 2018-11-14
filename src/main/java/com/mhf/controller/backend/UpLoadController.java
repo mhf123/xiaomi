@@ -1,7 +1,6 @@
 package com.mhf.controller.backend;
 
 import com.mhf.common.ServerResponse;
-import com.mhf.pojo.Product;
 import com.mhf.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,4 +26,6 @@ public class UpLoadController {
         String path = "C:/Users/14338/Desktop/picture/";
         return iProductService.upload(file,path);
     }
+
+
 }

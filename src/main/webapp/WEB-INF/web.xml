@@ -10,7 +10,7 @@
         <param-value>classpath:spring.xml</param-value>
     </context-param>
 
-    <!--step2；加载监听器-->
+    <!--step2：加载监听器-->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>

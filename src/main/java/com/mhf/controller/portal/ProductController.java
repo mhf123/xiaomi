@@ -3,6 +3,7 @@ package com.mhf.controller.portal;
 import com.mhf.common.ServerResponse;
 import com.mhf.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,8 +16,8 @@ public class ProductController {
     /**
      * 商品详情
      */
-    @RequestMapping(value = "detail.do")
-    public ServerResponse detail(Integer productId){
+    @RequestMapping(value = "detail/{productId}")
+    public ServerResponse detail(@PathVariable("productId")Integer productId){
         ServerResponse serverResponse = iProductService.detailPortal(productId);
         return serverResponse;
     }
@@ -24,7 +25,7 @@ public class ProductController {
     /**
      * 商品搜索
      */
-    @RequestMapping(value = "list.do")
+    @RequestMapping(value = "list")
     public ServerResponse list(@RequestParam(required = false) Integer categoryId,
                                @RequestParam(required = false) String keyword,
                                @RequestParam(required = false,defaultValue = "1") Integer pageNum,

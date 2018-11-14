@@ -1,6 +1,8 @@
 package com.mhf.dao;
 
 import com.mhf.pojo.XiaomiOrder;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 public interface XiaomiOrderMapper {
@@ -43,4 +45,20 @@ public interface XiaomiOrderMapper {
      * @mbg.generated
      */
     int updateByPrimaryKey(XiaomiOrder record);
+
+    /**
+     * 根据orderNo和userId查询
+     */
+    XiaomiOrder findOrderByUserIdAndOrderNo(@Param(value = "userId") Integer userId,
+                                            @Param(value = "orderNo") Long orderNo);
+
+    /**
+     * 根据userId查询订单
+     */
+    List<XiaomiOrder> findOrderByUserId(Integer userId);
+
+    /**
+     * 根据orderNo查询订单
+     */
+    XiaomiOrder findOrderByOrderNo(Long orderNo);
 }

@@ -5,6 +5,7 @@ import com.mhf.common.ServerResponse;
 import com.mhf.pojo.User;
 import com.mhf.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,8 +25,8 @@ public class UserManagerController {
     /**
      * 管理员登录
      */
-    @RequestMapping(value = "/login.do")
-    public ServerResponse login(HttpSession session, @RequestParam("username")String username, @RequestParam("password")String password){
+    @RequestMapping(value = "/login/{username}/{password}")
+    public ServerResponse login(HttpSession session, @PathVariable("username")String username, @PathVariable("password")String password){
         ServerResponse serverResponse = iUserService.login(username,password);
         if(serverResponse.isSuccess()){
             User user = (User) serverResponse.getData();

@@ -11,7 +11,10 @@
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <!--开启注解-->
-    <context:component-scan base-package="com.mhf.controller" />
+    <context:component-scan base-package="com.mhf.controller">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
 
     <!--配置控制前可以返回json格式的数据-->
     <mvc:annotation-driven>
@@ -43,5 +46,27 @@
         </property>
     </bean>
 
+    <mvc:interceptors>
+        <!-- 拦截请求 -->
+        <mvc:interceptor>
+            <mvc:mapping path="/manager1/**"/>
+            <mvc:exclude-mapping path="/manager1/user/login/**"></mvc:exclude-mapping>
+            <bean class="com.mhf.controller.common.interceptor.AuthorityInterceptor"></bean>
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/product/list/**"></mvc:exclude-mapping>
+            <mvc:exclude-mapping path="/product/detail/**"></mvc:exclude-mapping>
+            <mvc:exclude-mapping path="/manager1/user/login/**"></mvc:exclude-mapping>
+            <mvc:exclude-mapping path="/user/login/**"></mvc:exclude-mapping>
+            <mvc:exclude-mapping path="/user/register"></mvc:exclude-mapping>
+            <mvc:exclude-mapping path="/user/getQuestion/**"></mvc:exclude-mapping>
+            <mvc:exclude-mapping path="/user/checkAnswer/**"></mvc:exclude-mapping>
+            <mvc:exclude-mapping path="/user/resetPassword/**"></mvc:exclude-mapping>
+            <mvc:exclude-mapping path="/user/checkValid/**"></mvc:exclude-mapping>
+            <mvc:exclude-mapping path="/user/logout"></mvc:exclude-mapping>
+            <bean class="com.mhf.controller.common.interceptor.AuthorityInterceptor2"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
 
 </beans>

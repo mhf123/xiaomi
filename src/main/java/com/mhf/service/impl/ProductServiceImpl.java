@@ -14,7 +14,8 @@ import com.mhf.pojo.Product;
 import com.mhf.service.ICategoryService;
 import com.mhf.service.IProductService;
 import com.mhf.utils.DateUtils;
-import com.mhf.utils.PropertiesUtils;
+ import com.mhf.utils.FtpUtils;
+ import com.mhf.utils.PropertiesUtils;
 import com.mhf.vo.ProductDetailVo;
 import com.mhf.vo.ProductListVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,7 @@ public class ProductServiceImpl implements IProductService {
                 return ServerResponse.serverResponseByError("当前商品已经添加");
             }
             //新增
+            product.setStatus(Const.ProductStatusEnum.PRODUCT_ONLINE.getCode());
             int result = productMapper.insert(product);
             if (result > 0) {
                 // 4、返回结果
@@ -73,7 +75,7 @@ public class ProductServiceImpl implements IProductService {
 
         } else {
             //更新
-            int result = productMapper.updateByPrimaryKey(product);
+            int result = productMapper.updateProduct(product);
             if (result > 0) {
                 // 4、返回结果
                 return ServerResponse.serverResponseBySuccess();
@@ -192,9 +194,15 @@ public class ProductServiceImpl implements IProductService {
         try {
             file.transferTo(file1);
             //上传到图片服务器
+            FtpUtils.uploadFile(Lists.newArrayList(file1));
+
             Map<String,String> map = Maps.newHashMap();
             map.put("uri",newFileName);
             map.put("url",PropertiesUtils.readByKey("imageHost")+ "/" + newFileName);
+
+            //删除应用服务器上的图片
+            file1.delete();
+
             return ServerResponse.serverResponseBySuccess(map);
 
         } catch (IOException e) {

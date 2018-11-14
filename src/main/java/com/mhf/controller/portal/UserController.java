@@ -7,6 +7,7 @@ import com.mhf.pojo.User;
 import com.mhf.service.IUserService;
 import com.mhf.utils.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,8 +26,8 @@ public class UserController {
     /**
      * 登录
      */
-    @RequestMapping(value = "/login.do")
-    public ServerResponse login(HttpSession session, @RequestParam("username")String username, @RequestParam("password")String password){
+    @RequestMapping(value = "/login/{username}/{password}")
+    public ServerResponse login(HttpSession session, @PathVariable("username")String username, @PathVariable("password")String password){
         ServerResponse serverResponse = iUserService.login(username,password);
         if(serverResponse.isSuccess()){
             User user = (User) serverResponse.getData();
@@ -38,8 +39,8 @@ public class UserController {
     /**
      * 注册
      */
-    @RequestMapping(value = "/register.do")
-    public ServerResponse register(HttpSession session,User user){
+    @RequestMapping(value = "/register")
+    public ServerResponse register(User user){
         ServerResponse serverResponse = iUserService.register(user);
         return serverResponse;
     }
@@ -47,8 +48,8 @@ public class UserController {
     /**
      * 根据用户名找回密保问题
      */
-    @RequestMapping(value = "getQuestion.do")
-    public ServerResponse getQuestion(String username){
+    @RequestMapping(value = "getQuestion/{username}")
+    public ServerResponse getQuestion(@PathVariable("username")String username){
         ServerResponse serverResponse = iUserService.getQuestion(username);
         return serverResponse;
     }
@@ -56,16 +57,20 @@ public class UserController {
     /**
      * 提交密保问题答案，并验证
      */
-    @RequestMapping(value = "checkAnswer.do")
-    public ServerResponse checkAnswer(String username,String question,String answer){
+    @RequestMapping(value = "checkAnswer/{username}/{question}/{answer}")
+    public ServerResponse checkAnswer(@PathVariable("username")String username,
+                                      @PathVariable("question")String question,
+                                      @PathVariable("answer")String answer){
         ServerResponse serverResponse = iUserService.checkAnswer(username,question,answer);
         return serverResponse;
     }
     /**
      * 忘记密码重置密码
      */
-    @RequestMapping(value = "resetPassword.do")
-    public ServerResponse resetPassword(String username,String password,String forgetToken){
+    @RequestMapping(value = "resetPassword/{username}/{password}/{forgetToken}")
+    public ServerResponse resetPassword(@PathVariable("username") String username,
+                                        @PathVariable("password") String password,
+                                        @PathVariable("forgetToken") String forgetToken){
         ServerResponse serverResponse = iUserService.forgetResetPassword(username,password,forgetToken);
         return serverResponse;
     }
@@ -73,8 +78,9 @@ public class UserController {
     /**
      * 检查用户名和邮箱是否有效
      */
-    @RequestMapping(value = "checkValid.do")
-    public ServerResponse checkValid(String str,String type){
+    @RequestMapping(value = "checkValid/{str}/{type}")
+    public ServerResponse checkValid(@PathVariable("str")String str,
+                                     @PathVariable("type")String type){
         ServerResponse serverResponse = iUserService.checkValid(str,type);
         return serverResponse;
     }
@@ -82,13 +88,11 @@ public class UserController {
     /**
      * 获取登录用户信息
      */
-    @RequestMapping(value = "getUser.do")
+    @RequestMapping(value = "getUser")
     public ServerResponse getUser(HttpSession session){
 
         User user = (User)session.getAttribute(Const.CURRENTUSER);
-        if(user == null){
-            return ServerResponse.serverResponseByError("用户未登录");
-        }
+
         User newuser = new User();
         newuser.setId(user.getId());
         newuser.setUsername(user.getUsername());
@@ -100,12 +104,11 @@ public class UserController {
     /**
      * 登录状态下重置密码
      */
-    @RequestMapping(value = "loginResetPassword.do")
-    public ServerResponse loginResetPassword(HttpSession session,String oldPassword,String newPassword){
+    @RequestMapping(value = "loginResetPassword/{oldPassword}/{newPassword}")
+    public ServerResponse loginResetPassword(HttpSession session,
+                                             @PathVariable("oldPassword")String oldPassword,
+                                             @PathVariable("newPassword")String newPassword){
         User user = (User)session.getAttribute(Const.CURRENTUSER);
-        if(user == null){
-            return ServerResponse.serverResponseByError("用户未登录");
-        }
         ServerResponse serverResponse = iUserService.loginResetPassword(user.getUsername(),oldPassword,newPassword);
         return serverResponse;
     }
@@ -113,12 +116,9 @@ public class UserController {
     /**
      * 登录状态更新个人信息
      */
-    @RequestMapping(value = "updateInformation.do")
+    @RequestMapping(value = "updateInformation")
     public ServerResponse updateInformation(HttpSession session,User user){
         User u = (User)session.getAttribute(Const.CURRENTUSER);
-        if(u == null){
-            return ServerResponse.serverResponseByError("用户未登录");
-        }
         user.setId(u.getId());
         ServerResponse serverResponse = iUserService.updateInformation(user);
         if(serverResponse.isSuccess()){
@@ -132,12 +132,10 @@ public class UserController {
     /**
      * 获取用户详细信息
      */
-    @RequestMapping(value = "getInformation.do")
+    @RequestMapping(value = "getInformation")
     public ServerResponse getInformation(HttpSession session){
         User user = (User)session.getAttribute(Const.CURRENTUSER);
-        if(user == null){
-            return ServerResponse.serverResponseByError("用户未登录");
-        }
+
         user.setPassword("");
         return ServerResponse.serverResponseBySuccess(user);
     }
@@ -145,7 +143,7 @@ public class UserController {
     /**
      * 退出登录
      */
-    @RequestMapping(value = "logout.do")
+    @RequestMapping(value = "logout")
     public ServerResponse logout(HttpSession session){
 
         session.removeAttribute(Const.CURRENTUSER);

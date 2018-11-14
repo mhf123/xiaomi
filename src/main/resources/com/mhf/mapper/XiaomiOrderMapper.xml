@@ -43,7 +43,7 @@
       #{shippingId,jdbcType=INTEGER}, #{payment,jdbcType=DECIMAL}, #{paymentType,jdbcType=INTEGER}, 
       #{postage,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{paymentTime,jdbcType=TIMESTAMP}, 
       #{sendTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{closeTime,jdbcType=TIMESTAMP}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+     now(), now())
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.mhf.pojo.XiaomiOrder">
     <!--
@@ -85,4 +85,36 @@
     payment_time, send_time, end_time, close_time, create_time, update_time
     from xiaomi_order
   </select>
+
+  <select id="findOrderByUserIdAndOrderNo" parameterType="map" resultMap="BaseResultMap">
+    <!--
+      根据userId和orderNo查询订单
+    -->
+    select id, user_id, order_no, shipping_id, payment, payment_type, postage, status,
+    payment_time, send_time, end_time, close_time, create_time, update_time
+    from xiaomi_order
+    where user_id = #{userId} and order_no = #{orderNo}
+  </select>
+
+  <select id="findOrderByUserId" parameterType="int" resultMap="BaseResultMap">
+    <!--
+      根据userId查询订单
+    -->
+    select id, user_id, order_no, shipping_id, payment, payment_type, postage, status,
+    payment_time, send_time, end_time, close_time, create_time, update_time
+    from xiaomi_order
+    where user_id = #{userId}
+  </select>
+
+  <select id="findOrderByOrderNo" parameterType="long" resultMap="BaseResultMap">
+    <!--
+      根据prderNo查询订单
+    -->
+    select id, user_id, order_no, shipping_id, payment, payment_type, postage, status,
+    payment_time, send_time, end_time, close_time, create_time, update_time
+    from xiaomi_order
+    where order_no = #{orderNo}
+  </select>
+
+
 </mapper>

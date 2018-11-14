@@ -1,6 +1,9 @@
 package com.mhf.dao;
 
 import com.mhf.pojo.Cart;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
 
 public interface CartMapper {
@@ -43,4 +46,49 @@ public interface CartMapper {
      * @mbg.generated
      */
     int updateByPrimaryKey(Cart record);
+
+    /**
+     * 根据userId和商品productId查询购物信息
+     */
+    Cart selectCartByUserIdAndProductId(@Param(value = "userId") Integer userId,
+                                        @Param(value = "productId") Integer productId);
+
+    /**
+     * 根据userId查询购物信息
+     */
+    List<Cart> selectCartByUserId(Integer userId);
+
+    /**
+     * 统计用户购物信息是否全选
+     */
+    int isCheckedAll(Integer userId);
+
+    /**
+     * 删除购物车商品
+     */
+    int deleteByUserIdAndProductId(@Param(value = "userId") Integer userId,
+                                   @Param(value = "productIds") List<Integer> productIds);
+
+    /**
+     * 购物车选中、反选
+     * @param check 1:选中 0:取消选中
+     */
+    int selectOrUnselectProduct(@Param(value = "userId") Integer userId,
+                                @Param(value = "productId") Integer productId,
+                                @Param(value = "check") Integer check);
+    /**
+     * 购物车商品数量
+     */
+    int getCartProductCount(Integer userId);
+
+    /**
+     * 购物车用户已选中商品
+     */
+    List<Cart> findCartListByUserIdAndChecked(@Param(value = "userId") Integer userId,
+                                              @Param(value = "checked") Integer checked);
+
+    /**
+     * 批量删除购物车商品
+     */
+    int batchDelete(List<Cart> cartList);
 }

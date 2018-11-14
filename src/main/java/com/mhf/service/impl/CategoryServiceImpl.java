@@ -7,6 +7,7 @@ import com.mhf.pojo.Category;
 import com.mhf.service.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -35,6 +36,7 @@ public class CategoryServiceImpl implements ICategoryService {
         return ServerResponse.serverResponseBySuccess(childCategory);
     }
 
+    @Transactional
     @Override
     public ServerResponse addCategory(Integer parentId, String categoryName) {
         // 1、参数非空校验
@@ -62,6 +64,7 @@ public class CategoryServiceImpl implements ICategoryService {
         return ServerResponse.serverResponseByError("添加失败");
     }
 
+    @Transactional
     @Override
     public ServerResponse setCategoryName(Integer categoryId, String categoryName) {
         // 1、参数非空校验

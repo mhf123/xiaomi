@@ -5,6 +5,8 @@ public class Const {
 
     public static final String TRADE_SUCCESS = "TRADE_SUCCESS";
 
+    public static final String AUTOLOGINCOOKIE = "autoLoginCookie";
+
     public enum ResponseCodeEnum {
         NEED_LOGIN(2, "需要登录"),
         NO_PRIVILEGE(3, "无权限");

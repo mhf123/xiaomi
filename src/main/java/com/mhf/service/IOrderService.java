@@ -1,8 +1,11 @@
 package com.mhf.service;
 
 import com.mhf.common.ServerResponse;
+import com.mhf.pojo.XiaomiOrder;
+import org.apache.ibatis.annotations.Param;
 import org.omg.PortableInterceptor.INACTIVE;
 
+import java.util.List;
 import java.util.Map;
 
 public interface IOrderService {
@@ -50,4 +53,9 @@ public interface IOrderService {
      * 支付宝回调接口
      */
     ServerResponse alipayCallback(Map<String,String> map);
+
+    /**
+     * 根据创建时间查询订单
+     */
+    void orderClose(String time);
 }

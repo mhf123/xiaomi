@@ -61,4 +61,10 @@ public interface XiaomiOrderMapper {
      * 根据orderNo查询订单
      */
     XiaomiOrder findOrderByOrderNo(Long orderNo);
+
+    /**
+     * 根据创建时间查询订单
+     */
+    List<XiaomiOrder> findOrderByCreateTime(@Param("orderStatus") Integer orderStatus,
+                                            @Param("time")String time);
 }

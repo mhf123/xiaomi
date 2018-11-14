@@ -116,5 +116,15 @@
     where order_no = #{orderNo}
   </select>
 
+  <select id="findOrderByCreateTime" parameterType="map" resultMap="BaseResultMap">
+    <!--
+      根据创建时间查询订单
+    -->
+    select id, user_id, order_no, shipping_id, payment, payment_type, postage, status,
+    payment_time, send_time, end_time, close_time, create_time, update_time
+    from xiaomi_order
+    where status = #{orderStatus} and <![CDATA[create_time <= #{time}]]>
+  </select>
+
 
 </mapper>

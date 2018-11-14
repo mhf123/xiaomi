@@ -126,6 +126,19 @@
         where id = #{id,jdbcType=INTEGER}
     </update>
 
+    <!-- 更新token -->
+    <update id="saveTokenByUserId" parameterType="map">
+        update user set token = #{token} where id = #{userId};
+    </update>
+
+    <!-- 根据token查询用户信息 -->
+    <select id="findUserByToken" parameterType="string" resultMap="BaseResultMap">
+        select id, username, password, email, phone, question, answer, role, create_time,
+        update_time
+        from user
+        where token = #{token}
+    </select>
+
 
 
 </mapper>

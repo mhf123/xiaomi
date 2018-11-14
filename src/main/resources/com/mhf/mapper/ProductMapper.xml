@@ -157,4 +157,14 @@
         from product
         where name = #{name}
     </select>
+
+    <select id="findStockById" parameterType="int" resultType="int">
+        <!--
+          根据商品id查询商品库存
+        -->
+        select stock
+        from product
+        where name = #{name}
+        for update
+    </select>
 </mapper>

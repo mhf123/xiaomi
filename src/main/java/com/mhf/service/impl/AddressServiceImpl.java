@@ -9,6 +9,7 @@ import com.mhf.pojo.Shipping;
 import com.mhf.service.IAddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ public class AddressServiceImpl implements IAddressService {
     @Autowired
     ShippingMapper shippingMapper;
 
+    @Transactional
     @Override
     public ServerResponse add(Integer userId, Shipping shipping) {
         // 1、参数校验
@@ -33,6 +35,7 @@ public class AddressServiceImpl implements IAddressService {
         return ServerResponse.serverResponseBySuccess(map);
     }
 
+    @Transactional
     @Override
     public ServerResponse delete(Integer userId, Integer shippingId) {
         // 1、参数校验
@@ -48,6 +51,7 @@ public class AddressServiceImpl implements IAddressService {
         return ServerResponse.serverResponseByError("删除失败");
     }
 
+    @Transactional
     @Override
     public ServerResponse update(Shipping shipping) {
         // 1、参数校验

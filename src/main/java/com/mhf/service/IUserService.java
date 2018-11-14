@@ -50,4 +50,14 @@ public interface IUserService {
      * 根据用户id查询用户信息
      */
     User getInformationById(Integer userId);
+
+    /**
+     * 保存用户token信息
+     */
+    int saveTokenByUserId(Integer userId,String token);
+
+    /**
+     * 根据token查询用户信息
+     */
+    User findUserByToken(String token);
 }

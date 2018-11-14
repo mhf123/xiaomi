@@ -20,7 +20,8 @@ import com.mhf.vo.ProductDetailVo;
 import com.mhf.vo.ProductListVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+ import org.springframework.transaction.annotation.Transactional;
+ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +42,7 @@ public class ProductServiceImpl implements IProductService {
     @Autowired
     ICategoryService iCategoryService;
 
+    @Transactional
     @Override
     public ServerResponse saveOrUpdate(Product product) {
         // 1、参数校验
@@ -86,6 +88,7 @@ public class ProductServiceImpl implements IProductService {
 
     }
 
+    @Transactional
     @Override
     public ServerResponse setSaleStatus(Integer productId, Integer status) {
         // 1、参数非空校验

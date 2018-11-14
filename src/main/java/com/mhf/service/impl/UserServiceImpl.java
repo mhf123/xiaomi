@@ -9,6 +9,7 @@ import com.mhf.utils.MD5Utils;
 import com.mhf.utils.TokenCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.util.UUID;
@@ -44,6 +45,7 @@ public class UserServiceImpl implements IUserService {
         return ServerResponse.serverResponseBySuccess(user);
     }
 
+    @Transactional
     @Override
     public ServerResponse register(User user) {
         // 1、非空校验
@@ -117,6 +119,7 @@ public class UserServiceImpl implements IUserService {
         return ServerResponse.serverResponseBySuccess(forgetToken);
     }
 
+    @Transactional
     @Override
     public ServerResponse forgetResetPassword(String username, String password, String forgetToken) {
         // 1、非空校验
@@ -176,6 +179,7 @@ public class UserServiceImpl implements IUserService {
     }
 
 
+    @Transactional
     @Override
     public ServerResponse loginResetPassword(String username, String oldPassword, String newPassword) {
         // 1、参数非空校验
@@ -199,6 +203,7 @@ public class UserServiceImpl implements IUserService {
         return ServerResponse.serverResponseByError("密码修改失败");
     }
 
+    @Transactional
     @Override
     public ServerResponse updateInformation(User user) {
         // 1、参数校验
@@ -216,6 +221,21 @@ public class UserServiceImpl implements IUserService {
     @Override
     public User getInformationById(Integer userId) {
         User user = userMapper.selectByPrimaryKey(userId);
+        return user;
+    }
+
+    @Transactional
+    @Override
+    public int saveTokenByUserId(Integer userId, String token) {
+        int result = userMapper.saveTokenByUserId(userId, token);
+        return result;
+    }
+
+    @Override
+    public User findUserByToken(String token) {
+        if (token == null || token.equals(""))
+            return null;
+        User user = userMapper.findUserByToken(token);
         return user;
     }
 

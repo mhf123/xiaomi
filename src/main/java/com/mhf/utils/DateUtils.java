@@ -18,6 +18,9 @@ public class DateUtils {
      */
 
     public static String dateToStr(Date date){
+        if (date == null){
+            return null;
+        }
         DateTime dateTime = new DateTime(date);
 
         return dateTime.toString(STANDARD_FORMAT);
@@ -34,6 +37,9 @@ public class DateUtils {
      */
 
     public static Date strToDate(String str){
+        if (str == null){
+            return null;
+        }
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern(STANDARD_FORMAT);
         DateTime dateTime = dateTimeFormatter.parseDateTime(str);
         return dateTime.toDate();

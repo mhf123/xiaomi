@@ -69,4 +69,9 @@ public interface ProductMapper {
      * 前台—根据商品名字查询
      */
     int selectByName(String name);
+
+    /**
+     * 根据商品id查询商品库存
+     */
+    Integer findStockById(Integer id);
 }

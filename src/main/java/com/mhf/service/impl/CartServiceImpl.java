@@ -15,6 +15,7 @@ import com.mhf.vo.CartVo;
 import com.sun.org.apache.xpath.internal.operations.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
@@ -27,6 +28,7 @@ public class CartServiceImpl implements ICartService {
     @Autowired
     ProductMapper productMapper;
 
+    @Transactional
     @Override
     public ServerResponse add(Integer userId, Integer productId, Integer count) {
 
@@ -67,12 +69,14 @@ public class CartServiceImpl implements ICartService {
         return ServerResponse.serverResponseBySuccess(cartVoLimit);
     }
 
+
     @Override
     public ServerResponse list(Integer userId) {
         CartVo cartVoLimit = getCartVoLimit(userId);
         return ServerResponse.serverResponseBySuccess(cartVoLimit);
     }
 
+    @Transactional
     @Override
     public ServerResponse update(Integer userId, Integer productId, Integer count) {
         // 1、参数校验
@@ -91,6 +95,7 @@ public class CartServiceImpl implements ICartService {
         return ServerResponse.serverResponseBySuccess(cartVoLimit);
     }
 
+    @Transactional
     @Override
     public ServerResponse deleteProduct(Integer userId, String productIds) {
         // 1、参数非空校验

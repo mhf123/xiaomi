@@ -81,4 +81,14 @@ public interface UserMapper {
      * 更新用户信息
      */
     int updateInformation(User user);
+
+    /**
+     * 保存用户token信息
+     */
+    int saveTokenByUserId(@Param("userId")Integer userId,@Param("token")String token);
+
+    /**
+     * 根据token查询用户信息
+     */
+    User findUserByToken(String token);
 }

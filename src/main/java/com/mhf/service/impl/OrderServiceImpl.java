@@ -40,11 +40,13 @@ import com.mhf.vo.CartOrderItemVo;
 import com.mhf.vo.OrderItemVo;
 import com.mhf.vo.ShippingVo;
 import com.mhf.vo.XiaomiOrderVo;
+import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,6 +69,8 @@ public class OrderServiceImpl implements IOrderService {
     PayinfoMapper payinfoMapper;
 
 
+
+    @Transactional
     @Override
     public ServerResponse createOrder(Integer userId, Integer shippingId) {
         // 1、非空校验
@@ -101,6 +105,7 @@ public class OrderServiceImpl implements IOrderService {
         if (result == 0) {
             return ServerResponse.serverResponseByError("订单商品批量插入失败");
         }
+        int a = 1/0;
         // 6、扣商品库存
         reduceProductStock(orderItemList);
         // 7、清空购物车已下单商品
@@ -140,6 +145,7 @@ public class OrderServiceImpl implements IOrderService {
         return ServerResponse.serverResponseBySuccess(cartOrderItemVo);
     }
 
+    @Transactional
     @Override
     public ServerResponse cancel(Integer userId, Long orderNo) {
         // 1、非空校验
@@ -162,6 +168,7 @@ public class OrderServiceImpl implements IOrderService {
         }
         // 5、返回结果
         order.setStatus(Const.OrderStatusEnum.ORDER_CANCELED.getCode());
+        order.setCloseTime(new Date());
         int result = xiaomiOrderMapper.updateByPrimaryKey(order);
         if (result > 0) {
             return ServerResponse.serverResponseBySuccess("订单取消成功");
@@ -213,6 +220,7 @@ public class OrderServiceImpl implements IOrderService {
         return ServerResponse.serverResponseBySuccess(xiaomiOrderVo);
     }
 
+    @Transactional
     @Override
     public ServerResponse sendGoods(Long orderNo) {
         // 1、非空校验
@@ -230,6 +238,7 @@ public class OrderServiceImpl implements IOrderService {
         }
         // 4、发货、返回结果
         order.setStatus(Const.OrderStatusEnum.ORDER_SEND.getCode());
+        order.setSendTime(new Date());
         int result = xiaomiOrderMapper.updateByPrimaryKey(order);
         if (result > 0) {
             return ServerResponse.serverResponseBySuccess("发货成功");
@@ -293,9 +302,17 @@ public class OrderServiceImpl implements IOrderService {
         //查询订单商品
         List<OrderItem> orderItemList = ordorItemMapper.findOrderByOrderNo(orderNo);
         for (OrderItem orderItem : orderItemList) {
+            Integer stock = productMapper.findStockById(orderItem.getProductId());
+            if (stock == null){
+                continue;
+            }
             //恢复库存
-            Product product = productMapper.selectByPrimaryKey(orderItem.getProductId());
-            product.setStock(product.getStock() + orderItem.getQuantity());
+            stock = stock + orderItem.getQuantity();
+
+            Product product = new Product();
+            product.setStock(stock);
+            product.setId(orderItem.getProductId());
+
             int result = productMapper.updateByPrimaryKey(product);
             if (result == 0) {
                 return ServerResponse.serverResponseByError("恢复库存失败");
@@ -385,6 +402,12 @@ public class OrderServiceImpl implements IOrderService {
             xiaomiOrderVo.setPaymentTypeDesc(paymentEnum.getDesc());
         }
         xiaomiOrderVo.setOrderNo(order.getOrderNo());
+        xiaomiOrderVo.setCloseTime(DateUtils.dateToStr(order.getCloseTime()));
+        xiaomiOrderVo.setCreateTime(DateUtils.dateToStr(order.getCreateTime()));
+        xiaomiOrderVo.setPaymentTime(DateUtils.dateToStr(order.getPaymentTime()));
+        xiaomiOrderVo.setCloseTime(DateUtils.dateToStr(order.getCloseTime()));
+        xiaomiOrderVo.setEndTime(DateUtils.dateToStr(order.getEndTime()));
+        xiaomiOrderVo.setSendTime(DateUtils.dateToStr(order.getSendTime()));
 
         return xiaomiOrderVo;
     }
@@ -863,6 +886,7 @@ public class OrderServiceImpl implements IOrderService {
         return ServerResponse.serverResponseBySuccess(false);
     }
 
+    @Transactional
     @Override
     public ServerResponse alipayCallback(Map<String,String> map) {
         // 1、获取订单号
@@ -902,6 +926,23 @@ public class OrderServiceImpl implements IOrderService {
             return ServerResponse.serverResponseBySuccess();
         }
         return ServerResponse.serverResponseByError("支付信息保存失败");
+    }
+
+    @Transactional
+    @Override
+    public void orderClose(String time) {
+        // 1、查询 <time时间 未付款的订单
+        List<XiaomiOrder> orderList = xiaomiOrderMapper.findOrderByCreateTime(Const.OrderStatusEnum.ORDER_UN_PAY.getCode(), time);
+        // 2、恢复库存、关闭订单
+        if (orderList != null && orderList.size() > 0){
+            for (XiaomiOrder order : orderList){
+                recoverProductStock(order.getOrderNo());
+                order.setStatus(Const.OrderStatusEnum.ORDER_CANCELED.getCode());
+                order.setCloseTime(new Date());
+                xiaomiOrderMapper.updateByPrimaryKey(order);
+            }
+        }
+
     }
 }
 

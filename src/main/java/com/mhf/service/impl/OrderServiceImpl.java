@@ -105,7 +105,6 @@ public class OrderServiceImpl implements IOrderService {
         if (result == 0) {
             return ServerResponse.serverResponseByError("订单商品批量插入失败");
         }
-        int a = 1/0;
         // 6、扣商品库存
         reduceProductStock(orderItemList);
         // 7、清空购物车已下单商品
@@ -313,7 +312,7 @@ public class OrderServiceImpl implements IOrderService {
             product.setStock(stock);
             product.setId(orderItem.getProductId());
 
-            int result = productMapper.updateByPrimaryKey(product);
+            int result = productMapper.updateProduct(product);
             if (result == 0) {
                 return ServerResponse.serverResponseByError("恢复库存失败");
             }
@@ -822,7 +821,7 @@ public class OrderServiceImpl implements IOrderService {
                 dumpResponse(response);
 
                 // 需要修改为运行机器上的路径
-                String filePath = String.format("/ftpfile/img/qr-%s.png",
+                String filePath = String.format("ftpfile/img/qr-%s.png",
                         response.getOutTradeNo());
                 log.info("filePath:" + filePath);
                 ZxingUtils.getQRCodeImge(response.getQrCode(), 256, filePath);

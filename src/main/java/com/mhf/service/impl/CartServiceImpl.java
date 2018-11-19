@@ -36,6 +36,7 @@ public class CartServiceImpl implements ICartService {
         if (userId == null || productId == null || count == null) {
             return ServerResponse.serverResponseByError("参数不能为空");
         }
+
         //判断是否存在商品
         Product product = productMapper.selectByPrimaryKey(productId);
         if (product == null) {

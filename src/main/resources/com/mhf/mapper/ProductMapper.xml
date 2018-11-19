@@ -164,7 +164,7 @@
         -->
         select stock
         from product
-        where name = #{name}
+        where id = #{id}
         for update
     </select>
 </mapper>

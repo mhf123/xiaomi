@@ -16,6 +16,7 @@
         <result column="role" jdbcType="INTEGER" property="role"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="token" jdbcType="VARCHAR" property="token"/>
     </resultMap>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         <!--
@@ -138,6 +139,11 @@
         from user
         where token = #{token}
     </select>
+
+    <!-- 修改用户对应token -->
+    <update id="updateTokenByUserId" parameterType="com.mhf.pojo.User">
+        update user set token = #{token} where id = #{id};
+    </update>
 
 
 

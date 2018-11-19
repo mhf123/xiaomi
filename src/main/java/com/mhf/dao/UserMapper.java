@@ -91,4 +91,9 @@ public interface UserMapper {
      * 根据token查询用户信息
      */
     User findUserByToken(String token);
+
+    /**
+     * 修改用户对应token为空
+     */
+    Integer updateTokenByUserId(User user);
 }

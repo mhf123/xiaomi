@@ -44,7 +44,7 @@ public class UserController {
             String ip = IPUtils.getRemoteAddress(request);
             try {
                 String mac = IPUtils.getMACAddress(ip);
-                String token = MD5Utils.GetMD5Code(mac);
+                String token = MD5Utils.GetMD5Code(mac+user.getUsername());
                 //把token保存到数据库
                 iUserService.saveTokenByUserId(user.getId(),token);
                 //token作为cookie响应到客户端
@@ -171,9 +171,23 @@ public class UserController {
      * 退出登录
      */
     @RequestMapping(value = "logout")
-    public ServerResponse logout(HttpSession session){
-
+    public ServerResponse logout(HttpSession session,HttpServletRequest request){
+        User user = (User) session.getAttribute(Const.CURRENTUSER);
+        //删除token
+        ServerResponse serverResponse = iUserService.logout(user);
+        //清除cookie
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null && cookies.length > 0) {
+            for (Cookie cookie : cookies) {
+                String name = cookie.getName();
+                if (name.equals(Const.AUTOLOGINCOOKIE)){
+                    cookie.setMaxAge(0);
+                    break;
+                }
+            }
+        }
         session.removeAttribute(Const.CURRENTUSER);
-        return ServerResponse.serverResponseBySuccess("退出成功");
+
+        return serverResponse;
     }
 }

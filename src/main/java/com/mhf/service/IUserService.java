@@ -60,4 +60,9 @@ public interface IUserService {
      * 根据token查询用户信息
      */
     User findUserByToken(String token);
+
+    /**
+     * 退出登录接口
+     */
+    ServerResponse logout(User user);
 }

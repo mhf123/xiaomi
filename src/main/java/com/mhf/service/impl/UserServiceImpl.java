@@ -6,10 +6,12 @@ import com.mhf.dao.UserMapper;
 import com.mhf.pojo.User;
 import com.mhf.service.IUserService;
 import com.mhf.utils.MD5Utils;
+import com.mhf.utils.RedisPoolUtils;
 import com.mhf.utils.TokenCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import redis.clients.jedis.Jedis;
 
 import javax.servlet.http.HttpSession;
 import java.util.UUID;
@@ -114,10 +116,14 @@ public class UserServiceImpl implements IUserService {
         }
         // 3、服务端生成一个token保存，并返回给客户端
         String forgetToken = UUID.randomUUID().toString();
-        TokenCache.set(username,forgetToken);
+
+        //放入redis缓存
+        RedisPoolUtils.setex(username,forgetToken,60*60);
+
 
         return ServerResponse.serverResponseBySuccess(forgetToken);
     }
+
 
     @Transactional
     @Override
@@ -133,7 +139,7 @@ public class UserServiceImpl implements IUserService {
             return ServerResponse.serverResponseByError("token不能为空");
         }
         // 2、校验token
-        String token = TokenCache.get(username);
+        String token = RedisPoolUtils.get(username);
         if(token == null){
             return ServerResponse.serverResponseByError("token已过期");
         }
@@ -237,6 +243,23 @@ public class UserServiceImpl implements IUserService {
             return null;
         User user = userMapper.findUserByToken(token);
         return user;
+    }
+
+    @Override
+    public ServerResponse logout(User user) {
+        // 1、修改当前用户的token为空
+        if (user == null){
+            return ServerResponse.serverResponseByError("用户未登录");
+        }
+        user.setToken("");
+
+        int result = userMapper.updateTokenByUserId(user);
+        // 2、返回结果
+        if (result > 0){
+            return ServerResponse.serverResponseBySuccess("退出登录成功");
+
+        }
+        return ServerResponse.serverResponseByError("退出登录失败");
     }
 
 

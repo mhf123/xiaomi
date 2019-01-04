@@ -30,12 +30,13 @@ public class AuthorityInterceptor implements HandlerInterceptor {
             if (cookies != null && cookies.length > 0) {
                 for (Cookie cookie : cookies) {
                     String name = cookie.getName();
-                    if (name.equals(Const.AUTOLOGINCOOKIE)){
+                    if (name.equals(Const.AUTOLOGINCOOKIE)) {
                         String autoLoginToken = cookie.getValue();
                         //根据token查询用户信息
                         user = iUserService.findUserByToken(autoLoginToken);
-                        if (user != null){
-                            session.setAttribute(Const.CURRENTUSER,user);
+                        if (user != null) {
+                            session.setAttribute(Const.CURRENTUSER, user);
+
                         }
                         break;
                     }

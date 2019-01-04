@@ -7,6 +7,7 @@ public class RedisPoolUtils {
 
     /**
      * 添加key、value
+     *
      * @param key
      * @param value
      * @return
@@ -29,6 +30,7 @@ public class RedisPoolUtils {
 
     /**
      * 添加key、过期时间、value
+     *
      * @param key
      * @param value
      * @param expireTime
@@ -52,6 +54,7 @@ public class RedisPoolUtils {
 
     /**
      * 根据key获取value3
+     *
      * @param key
      * @return
      */
@@ -73,6 +76,7 @@ public class RedisPoolUtils {
 
     /**
      * 根据key删除
+     *
      * @param key
      * @return
      */
@@ -94,15 +98,16 @@ public class RedisPoolUtils {
 
     /**
      * 设置key有效时间
+     *
      * @param key
      * @return
      */
-    public static Long expire(String key,int expireTime) {
+    public static Long expire(String key, int expireTime) {
         Jedis jedis = null;
         Long result = null;
         try {
             jedis = RedisPool.getJedis();
-            result = jedis.expire(key,expireTime);
+            result = jedis.expire(key, expireTime);
         } catch (Exception e) {
             e.printStackTrace();
             RedisPool.returnBrokenResource(jedis);

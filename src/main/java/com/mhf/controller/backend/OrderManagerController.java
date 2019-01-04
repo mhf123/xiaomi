@@ -19,10 +19,11 @@ public class OrderManagerController {
      * 订单列表
      */
     @RequestMapping(value = "list")
-    public ServerResponse list(@RequestParam(required = false, defaultValue = "1") Integer pageNum,
+    public ServerResponse list(@RequestParam(required = false) Integer status,
+                               @RequestParam(required = false, defaultValue = "1") Integer pageNum,
                                @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
 
-        ServerResponse serverResponse = iOrderService.list(null, pageNum, pageSize);
+        ServerResponse serverResponse = iOrderService.list(null, pageNum, pageSize, status);
         return serverResponse;
     }
 

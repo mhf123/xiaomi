@@ -22,12 +22,12 @@ public class CategoryServiceImpl implements ICategoryService {
     @Override
     public ServerResponse getCategory(Integer id) {
         // 1、非空校验
-        if(id == null){
+        if (id == null) {
             return ServerResponse.serverResponseByError("参数不能为空");
         }
         // 2、根据id查询类别
         Category category = categoryMapper.selectByPrimaryKey(id);
-        if(category == null){
+        if (category == null) {
             return ServerResponse.serverResponseByError("查询类别不存在");
         }
         // 3、查询子类别
@@ -40,12 +40,12 @@ public class CategoryServiceImpl implements ICategoryService {
     @Override
     public ServerResponse addCategory(Integer parentId, String categoryName) {
         // 1、参数非空校验
-        if(categoryName == null || categoryName.equals("")){
+        if (categoryName == null || categoryName.equals("")) {
             return ServerResponse.serverResponseByError("类别名称不能为空");
         }
         // 2、判断要添加的节点名称是否已经存在
         int result1 = categoryMapper.selectByCategoryName(categoryName);
-        if(result1 > 0){
+        if (result1 > 0) {
             //已经存在
             return ServerResponse.serverResponseByError("当前类别名称已经存在");
         }
@@ -56,7 +56,7 @@ public class CategoryServiceImpl implements ICategoryService {
         category.setParentId(parentId);
         category.setStatus(1);
         int result = categoryMapper.insert(category);
-        if(result > 0){
+        if (result > 0) {
             //添加成功
             return ServerResponse.serverResponseBySuccess();
         }
@@ -68,21 +68,21 @@ public class CategoryServiceImpl implements ICategoryService {
     @Override
     public ServerResponse setCategoryName(Integer categoryId, String categoryName) {
         // 1、参数非空校验
-        if(categoryName == null || categoryName.equals("")){
+        if (categoryName == null || categoryName.equals("")) {
             return ServerResponse.serverResponseByError("类别名称不能为空");
         }
-        if(categoryId == null){
+        if (categoryId == null) {
             return ServerResponse.serverResponseByError("类别id不能为空");
         }
         // 2、根据id查询
         Category category = categoryMapper.selectByPrimaryKey(categoryId);
-        if(category == null){
+        if (category == null) {
             return ServerResponse.serverResponseByError("要修改的类别不存在");
         }
         // 3、修改名称
         category.setName(categoryName);
         int result = categoryMapper.updateByPrimaryKey(category);
-        if(result > 0){
+        if (result > 0) {
             //修改成功
             return ServerResponse.serverResponseBySuccess();
         }
@@ -93,7 +93,7 @@ public class CategoryServiceImpl implements ICategoryService {
     @Override
     public ServerResponse getDeepCategory(Integer categoryId) {
         // 1、参数非空校验
-        if(categoryId == null){
+        if (categoryId == null) {
             return ServerResponse.serverResponseByError("类别id不能为空");
         }
         // 2、查询
@@ -103,7 +103,7 @@ public class CategoryServiceImpl implements ICategoryService {
         Set<Integer> integerSet = Sets.newHashSet();
 
         Iterator<Category> categoryIterator = categorySet.iterator();
-        while (categoryIterator.hasNext()){
+        while (categoryIterator.hasNext()) {
             Category category = categoryIterator.next();
             integerSet.add(category.getId());
         }
@@ -111,16 +111,16 @@ public class CategoryServiceImpl implements ICategoryService {
         return ServerResponse.serverResponseBySuccess(integerSet);
     }
 
-    private Set<Category> findAllChildCategory(Set<Category> categorySet,Integer categoryId){
+    private Set<Category> findAllChildCategory(Set<Category> categorySet, Integer categoryId) {
         Category category = categoryMapper.selectByPrimaryKey(categoryId);
-        if(category != null){
+        if (category != null) {
             categorySet.add(category);
         }
         //查找id下的子节点（平级）
         List<Category> childCategoryList = categoryMapper.getChildCategory(categoryId);
-        if(childCategoryList != null && childCategoryList.size() > 0){
+        if (childCategoryList != null && childCategoryList.size() > 0) {
             for (Category category1 : childCategoryList) {
-                findAllChildCategory(categorySet,category1.getId());
+                findAllChildCategory(categorySet, category1.getId());
             }
         }
         return categorySet;

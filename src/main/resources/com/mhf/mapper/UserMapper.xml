@@ -80,10 +80,34 @@
     <select id="checkUsername" parameterType="string" resultType="int">
         select count(1) from user where username = #{username}
     </select>
+
+    <!-- 检查用户名或手机号是否存在 -->
+    <select id="checkUsernameOrPhone" parameterType="string" resultType="int">
+        select count(1) from user where username = #{username} or phone = #{username}
+    </select>
+
     <!-- 根据用户名密码查询用户信息 -->
     <select id="selectUserByUsernameAndPassword" parameterType="map" resultMap="BaseResultMap">
         select  id, username, password, email, phone, question, answer, role, create_time,
         update_time from user where username = #{username} and password = #{password};
+    </select>
+
+    <!-- 根据手机号查找信息 -->
+    <select id="selectUserByPhone" parameterType="string" resultMap="BaseResultMap">
+        select  id, username, password, email, phone, question, answer, role, create_time,
+        update_time from user where phone = #{phone};
+    </select>
+
+    <!-- 根据用户名或手机号-密码查找信息 -->
+    <select id="selectUserByUsernameOrPhoneAndPassword" parameterType="map" resultMap="BaseResultMap">
+        select  id, username, password, email, phone, question, answer, role, create_time, update_time
+        from user
+        where (username = #{username} or phone = #{username}) and password = #{password};
+    </select>
+
+    <!-- 检查手机号是否存在 -->
+    <select id="checkPhone" parameterType="string" resultType="int">
+        select count(1) from user where phone = #{phone}
     </select>
 
     <!-- 检查邮箱是否存在 -->
@@ -106,23 +130,28 @@
         update user set password = #{password},update_time = now() where username = #{username};
     </update>
 
+    <!-- 通过手机验证码修改用户密码 -->
+    <update id="updatePasswordByPhone" parameterType="string">
+        update user set password = #{password},update_time = now() where phone = #{phone};
+    </update>
+
     <!-- 更新用户信息 -->
     <update id="updateInformation" parameterType="com.mhf.pojo.User">
-       update user
-       <set>
-           <if test="email != null">
-               email = #{email,jdbcType=VARCHAR},
-           </if>
-           <if test="phone != null">
-               phone = #{phone,jdbcType=VARCHAR},
-           </if>
-           <if test="question != null">
-               question = #{question,jdbcType=VARCHAR},
-           </if>
-           <if test="answer != null">
-               answer = #{answer,jdbcType=VARCHAR},
-           </if>
-        update_time = now()
+        update user
+        <set>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="question != null">
+                question = #{question,jdbcType=VARCHAR},
+            </if>
+            <if test="answer != null">
+                answer = #{answer,jdbcType=VARCHAR},
+            </if>
+            update_time = now()
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
@@ -144,7 +173,6 @@
     <update id="updateTokenByUserId" parameterType="com.mhf.pojo.User">
         update user set token = #{token} where id = #{id};
     </update>
-
 
 
 </mapper>

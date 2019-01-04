@@ -41,8 +41,7 @@ public class Const {
         ORDER_PAYED(20, "已付款"),
         ORDER_SEND(40, "已发货"),
         ORDER_SUCCESS(50, "交易成功"),
-        ORDER_CLOSED(60, "交易关闭")
-        ;
+        ORDER_CLOSED(60, "交易关闭");
 
         private int code;
         private String desc;
@@ -68,9 +67,9 @@ public class Const {
             this.desc = desc;
         }
 
-        public static OrderStatusEnum condeOf(Integer code){
+        public static OrderStatusEnum condeOf(Integer code) {
             for (OrderStatusEnum orderStatusEnum : values()) {
-                if(code == orderStatusEnum.getCode()){
+                if (code == orderStatusEnum.getCode()) {
                     return orderStatusEnum;
                 }
             }
@@ -133,9 +132,10 @@ public class Const {
         public void setDesc(String desc) {
             this.desc = desc;
         }
-        public static PaymentEnum condeOf(Integer code){
+
+        public static PaymentEnum condeOf(Integer code) {
             for (PaymentEnum paymentEnum : values()) {
-                if(code == paymentEnum.getCode()){
+                if (code == paymentEnum.getCode()) {
                     return paymentEnum;
                 }
             }

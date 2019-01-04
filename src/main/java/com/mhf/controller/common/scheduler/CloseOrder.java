@@ -18,11 +18,10 @@ public class CloseOrder {
     /**
      * 定时关闭订单
      */
-
     @Scheduled(cron = "0 */1 * * * ?")
-    public void closeOrder(){
-        Integer hour =Integer.parseInt( PropertiesUtils.readByKey("close.order.time"));
-        String date = com.mhf.utils.DateUtils.dateToStr(DateUtils.addHours(new Date(),-hour));
+    public void closeOrder() {
+        Integer hour = Integer.parseInt(PropertiesUtils.readByKey("close.order.time"));
+        String date = com.mhf.utils.DateUtils.dateToStr(DateUtils.addHours(new Date(), -hour));
         iOrderService.orderClose(date);
     }
 }

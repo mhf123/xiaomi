@@ -55,7 +55,8 @@ public interface XiaomiOrderMapper {
     /**
      * 根据userId查询订单
      */
-    List<XiaomiOrder> findOrderByUserId(Integer userId);
+    List<XiaomiOrder> findOrderByUserId(@Param("status") Integer status,
+                                        @Param("userId") Integer userId);
 
     /**
      * 根据orderNo查询订单
@@ -66,5 +67,5 @@ public interface XiaomiOrderMapper {
      * 根据创建时间查询订单
      */
     List<XiaomiOrder> findOrderByCreateTime(@Param("orderStatus") Integer orderStatus,
-                                            @Param("time")String time);
+                                            @Param("time") String time);
 }

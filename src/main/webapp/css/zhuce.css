@@ -2,12 +2,12 @@
 	margin-top: 70px;
 	margin-left: 285px;
 	width: 800px;
-	height: 700px;
+	height: 650px;
 	background-color: #FFFFCC;
 }
 
 .d1-1 {
-	margin-top: 80px;
+	margin-top: 40px;
 	margin-left: 250px;
 	width: 300px;
 	height: 380px;
@@ -81,14 +81,12 @@
 	background-color: white;
 	border-radius: 5px;
 	height: 35px;
+	width: 86px;
 	border: 1px #CCCCCC solid;
 	color: #EF5B00;
 	transition-duration: 0.4s;
 }
-#but1:hover{
-	background-color: #EF5B00;
-	color: white;
-}
+
 #but1:focus{
 	outline: none;
 }
@@ -101,11 +99,11 @@
 }
 .span2{
 	position: relative;
-	left: 180px;
+	left: 100px;
 	color: red;
 }
 .span3{
 	position: relative;
-	left: 180px;
+	left: 80px;
 	color: red;
 }

@@ -20,59 +20,95 @@
 
     </style>
     <script type="text/javascript">
-        //地址id全局变量
+        //地址id
         var addrid;
-        //商品编号
-        var codes = "${codes}";
-        //显示合计价钱全局变量
-        var sprice;
 
         /**
          * 页面加载完成后 在页面相应位置显示信息
          */
         $(document).ready(function () {
-            //显示商品数量
-            var sum = 0;
-            //遍历商品，获取数量
-            for (var i = 0; i < $(".spno").length; i++) {
-                var v = parseInt($(".spno:eq(" + i + ")").text());
-                sum += v;
-            }
-            //显示数量到相应位置
-            $("#sp2").text(sum + "件");
-
-
-            //遍历商品，获取各商品价钱
-            sprice = 0;
-            for (var i = 0; i < $(".sp8").length; i++) {
-                var v1 = parseInt($(".sp55:eq(" + i + ")").text());
-                var v2 = parseInt($(".sp66:eq(" + i + ")").text());
-                sprice += v1 * v2;
-
-            }
-            //显示数量到相应位置
-            $("#sp3").text(sprice + "元");
-            $("#sp4").text(sprice);
-
-            //显示收货地址
-            $
-                .ajax({
-                    type: "post",
-                    url: "/xiaomi/AddressServlet",
-                    data: {},
-                    //获取地址信息显示在页面
-                    success: function (data) {
+            //获取要生成订单的商品信息
+            $.ajax({
+                type: "post",
+                url: "/order/getOrderCartProduct",
+                success: function (data) {
+                    if (data.status == 0) {
                         var str = "";
-                        for (var i = 0; i < data.length; i++) {
-                            str += "<button class=\"bu7\" value=" + data[i].id + " onclick='daddress(this)'> <div class=\"div6\"> <span class=\"span1\">" +
-                                data[i].sname + "</span> <span class=\"span2\">" + data[i].phone +
-                                "</span> <span class=\"span3\">" + data[i].addr + "</span> </div> <span class='sp15' onclick='deladdrO(this)'>删除</span> </button>";
+                        //商品数量
+                        var quantityNum = 0;
+                        for (var i = 0; i < data.data.orderItemVoList.length; i++) {
+                            str += "<div style='display: flex;'>" +
+                                "       <div class='col-lg-4 col-md-4 a4' style='display: flex;' href=''>" +
+                                "           <img id='img1' src='" + data.data.orderItemVoList[i].productImage + "'/>" +
+                                "           <div class='sds'>" +
+                                "               <span id='sp1'>" + data.data.orderItemVoList[i].productName + "&nbsp;" +
+                                data.data.orderItemVoList[i].productDetail + "&nbsp;" +
+                                data.data.orderItemVoList[i].productColor +
+                                "               </span>" +
+                                "           </div>" +
+                                "       </div>" +
+                                "       <div class='col-lg-3 col-md-3'></div>" +
+                                "       <span class='col-lg-2 col-md-2 sp8'>" +
+                                "           <span class='sp55'>" + data.data.orderItemVoList[i].currentUnitPrice + "</span>" +
+                                "               元&nbsp;×" +
+                                "           <span class='sp66'>" + data.data.orderItemVoList[i].quantity + "</span>" +
+                                "       </span>" +
+                                "       <div class='col-lg-1 col-md-1'></div>" +
+                                "           <span class='col-lg-2 col-md-2 sp7'>" + data.data.orderItemVoList[i].totalPrice + "&nbsp;元</span>" +
+                                "       </div>"
+                            quantityNum += data.data.orderItemVoList[i].quantity;
+                        }
+                        //订单商品信息
+                        $("#div1").html(str);
+                        //显示商品数量到相应位置
+                        $("#sp2").text(quantityNum + "件");
+                        //商品总价
+                        $("#sp3").text(data.data.totalPrice + "元");
+                        $("#sp4").text(data.data.totalPrice);
+                    } else {
+                        alert("获取订单信息失败！" + data.msg);
+                    }
+                },
+                dataType: "JSON"
+            })
+
+            //收货地址
+            $.ajax({
+                type: "post",
+                url: "/address/list",
+                //获取地址信息显示在页面
+                success: function (data) {
+                    if (data.status == 0) {
+                        var str = "";
+                        for (var i = 0; i < data.data.list.length; i++) {
+                            //保密手机号码
+                            var receiverMobile = "";
+                            for (var j = 0;j < data.data.list[i].receiverMobile.length;j++){
+                                if (j > 2 && j < 7) {
+                                    receiverMobile += "*";
+                                }else {
+                                    receiverMobile += data.data.list[i].receiverMobile[j];
+                                }
+                            }
+                            str += "<button class=\"bu7\" value="
+                                + data.data.list[i].id
+                                + " onclick='daddress(this)'> <div class=\"div6\"> <span class=\"span1\">"
+                                + data.data.list[i].receiverName
+                                + "</span> <span class=\"span2\">"
+                                + receiverMobile
+                                + "</span> <span class=\"span3\">"
+                                + data.data.list[i].receiverProvince + ' ' + data.data.list[i].receiverCity + ' ' + data.data.list[i].receiverDistrict + ' ' + data.data.list[i].receiverAddress
+                                + "</span> </div> <span class='sp15' onclick='deladdrO(this)'>删除</span> </button>";
                         }
                         str += " <span id=\"span4\" class=\"sp2\"><button class=\"bu2\" data-toggle=\"modal\" data-target=\"#myModal\"><div class=\"d2-1-1-1\"><span class=\"sp1\">+</span></div>添加新地址</button></span>"
                         $("#div5").html(str);
-                    },
-                    dataType: "JSON"
-                })
+                    } else {
+                        alert("获取收货地址信息失败！" + data.msg);
+                    }
+
+                },
+                dataType: "JSON"
+            })
         })
 
         /**
@@ -95,29 +131,45 @@
         function deladdrO(th) {
             var t = confirm("确认删除吗？")
             if (t == true) {
-                //获取地址信息
-                var id = $(th).parent().val();
                 //把信息传回后台进行删除，并且重新显示地址信息
-                $
-                    .ajax({
-                        type: "post",
-                        url: "/xiaomi/DelAddressServlet",
-                        data: {
-                            "id": id
-                        },
-                        //获取地址信息显示在页面
-                        success: function (data) {
-                            var str = "";
-                            for (var i = 0; i < data.length; i++) {
-                                str += "<button class=\"bu7\" value=" + data[i].id + " onclick='daddress(this)'> <div class=\"div6\"> <span class=\"span1\">" +
-                                    data[i].sname + "</span> <span class=\"span2\">" + data[i].phone +
-                                    "</span> <span class=\"span3\">" + data[i].addr + "</span> </div> <span class='sp15' onclick='deladdrO(this)'>删除</span> </button>";
-                            }
-                            str += " <span id=\"span4\" class=\"sp2\"><button class=\"bu2\" data-toggle=\"modal\" data-target=\"#myModal\"><div class=\"d2-1-1-1\"><span class=\"sp1\">+</span></div>添加新地址</button></span>"
-                            $("#div5").html(str);
-                        },
-                        dataType: "JSON"
-                    })
+                $.ajax({
+                    type: "post",
+                    url: "/address/delete/" + addrid,
+                    //获取地址信息显示在页面
+                    success: function (data) {
+                        if (data.status == 0) {
+                            $.ajax({
+                                type: "post",
+                                url: "/address/list",
+                                //获取地址信息显示在页面
+                                success: function (data) {
+                                    if (data.status == 0) {
+                                        var str = "";
+                                        for (var i = 0; i < data.data.list.length; i++) {
+                                            str += "<button class=\"bu7\" value="
+                                                + data.data.list[i].id
+                                                + " onclick='daddress(this)'> <div class=\"div6\"> <span class=\"span1\">"
+                                                + data.data.list[i].receiverName
+                                                + "</span> <span class=\"span2\">"
+                                                + data.data.list[i].receiverMobile
+                                                + "</span> <span class=\"span3\">"
+                                                + data.data.list[i].receiverProvince + ' ' + data.data.list[i].receiverCity + ' ' + data.data.list[i].receiverDistrict + ' ' + data.data.list[i].receiverAddress
+                                                + "</span> </div> <span class='sp15' onclick='deladdrO(this)'>删除</span> </button>";
+                                        }
+                                        str += " <span id=\"span4\" class=\"sp2\"><button class=\"bu2\" data-toggle=\"modal\" data-target=\"#myModal\"><div class=\"d2-1-1-1\"><span class=\"sp1\">+</span></div>添加新地址</button></span>"
+                                        $("#div5").html(str);
+                                    } else {
+                                        alert("获取收货地址信息失败！" + data.msg);
+                                    }
+                                },
+                                dataType: "JSON"
+                            })
+                        } else {
+                            alert("删除收货地址失败！" + data.msg);
+                        }
+                    },
+                    dataType: "JSON"
+                })
             }
         }
 
@@ -574,32 +626,59 @@
                 }, 5000);
             } else {
                 //验证成功，则获取地址信息
-                var addr = $("#s_province").val() + " " + $("#s_city").val() + " " + $("#s_county").val() + " " + $("#xxdz").val();
-                var sname = $("#sname").val();
-                var phone = $("#phone").val();
+                var receiverProvince = $("#s_province").val();
+                var receiverCity = $("#s_city").val();
+                var receiverDistrict = $("#s_county").val();
+                var receiverAddress = $("#xxdz").val();
+                var receiverName = $("#sname").val();
+                var receiverMobile = $("#phone").val();
                 //信息传到后台
-                $
-                    .ajax({
-                        type: "post",
-                        url: "/xiaomi/AddressServlet",
-                        data: {
-                            "addr": addr,
-                            "sname": sname,
-                            "phone": phone
-                        },
-                        //获取收货地址的json信息，显示在页面
-                        success: function (data) {
-                            var str = "";
-                            for (var i = 0; i < data.length; i++) {
-                                str += "<button class=\"bu7\" value=" + data[i].id + " onclick='daddress(this)'> <div class=\"div6\"> <span class=\"span1\">" +
-                                    data[i].sname + "</span> <span class=\"span2\">" + data[i].phone +
-                                    "</span> <span class=\"span3\">" + data[i].addr + "</span> </div> <span class='sp15' onclick='deladdrO(this)'>删除</span> </button>";
-                            }
-                            str += " <span id=\"span4\" class=\"sp2\"><button class=\"bu2\" data-toggle=\"modal\" data-target=\"#myModal\"><div class=\"d2-1-1-1\"><span class=\"sp1\">+</span></div>添加新地址</button></span>"
-                            $("#div5").html(str);
-                        },
-                        dataType: "JSON"
-                    })
+                $.ajax({
+                    type: "post",
+                    url: "/address/add",
+                    data: {
+                        "receiverProvince": receiverProvince,
+                        "receiverCity": receiverCity,
+                        "receiverDistrict": receiverDistrict,
+                        "receiverAddress": receiverAddress,
+                        "receiverName": receiverName,
+                        "receiverMobile": receiverMobile
+                    },
+                    //获取收货地址的json信息，显示在页面
+                    success: function (data) {
+                        if (data.status == 0) {
+                            $.ajax({
+                                type: "post",
+                                url: "/address/list",
+                                //获取地址信息显示在页面
+                                success: function (data) {
+                                    if (data.status == 0) {
+                                        var str = "";
+                                        for (var i = 0; i < data.data.list.length; i++) {
+                                            str += "<button class=\"bu7\" value="
+                                                + data.data.list[i].id
+                                                + " onclick='daddress(this)'> <div class=\"div6\"> <span class=\"span1\">"
+                                                + data.data.list[i].receiverName
+                                                + "</span> <span class=\"span2\">"
+                                                + data.data.list[i].receiverMobile
+                                                + "</span> <span class=\"span3\">"
+                                                + data.data.list[i].receiverProvince + ' ' + data.data.list[i].receiverCity + ' ' + data.data.list[i].receiverDistrict + ' ' + data.data.list[i].receiverAddress
+                                                + "</span> </div> <span class='sp15' onclick='deladdrO(this)'>删除</span> </button>";
+                                        }
+                                        str += " <span id=\"span4\" class=\"sp2\"><button class=\"bu2\" data-toggle=\"modal\" data-target=\"#myModal\"><div class=\"d2-1-1-1\"><span class=\"sp1\">+</span></div>添加新地址</button></span>"
+                                        $("#div5").html(str);
+                                    } else {
+                                        alert("获取收货地址信息失败！" + data.msg);
+                                    }
+                                },
+                                dataType: "JSON"
+                            })
+                        } else {
+                            alert("添加收货地址失败！" + data.msg);
+                        }
+                    },
+                    dataType: "JSON"
+                })
                 //关闭模态框
                 $("#myModal").modal("hide");
             }
@@ -608,14 +687,54 @@
         /**
          * 点击结算按钮
          */
-        function jiesuan() {
+        function jiesuan(th) {
             //判断是否选中地址
-            if(addrid == undefined){
+            if (addrid == undefined) {
                 alert("请选择收货地址！");
-            }else{
-                //把商品编号、地址id传到后台
-                var hr = "PayServlet?code="+codes+"&addrid="+addrid+"&sprice="+sprice;
-                location.href = hr;
+            } else {
+                //创建订单
+                $.ajax({
+                    type: "post",
+                    url: "/order/create/" + addrid,
+                    success: function (data) {
+                        if (data.status == 0) {
+                            $(th).attr('disabled',true);
+                            location.href = "fukuan.jsp?orderNo="+data.data.orderNo;
+                        } else {
+                            alert("创建订单失败！" + data.msg);
+                        }
+                    },
+                    dataType: "JSON"
+                })
+            }
+        }
+
+        /**
+         * 退出登录
+         */
+        function logout() {
+            $.ajax({
+                type: "post",
+                url: "/user/logout",
+                success: function (data) {
+                    if (data.status == 0) {
+                        location.href = "zhuye.jsp";
+                    } else {
+                        alert("退出登录失败！"+data.msg);
+                    }
+                },
+                dataType: "JSON"
+            })
+        }
+
+        /**
+         * 点击我的订单
+         */
+        function orderList(){
+            if ("${current_user}" == "") {
+                location.href="denglu1.jsp";
+            }else {
+                location.href="orderList.jsp";
             }
         }
     </script>
@@ -634,7 +753,12 @@
             <div class="d1-2-1 dropdown">
                 <button class="bu1" id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="false">
-                    ${name}
+                    <span id="dl">
+                        <c:if test="${!empty current_user}">${current_user.username}</c:if>
+                        <c:if test="${empty current_user}">
+                            你好，请登录
+                        </c:if>
+                    </span>
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dLabel">
@@ -651,13 +775,13 @@
                         <a class="a2" href="#">小米账户</a>
                     </li>
                     <li>
-                        <a class="a2" href="#">退出登录</a>
+                        <a class="a2" onclick="logout()">退出登录</a>
                     </li>
                 </ul>
             </div>
             <div class="d1-4">
                 <span class="sp1-1">|</span>
-                <a class="a1" href="">我的订单</a>
+                <a class="a1" onclick="orderList()">我的订单</a>
             </div>
         </div>
     </div>
@@ -734,36 +858,17 @@
                 <a class="a3" href="">修改&nbsp;></a>
             </div>
             <span class="sp3-2">商品及优惠券</span>
-            <div class="d2-1-3 row">
-                <c:forEach items="${dingdan}" var="dd">
-                    <div style="display: flex;">
-                        <div class="col-lg-4 col-md-4 a4" style="display: flex;" href="">
-                            <img src="img/zhuye/lst/xiaomi6X.png"/>
-                            <div class="sds">
-                                <span id="sp1">${dd[0]}&nbsp;${dd[1]}&nbsp;${dd[2]}</span>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-3"></div>
-                        <span class="col-lg-2 col-md-2 sp8">
-                            <span class="sp55">${dd[3]}</span>
-                            元&nbsp;×
-                            <span class="sp66">${dd[4]}</span>
-                        </span>
-                        <span class="spno" style="display: none">${dd[4]}</span>
-                        <div class="col-lg-1 col-md-1"></div>
-                        <span class="col-lg-2 col-md-2 sp7">${dd[3] * dd[4]}元</span>
-                    </div>
-                </c:forEach>
+            <div id="div1" class="d2-1-3 row">
             </div>
             <div class="d2-1-4 row">
-                <div class="col-lg-9 col-md-9"></div>
+                <div class="col-lg-8 col-md-8"></div>
                 <div class="col-lg-2 col-md-2">
 						<span class="sp9">商品件数：<br/>商品总价：<br/>
 							活动优惠：<br/>优惠券抵扣：<br/>运费：<br/><br/>
 							应付总额：
 						</span>
                 </div>
-                <div class="col-lg-1 col-md-1">
+                <div class="col-lg-2 col-md-2 div7">
 						<span class="sp10">
                             <span id="sp2">0件</span>
                             <br/>
@@ -775,13 +880,13 @@
                             <br/>
                             <span>0元</span>
                             <br/><br/>
-							<span class="sp13" id="sp4">0</span>元
+							<span class="sp13" id="sp4">0</span>&nbsp;元
 						</span>
                 </div>
             </div>
         </div>
         <div class="d2-2 row">
-            <button class="bu4" onclick="jiesuan()">去结算</button>
+            <button class="bu4" onclick="jiesuan(this)">去结算</button>
         </div>
     </div>
 

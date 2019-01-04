@@ -18,16 +18,66 @@
     <link rel="stylesheet" type="text/css" href="css/xiangqing.css"/>
 
     <script type="text/javascript">
-        //版本、颜色的全局变量
-        var banben, color;
+        //id、名字、版本、颜色的全局变量
+        var id, name, detail, color;
 
         /**
-         * 网页加载完成后 默认选中第一个版本
+         *  获取URL参数
+         */
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = decodeURI(window.location.search).substr(1).match(reg);  //匹配目标参数
+            if (r != null)
+            //返回参数值
+                return unescape(r[2]);
+            return null;
+        }
+
+        /**
+         * 网页加载完成后加载数据
          */
         $(document).ready(function () {
-            //购物车商品种类数
-            if("${count}" != "")
-                $("#gou").text("购物车("+"${count}"+")");
+            //获取url参数
+            name = getUrlParam("name");
+            //加载商品数据
+            $.ajax({
+                type: "post",
+                url: "/product/listByDemand/" + name,
+                success: function (data) {
+                    if (data.status == 0) {
+                        $("#span1").text(data.data.list[0].name);
+                        $("#cname").text(data.data.list[0].name);
+                        $("#span2").text(data.data.list[0].subtitle);
+
+                        //加载版本数据
+                        var str = "";
+                        for (var i = 0; i < data.data.list.length; i++) {
+                            str += "<button class='d4-2-3-1' onclick='banben1(this)' value='"
+                                + data.data.list[i].detail
+                                + "'><span class='sp7'>&nbsp;&nbsp;"
+                                + data.data.list[i].detail
+                                + "</span></button>";
+                        }
+                        $("#div2").html(str);
+
+                        //加载颜色数据
+                        banben1(".d4-2-3-1:nth-of-type(1)");
+                    } else {
+                        alert("加载商品数据失败！" + data.msg);
+                    }
+                },
+            })
+            //获取购物车商品数量
+            $.ajax({
+                type: "post",
+                url: "/cart/getCartProductCount",
+                success: function (data) {
+                    if (data.status == 0) {
+                        $("#gou").text("购物车(" + data.data + ")");
+                    }
+                },
+                dataType: "JSON"
+            })
             //调用点击版本的函数
             banben1(".d4-2-3-1:nth-of-type(1)");
         })
@@ -36,10 +86,8 @@
          * 通过点击商品版本，获取商品版本对应的颜色并显示在页面，并默认选中相应颜色
          */
         function banben1(th) {
-            //获取商品名称
-            var name = $("#cname").text();
             //获取商品版本
-            banben = $(th).val();
+            detail = $(th).val();
             //版本选中样式
             $(".d4-2-3-1").css({
                 "border-color": "#DBDBDB",
@@ -49,48 +97,46 @@
                 "border-color": "#FF6700",
                 "color": "#FF6700"
             });
-            $
-                .ajax({
-                    type: "post",
-                    url: "/xiaomi/ColorServlet",
-                    //把商品名称和版本的数据传到后台
-                    data: {
-                        "banben": banben,
-                        "name": name
-                    },
-                    //获取商品版本对应的颜色和库存的json，并显示在页面
-                    success: function (data) {
+            $.ajax({
+                type: "post",
+                url: "/product/listByDemand/" + name,
+                data: {
+                    "detail": detail,
+                },
+                //获取商品版本对应的颜色和库存的json，并显示在页面
+                success: function (data) {
+                    if (data.status == 0) {
                         var str = "";
                         //遍历当前版本商品颜色
-                        for (var i = 0; i < data.length; i++) {
+                        for (var i = 0; i < data.data.list.length; i++) {
                             //库存不为0的样式
-                            if (data[i].stock != 0) {
+                            if (data.data.list[i].stock != 0) {
                                 str += "<button class='d4-2-4-1' onclick='color1(this)' value='"
-                                    + data[i].ccolor2
-                                    + "'><div style='background-color:" + data[i].ccolor1 + "' class='d4-2-4-1-1'></div><h4>"
-                                    + data[i].ccolor2 + "</h4></button>";
+                                    + data.data.list[i].color2
+                                    + "'><div style='background-color:" + data.data.list[i].color1 + "' class='d4-2-4-1-1'></div><h4>"
+                                    + data.data.list[i].color2 + "</h4></button>";
                             }
                         }
-                        for (var i = 0; i < data.length; i++) {
+                        for (var i = 0; i < data.data.list.length; i++) {
                             //判断库存是否为0，如果为0修改样式
-                            if (data[i].stock == 0) {
+                            if (data.data.list[i].stock == 0) {
                                 str += "<button class='d4-2-4-2' onclick='color1(this)' value='"
-                                    + data[i].ccolor2
-                                    + "'><div style='background-color:" + data[i].ccolor1 + "' class='d4-2-4-1-1'></div><h4>"
-                                    + data[i].ccolor2 + "</h4></button>";
+                                    + data.data.list[i].color2
+                                    + "'><div style='background-color:" + data.data.list[i].color1 + "' class='d4-2-4-1-1'></div><h4>"
+                                    + data.data.list[i].color2 + "</h4></button>";
                             }
                         }
 
                         $("#d4-2-4").html(str);
 
+                        var i;
                         //遍历当前版本所有颜色
                         for (i = 1; i <= $(".d4-2-4-1").length; i++) {
                             //如果此版本的颜色中有上一次选中的颜色，则选中此颜色
                             if (color == $(".d4-2-4-1:nth-of-type(" + i + ")")
                                 .text()) {
                                 //给颜色全局变量赋值为上一次选中颜色
-                                color = $(".d4-2-4-1:nth-of-type(" + i + ")")
-                                    .text();
+                                color = $(".d4-2-4-1:nth-of-type(" + i + ")").text();
                                 //所有颜色变回原来样式
                                 $(".d4-2-4-1").css({
                                     "border-color": "#DBDBDB",
@@ -101,11 +147,13 @@
                                     "border-color": "#FF6700",
                                     "color": "#FF6700"
                                 });
-                                break;
+                                //选中颜色
+                                color1(".d4-2-4-1:nth-of-type(" + i + ")");
+                                return;
                             }
                         }
-                        //如果此版本颜色中没有上一次选中的颜色，则选中第一个库存不为0的颜色
-                        if (i > $(".d4-2-4-1").length) {
+                        //如果此版本颜色中没有上一次选中的颜色且有库存不为零的颜色，则选中第一个库存不为0的颜色
+                        if (i > $(".d4-2-4-1").length && $(".d4-2-4-1").length != 0) {
                             //给颜色全局变量赋值为第一个颜色
                             color = $(".d4-2-4-1:nth-of-type(1)").text();
                             //改变第一个颜色样式
@@ -113,10 +161,10 @@
                                 "border-color": "#FF6700",
                                 "color": "#FF6700"
                             });
-
-                        }
-                        //如果没有库存不为0的颜色，则选中库存为0的第一个颜色
-                        if ($(".d4-2-4-1").length == 0) {
+                            //选中颜色
+                            color1(".d4-2-4-1:nth-of-type(1)");
+                            //如果没有库存不为0的颜色，则选中库存为0的第一个颜色
+                        } else if ($(".d4-2-4-1").length == 0) {
                             //给颜色全局变量赋值为库存为0的第一个颜色
                             color = $(".d4-2-4-2:nth-of-type(1)").text();
                             //修改选中颜色的样式
@@ -124,55 +172,19 @@
                                 "border-color": "#FF6700",
                                 "color": "#FF6700"
                             });
+                            //选中颜色
+                            color1(".d4-2-4-2:nth-of-type(1)");
                         }
-                        //获取选中的商品价钱和库存并显示在页面相应位置和改变加入购物车按钮样式
-                        var name = $("#cname").text();
-                        $.ajax({
-                            type: "post",
-                            url: "/xiaomi/PriceServlet",
-                            //把商品名称、颜色和版本的数据穿到后台
-                            data: {
-                                "banben": banben,
-                                "name": name,
-                                "color": color
-                            },
-                            //获取商品价钱和库存并显示在页面相应位置，并变成加入购物车按钮样式
-                            success: function (data) {
-                                //显示价钱
-                                $("#sp7").text(data[0].cprice + "元");
-                                //判断库存是否为0
-                                if (data[0].stock == 0) {
-                                    //修改加入购物车按钮和库存显示
-                                    $("#kc").text("");
-                                    $("#a7").text("暂时缺货");
-                                    $("#sp9").text("到货通知");
-                                    $("#gwc").attr("value", "到货通知");
-                                    $("#gwc").attr("class", "d4-2-5-0 col-lg-6 col-md-6");
-                                } else {
-                                    //修改加入购物车按钮和库存显示
-                                    $("#kc").text("(库存 " + data[0].stock + ")");
-                                    $("#sp9").text("加入购物车");
-                                    $("#gwc").attr("value", "加入购物车");
-                                    $("#a7").text("有现货");
-                                    $("#gwc").attr("class", "d4-2-5-1 col-lg-6 col-md-6");
-                                }
-
-                            },
-                            dataType: "JSON"
-                        })
-
-                    },
-                    dataType: "JSON"
-                })
-
+                    }
+                },
+                dataType: "JSON"
+            })
         }
 
         /**
          * 通过点击商品颜色，获取商品库存和价格并显示在页面
          */
         function color1(th) {
-            //获取商品名称
-            var name = $("#cname").text();
             //获取商品颜色
             color = $(th).val();
             //颜色选中样式
@@ -190,34 +202,39 @@
             });
             $.ajax({
                 type: "post",
-                url: "/xiaomi/PriceServlet",
+                url: "/product/listByDemand/" + name,
                 //把商品名称、颜色和版本的数据穿到后台
                 data: {
-                    "banben": banben,
-                    "name": name,
+                    "detail": detail,
                     "color": color
                 },
                 //获取商品价钱、库存和编号并将价钱和库存显示在页面相应位置
                 success: function (data) {
-                    //显示价钱
-                    $("#sp7").text(data[0].cprice + "元");
-                    //判断库存是否为0
-                    if (data[0].stock == 0) {
+                    if (data.status == 0) {
+                        id = data.data.list[0].id;
+                        //加载轮播图片
+                        var imgs = data.data.list[0].subImages.split(",");
+                        var i = 0;
+                        $(".img3").each(function () {
+                            $(this).attr("src", imgs[i++]);
+                        })
+                        //更新价格
+                        $("#sp7").text(data.data.list[0].price + "元");
                         //修改加入购物车按钮和库存显示
-                        $("#kc").text("");
-                        $("#a7").text("暂时缺货");
-                        $("#sp9").text("到货通知");
-                        $("#gwc").attr("value", "到货通知");
-                        $("#gwc").attr("class", "d4-2-5-0 col-lg-6 col-md-6");
-                    } else {
-                        //修改加入购物车按钮和库存显示
-                        $("#kc").text("(库存 " + data[0].stock + ")");
-                        $("#sp9").text("加入购物车");
-                        $("#gwc").attr("value", "加入购物车");
-                        $("#a7").text("有现货");
-                        $("#gwc").attr("class", "d4-2-5-1 col-lg-6 col-md-6");
+                        if (data.data.list[0].stock == 0) {
+                            $("#kc").text("");
+                            $("#a7").text("暂时缺货");
+                            $("#sp9").text("到货通知");
+                            $("#gwc").attr("value", "到货通知");
+                            $("#gwc").attr("class", "d4-2-5-0 col-lg-6 col-md-6");
+                        } else {
+                            $("#kc").text("(库存 " + data.data.list[0].stock + ")");
+                            $("#sp9").text("加入购物车");
+                            $("#gwc").attr("value", "加入购物车");
+                            $("#a7").text("有现货");
+                            $("#gwc").attr("class", "d4-2-5-1 col-lg-6 col-md-6");
+                        }
                     }
-
                 },
                 dataType: "JSON"
             })
@@ -228,7 +245,7 @@
          */
         function cart(th) {
             //判断是否登录
-            if ($("#dlu").text() == "你好，请登录") {
+            if ("${current_user}" == "") {
                 var t = confirm("你还未登录，是否前往登录？")
                 if (t == true) {
                     window.location.href = "denglu1.jsp";
@@ -237,38 +254,34 @@
             else {
                 //判断库存是否为0
                 if ($(th).val() == "加入购物车") {
-                    //获取用户名称
-                    var name = $("#dLabel").val();
-                    //获取用户账号
-                    var username = "${username}";
-                    //获取商品名称
-                    var cname = $("#cname").text();
-                    //获取商品价钱
-                    var cprice = $("#sp7").text().substring(0, $("#sp7").text().length - 1);
-                    //将以上数据和商品版本、颜色传入后台
                     $.ajax({
                         type: "post",
-                        url: "/xiaomi/ToCartServlet",
-                        data: {
-                            "name": name,
-                            "username": username,
-                            "cname": cname,
-                            "color": color,
-                            "banben": banben,
-                            "cprice": cprice
-                        },
+                        url: "/cart/add/" + id + "/1",
                         //获取操作结果
                         success: function (data) {
                             //如果操作成功，则弹出是否转到购物车界面的提示框
-                            if (data == "true") {
+                            if (data.status == 0) {
+                                //获取购物车商品数量
+                                $.ajax({
+                                    type: "post",
+                                    url: "/cart/getCartProductCount",
+                                    success: function (data) {
+                                        if (data.status == 0) {
+                                            $("#gou").text("购物车(" + data.data + ")");
+                                        }
+                                    },
+                                    dataType: "JSON"
+                                })
+
                                 var t = confirm("加入购物车成功，是否前往购物车结算？")
                                 if (t == true) {
-                                    var str = "CartServlet";
-                                    window.location.href = str;
+                                    window.location.href = "gouwuche.jsp";
                                 }
+                            } else {
+                                alert(data.msg);
                             }
                         },
-                        dataType: "text"
+                        dataType: "json"
                     })
 
                 } else if ($(th).val() == "到货通知") {
@@ -283,21 +296,21 @@
          */
 
         function on2() {
-            if ($("#dlu").text() == "你好，请登录") {
+            if ("${current_user}" == "") {
                 var t = confirm("你还未登录，是否前往登录？")
                 if (t == true) {
                     window.location.href = "denglu1.jsp";
                 }
             }
             else
-                window.location.href = "CartServlet";
+                window.location.href = "gouwuche.jsp";
         }
 
         /**
          * 如果未登录，则用户确认后转到登录界面
          */
         function on1() {
-            if ($("#dlu").text() == "你好，请登录") {
+            if ("${current_user}" == "") {
                 //隐藏下拉菜单
                 $("ul").hide();
                 window.location.href = "denglu1.jsp";
@@ -346,25 +359,26 @@
             if (val == "") {
                 $("#div1").hide();
             }
-            $
-                .ajax({
-                    type: "post",
-                    url: "/xiaomi/CommodityServlet",
-                    //把输入的数据穿到后台
-                    data: {
-                        "val": val
-                    },
-                    //获取搜索提示的数据并输出
-                    success: function (data) {
-                        if (data.length > 0)
+            $.ajax({
+                type: "post",
+                url: "/product/suggestList/" + val,
+                //把输入的数据穿到后台
+                data: {
+                    "val": val
+                },
+                //获取搜索提示的数据并输出
+                success: function (data) {
+                    if (data.status == 0) {
+                        if (data.data.list.length > 0)
                             $("#div1").css("border", "1px solid #A6A6A6");
-                        for (var i = 0; i < data.length; i++)
-                            str += "<div onmousemove='xiala1(this)' onclick='xiala2(this)' onmouseout='xiala3(this)'>"
-                                + data[i].cname + "</div>";
+                        for (var i = 0; i < data.data.list.length; i++)
+                            str += "<div style='line-height:30px' onmousemove='xiala1(this)' onclick='xiala2(this)' onmouseout='xiala3(this)'>"
+                                + data.data.list[i].name + "</div>";
                         $("#div1").html(str);
-                    },
-                    dataType: "JSON"
-                })
+                    }
+                },
+                dataType: "JSON"
+            })
 
         }
 
@@ -372,10 +386,39 @@
         function close_xiala() {
             $("#div1").hide();
         }
+
+        /**
+         * 退出登录
+         */
+        function logout() {
+            $.ajax({
+                type: "post",
+                url: "/user/logout",
+                success: function (data) {
+                    if (data.status == 0) {
+                        location.href = "zhuye.jsp";
+                    } else {
+                        alert("退出登录失败！")
+                    }
+                },
+                dataType: "JSON"
+            })
+        }
+
+        /**
+         * 点击我的订单
+         */
+        function orderList(){
+            if ("${current_user}" == "") {
+                location.href="denglu1.jsp";
+            }else {
+                location.href="orderList.jsp";
+            }
+        }
     </script>
 </head>
 
-<body>
+<body onclick="close_xiala()">
 <div class="container-fluid">
     <div class="d1 row">
         <div class="d1-1">
@@ -389,29 +432,35 @@
             <a href="" class="a1">政企服务&nbsp;</a> <span class="sp1">|&nbsp;</span>
             <a href="" class="a1">Select Region</a>
         </div>
-        <!--下拉式菜单-->
-        <div class="d1-2 dropdown">
-            <button class="bu1" onclick="on1()" id="dLabel" type="button" value="${sessionScope.name}"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <c:if test="${iflogin == 1}">${sessionScope.name}</c:if>
-                <c:if test="${empty iflogin}"><span id="dlu">你好，请登录</span></c:if>
-                <span class="caret"></span>
+        <div id="div3">
+            <!--下拉式菜单-->
+            <div class="d1-2 dropdown">
+                <button class="bu1" onclick="on1()" id="dLabel" type="button" value="${current_user.username}"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span id="dl">
+                        <c:if test="${!empty current_user}">${current_user.username}</c:if>
+                        <c:if test="${empty current_user}">
+                            你好，请登录
+                        </c:if>
+                    </span>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dLabel">
+                    <li><a class="a2" href="#">个人中心</a></li>
+                    <li><a class="a2" href="#">评价晒单</a></li>
+                    <li><a class="a2" href="#">我的喜欢</a></li>
+                    <li><a class="a2" href="#">小米账户</a></li>
+                    <li><a class="a2" onclick="logout()">退出登录</a></li>
+                </ul>
+            </div>
+            <span class="sp1">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+            <a href="" class="a1">消息通知&nbsp;&nbsp;</a>
+            <span class="sp1">|&nbsp;&nbsp;</span>
+            <a onclick="orderList()" class="a1">我的订单</a>
+            <button class="bu2" onclick="on2()">
+                <span class="glyphicon glyphicon-shopping-cart" id="gou">购物车(0)</span>
             </button>
-            <ul class="dropdown-menu" aria-labelledby="dLabel">
-                <li><a class="a2" href="#">个人中心</a></li>
-                <li><a class="a2" href="#">评价晒单</a></li>
-                <li><a class="a2" href="#">我的喜欢</a></li>
-                <li><a class="a2" href="#">小米账户</a></li>
-                <li><a class="a2" href="LogOutServlet">退出登录</a></li>
-            </ul>
         </div>
-        <span class="sp1">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-        <a href="" class="a1">消息通知&nbsp;&nbsp;</a>
-        <span class="sp1">|&nbsp;&nbsp;</span>
-        <a href="" class="a1">我的订单</a>
-        <button class="bu2" onclick="on2()">
-            <span class="glyphicon glyphicon-shopping-cart" id="gou">购物车(0)</span>
-        </button>
     </div>
     <div class="d2 row">
         <div>
@@ -452,8 +501,7 @@
         <div class="d2-2">
             <div class="d2-2-1">
                 <form>
-                    <input class="in1" id="search" onkeyup="fsearch(this)"
-                           onblur="onb1()" type="text" placeholder="小米8 小米MIX 2s">
+                    <input class="in1" id="search" onkeyup="fsearch(this)" type="text" placeholder="小米8 小米MIX 2s">
                     <button class="bu4" type="submit">
                         <span class="glyphicon glyphicon-search"></span>
                     </button>
@@ -464,7 +512,7 @@
     </div>
     <div class="d3 row">
         <div class="d3-1 col-lg-4 col-md-4">
-            <span class="sp3">${cname}</span> <span class="sp4">&nbsp;|&nbsp;</span>
+            <span id="span1" class="sp3"></span> <span class="sp4">&nbsp;|&nbsp;</span>
             <a class="a4" href="">小米8 透明探索版</a> <span class="sp4">&nbsp;|&nbsp;</span>
             <a class="a4" href="">小米8 SE</a>
         </div>
@@ -487,17 +535,17 @@
                     <li data-target="#myCarousel" data-slide-to="2"></li>
                 </ol>
                 <div class="carousel-inner">
-                    <div class="item active d4-1-1-1">
+                    <div class="item active">
                         <a href=""><img class="img3"
-                                        src="img/xiangqing/xiangqing1-2.png" alt="First slide"></a>
+                                        src="" alt="First slide"></a>
                     </div>
-                    <div class="item d4-1-1-1">
+                    <div class="item">
                         <a href=""><img class="img3"
-                                        src="img/xiangqing/xiangqing1-3.png" alt="Second slide"></a>
+                                        src="" alt="Second slide"></a>
                     </div>
-                    <div class="item d4-1-1-1">
+                    <div class="item">
                         <a href=""><img class="img3"
-                                        src="img/xiangqing/xiangqing1-1.png" alt="Third slide"></a>
+                                        src="" alt="Third slide"></a>
                     </div>
                 </div>
                 <a class="left carousel-control" href="#myCarousel" role="button"
@@ -513,9 +561,8 @@
         </div>
         <div class="col-lg-6 col-md-6 d4-2">
             <div class="d4-2-1">
-                <h3 id="cname">${cname}</h3>
-                <span class="sp5">「重磅旗舰在售中」</span> <span class="sp6">全球首款双频GPS
-						/ 骁龙845处理器 / 红外人脸解锁 / AI变焦双摄 / 三星 AMOLED 屏</span> <br/> <span
+                <h3 id="cname"></h3>
+                <span class="sp5">「商城特惠」</span> <span id="span2" class="sp6"></span> <br/> <span
                     class="sp77" id="sp7"></span>
             </div>
             <div class="d4-2-2">
@@ -527,7 +574,7 @@
             </div>
             <h4 class="hh2">选择版本</h4>
 
-            <div class="d4-2-3">
+            <div id="div2" class="d4-2-3">
                 <c:forEach items="${banben}" var="b">
                     <button class="d4-2-3-1" onclick="banben1(this)" value="${b[0]}">
                         <span class="sp7">&nbsp;&nbsp;${b[0]}</span>

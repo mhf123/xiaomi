@@ -1,184 +1,200 @@
-	#img1 {
-		margin-left: 120px;
-	}
-	
-	#img2 {
-		margin-left: 55px;
-	}
-	
-	#img3 {
-		position: absolute;
-		top: 20px;
-		right: 200px;
-		animation: img1 2s;
-	}
-	
-	@keyframes img1 {
-		from {
-			right: 0px;
-		}
-		to {
-			right: 200px;
-		}
-	}
-	
-	.img4 {
-		text-align: center;
-	}
-	
-	#a1 {
-		text-decoration: none;
-		color: gray;
-		font-size: 150%;
-		position: relative;
-		top: 10px;
-		left: 55px;
-	}
-	
-	#a2 {
-		text-decoration: none;
-		color: gray;
-		font-size: 150%;
-		position: relative;
-		top: 10px;
-		left: 75px;
-	}
-	
-	#a3 {
-		color: #EF5B00;
-		font-size: 80%;
-		text-decoration: none;
-	}
-	
-	.a6 {
-		color: #8B8B7A;
-		text-decoration: none;
-		font-size: 80%;
-	}
-	
-	#a1:hover {
-		color: #F77700;
-	}
-	
-	#a2:hover {
-		color: #F77700;
-	}
-	
-	#a4:hover {
-		color: #F77700;
-		;
-	}
-	
-	#a5:hover {
-		color: #F77700;
-		;
-	}
-	
-	#sp1 {
-		color: #A8A8A8;
-		font-size: 190%;
-		position: relative;
-		top: 10px;
-		left: 65px;
-	}
-	
-	.sp2 {
-		color: #A8A8A8;
-	}
-	
-	#sp4 {
-		animation: op 2.5s;
-	}
-	
-	@keyframes op {
-		from {
-			opacity: 0;
-		}
-		to {
-			opacity: 1;
-		}
-	}
-	
-	#sp3 {
-		color: #A8A8A8;
-		position: relative;
-		left: 120px;
-	}
-	
-	#fo1 {
-		margin-top: 30px;
-		margin-left: 20px;
-		border: silver;
-	}
-	
-	#but1 {
-		width: 90px;
-		height: 45px;
-		color: blue;
-	}
-	
-	.d2 {
-		background-image: url(../img/denglu1.png);
-		background-color: #FA0001;
-		width: 1340px;
-		height: 525px;
-		display: flex;
-		background-repeat: no-repeat;
-	}
-	
-	.d2-1 {
-		width: 350px;
-		height: 450px;
-		background-color: white;
-		margin-top: 45px;
-		margin-left: 900px;
-	}
-	
-	.d2-1-1 {
-		width: 350px;
-		height: 60px;
-		background-color: #FFFCF5;
-	}
-	
-	.d2-1-2-1 {
-		width: 302px;
-		height: 40px;
-		float: left;
-	}
-	
-	.d2-1-2-2 {
-		float: left;
-		border: 1px solid gray;
-		width: 240px;
-		height: 40px;
-	}
-	
-	.in1 {
-		width: 300px;
-		height: 40px;
-	}
-	
-	.in2 {
-		margin-left: 15px;
-		width: 245px;
-		height: 40px;
-	}
-	
-	.in3 {
-		margin-left: 2px;
-		width: 200px;
-		height: 40px;
-	}
-	
-	.b1 {
-		background-color: #FF6700;
-		width: 302px;
-		height: 50px;
-		color: white;
-		font-size: 120%;
-		border: 1px #CCCCCC solid;
-		transition-duration: 0.3s;
-	}
-	.b1:hover{
-		background-color: #EF5B00;
-	}
+#img1 {
+    margin-left: 120px;
+}
+
+#img2 {
+    margin-left: 55px;
+}
+
+#img3 {
+    position: absolute;
+    top: 20px;
+    right: 200px;
+    animation: img1 2s;
+}
+
+@keyframes img1 {
+    from {
+        right: 0px;
+    }
+    to {
+        right: 200px;
+    }
+}
+
+.img4 {
+    text-align: center;
+}
+
+#a1 {
+    text-decoration: none;
+    color: gray;
+    font-size: 150%;
+    position: relative;
+    top: 10px;
+    left: 55px;
+}
+
+#a2 {
+    text-decoration: none;
+    color: gray;
+    font-size: 150%;
+    position: relative;
+    top: 10px;
+    left: 75px;
+}
+
+#a3 {
+    color: #EF5B00;
+    font-size: 80%;
+    text-decoration: none;
+}
+
+.a6 {
+    color: #8B8B7A;
+    text-decoration: none;
+    font-size: 80%;
+}
+
+#a1:hover {
+    color: #F77700;
+}
+
+#a2:hover {
+    color: #F77700;
+}
+
+#a4:hover {
+    color: #F77700;;
+}
+
+#a5:hover {
+    color: #F77700;;
+}
+
+#sp1 {
+    color: #A8A8A8;
+    font-size: 190%;
+    position: relative;
+    top: 10px;
+    left: 65px;
+}
+
+.sp2 {
+    color: #A8A8A8;
+}
+
+#sp4 {
+    animation: op 2.5s;
+}
+
+@keyframes op {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+#sp3 {
+    color: #A8A8A8;
+    position: relative;
+    left: 120px;
+}
+
+#fo1 {
+    margin-top: 30px;
+    margin-left: 20px;
+    border: silver;
+}
+
+#but1 {
+    cursor:pointer;
+    width: 88px;
+    height: 46px;
+    color: #FF6700;
+    background-color: white;
+    border: 1px #A9A9A9 solid;
+}
+
+.d2 {
+    background-image: url(../img/denglu1.png);
+    background-color: #FA0001;
+    width: 1340px;
+    height: 525px;
+    display: flex;
+    background-repeat: no-repeat;
+}
+
+.d2-1 {
+    width: 350px;
+    height: 450px;
+    background-color: white;
+    margin-top: 45px;
+    margin-left: 900px;
+}
+
+.d2-1-1 {
+    width: 350px;
+    height: 60px;
+    background-color: #FFFCF5;
+}
+
+.d2-1-2-1 {
+    width: 302px;
+    height: 40px;
+    float: left;
+    margin-bottom: 8px;
+}
+
+.d2-1-2-2 {
+    float: left;
+    border: 1px solid gray;
+    width: 240px;
+    height: 40px;
+}
+
+.in1 {
+    width: 300px;
+    height: 40px;
+}
+
+.in2 {
+    margin-left: 15px;
+    width: 245px;
+    height: 40px;
+
+}
+
+.in3 {
+    margin-left: 2px;
+    width: 200px;
+    height: 40px;
+}
+
+.b1 {
+    background-color: #FF6700;
+    width: 302px;
+    height: 50px;
+    color: white;
+    font-size: 120%;
+    border: 1px #CCCCCC solid;
+    transition-duration: 0.3s;
+}
+
+.b1:hover {
+    background-color: #EF5B00;
+}
+
+#span1{
+    float: right;
+    font-size: 14px;
+    position: relative;
+    color: red;
+}
+
+#div1{
+    height: 18px;
+    width: 305px;
+}

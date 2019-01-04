@@ -14,7 +14,7 @@ public interface ICategoryService {
     /**
      * 增加分类节点
      */
-    ServerResponse addCategory(Integer parentId,String categoryName);
+    ServerResponse addCategory(Integer parentId, String categoryName);
 
     /**
      * 修改分类节点名称

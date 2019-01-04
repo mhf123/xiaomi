@@ -4,6 +4,8 @@ import com.mhf.common.ServerResponse;
 import com.mhf.pojo.Product;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 public interface IProductService {
     /**
      * 新增OR更新商品接口
@@ -33,7 +35,7 @@ public interface IProductService {
     /**
      * 图片上传
      */
-    ServerResponse upload(MultipartFile file, String path);
+    Map<String, String> upload(MultipartFile file, String path);
 
     /**
      * 前台-商品详情
@@ -43,5 +45,20 @@ public interface IProductService {
     /**
      * 前台-商品搜索
      */
-    ServerResponse listPortal(Integer categoryId,String keyword,Integer pageNum,Integer pageSize,String orderBy);
+    ServerResponse listPortal(Integer categoryId, String keyword, Integer pageNum, Integer pageSize, String orderBy);
+
+    /**
+     * 根据分类查找商品名称列表接口
+     */
+    ServerResponse nameList(Integer categoryId, Integer pageNum, Integer pageSize, String orderBy);
+
+    /**
+     * 按需查询商品列表
+     */
+    ServerResponse listByDemand(String productName, String detail, String color);
+
+    /**
+     * 商品搜索提示
+     */
+    ServerResponse suggestList(String keyword, Integer pageNum, Integer pageSize, String orderBy);
 }

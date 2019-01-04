@@ -26,7 +26,7 @@ public class RedisPool {
     //password
     private static String password = PropertiesUtils.readByKey("redis.password");
 
-    private static void initPool(){
+    private static void initPool() {
         JedisPoolConfig config = new JedisPoolConfig();
         config.setMaxIdle(maxIdle);
         config.setMaxTotal(maxTotal);
@@ -37,20 +37,22 @@ public class RedisPool {
         //在连接耗尽时，判断是否阻塞，false:抛出异常，true：等待连接直到超时（默认）
         config.setBlockWhenExhausted(true);
 
-        jedisPool = new JedisPool(config,redisIp,redisPort,1000*2,password);
+        jedisPool = new JedisPool(config, redisIp, redisPort, 1000 * 2, password);
     }
 
     static {
         initPool();
     }
 
-    public static Jedis getJedis(){
+    public static Jedis getJedis() {
         return jedisPool.getResource();
     }
-    public static void returnResource(Jedis jedis){
+
+    public static void returnResource(Jedis jedis) {
         jedisPool.returnResource(jedis);
     }
-    public static void returnBrokenResource(Jedis jedis){
+
+    public static void returnBrokenResource(Jedis jedis) {
         jedisPool.returnBrokenResource(jedis);
     }
 

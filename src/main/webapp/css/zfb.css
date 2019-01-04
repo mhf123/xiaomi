@@ -1,0 +1,330 @@
+body,
+h3 {
+	margin: 0;
+	padding: 0;
+}
+
+body,
+button {
+	font: 12px/1.5 tahoma, arial, \5b8b\4f53
+}
+
+.fn-clear:after {
+	visibility: hidden;
+	display: block;
+	font-size: 0;
+	content: " ";
+	clear: both;
+	height: 0
+}
+
+.fn-left {
+	float: left
+}
+
+html body .ft-center {
+	text-align: center
+}
+
+.topbar {
+	width: 100%;
+	height: 26px;
+	background: url(https://i.alipayobjects.com/e/201305/OzLou0mHd.png) repeat-x 0 0
+}
+
+.topbar .topbar-wrap {
+	background: url(https://i.alipayobjects.com/e/201305/OzLou0mHd.png) repeat-x 0 0;
+	width: 950px;
+	margin: 0 auto
+}
+
+.topbar .topbar-wrap a,
+.topbar .topbar-wrap span {
+	float: right;
+	color: #fff;
+	padding: 4px 15px;
+	background: url(https://i.alipayobjects.com/e/201305/OzUPukVET.png) no-repeat 0 7px
+}
+
+.mi-notice {
+	font-size: 14px;
+	border: 1px solid #e1e1ca;
+	background-color: #fff
+}
+
+.mi-notice-success .mi-notice-title {
+	background-color: #edffcc
+}
+
+.mi-notice-success .iconfont {
+	color: #3C3
+}
+
+.mi-notice-error .mi-notice-title {
+	background-color: #fceee8;
+	border-color: #f6c8b5
+}
+
+.mi-notice-error .iconfont {
+	color: #f33
+}
+
+.mi-notice-title {
+	min-height: 34px;
+	_height: 34px;
+	padding: 25px 43px 21px 88px;
+	border: 1px solid #e1e1ca;
+	margin: -1px;
+	position: relative
+}
+
+.mi-notice-title .iconfont {
+	font-size: 38px;
+	line-height: 38px;
+	float: left;
+	margin: -4px 0 0 -51px;
+	*display: inline
+}
+
+.mi-notice-title h3 {
+	color: #3C3C3C;
+	font-weight: 700;
+	font-size: 16px;
+	padding: 4px 0 0;
+	padding-top: 5px\9;
+	_padding-top: 4px
+}
+
+.mi-notice-title .mi-notice-explain-other {
+	padding: 14px 0 0;
+	margin: 0;
+	border-top: 0
+}
+
+@font-face {
+	font-family: rei;
+	src: url(https://i.alipayobjects.com/common/fonts/rei.eot?20130819);
+	src: url(https://i.alipayobjects.com/common/fonts/rei.eot?20130819#iefix) format("embedded-opentype"), url(https://i.alipayobjects.com/common/fonts/rei.woff?20130819) format("woff"), url(https://i.alipayobjects.com/common/fonts/rei.ttf?20130819) format("truetype"), url(https://i.alipayobjects.com/common/fonts/rei.svg?20130819#rei) format("svg")
+}
+
+.iconfont {
+	font-family: rei;
+	font-style: normal;
+	font-weight: 400;
+	cursor: default;
+	-webkit-font-smoothing: antialiased
+}
+
+.orderDetail-base {
+	background-color: #EFF4FF;
+	border-bottom: 3px solid #A3B5DB;
+	padding: 16px 20px;
+	position: relative
+}
+
+#order {
+	position: relative;
+	margin-top: 10px;
+	*zoom: 1;
+	*z-index: 101
+}
+
+#order.order-bow .orderDetail-base {
+	background-color: #deeaff;
+	border-bottom: 3px solid #85aed4;
+	color: #244d75
+}
+
+.commodity-message-row {
+	height: 22px;
+	overflow: hidden;
+	padding-top: 14px
+}
+
+.commodity-message-row .first {
+	font-weight: 700;
+	font-size: 14px;
+	float: left
+}
+
+.commodity-message-row .second {
+	margin-left: 20px;
+	float: left;
+	margin-top: 1px
+}
+
+.payAmount-area {
+	position: absolute;
+	bottom: 16px;
+	right: 23px;
+	text-align: right;
+	z-index: 1
+}
+
+.payAmount-area .amount-font-22 {
+	font-size: 22px;
+	line-height: 22px;
+	color: #f60
+}
+
+#container {
+	width: 950px;
+	margin: 0 auto;
+	overflow: hidden
+}
+
+.qrcode-integration .qrcode-img-area {
+	width: 220px;
+	margin: 0 auto;
+	position: relative;
+	height: 185px
+}
+
+.ui-loading {
+	width: 50px;
+	height: 50px;
+	background-repeat: no-repeat;
+	background-image: url(https://i.alipayobjects.com/e/201305/M9UQl3TuH.gif);
+	text-align: center;
+	line-height: 50px;
+	font-size: 11px;
+	color: #777
+}
+
+.qrcode-independence .qrcode-loading {
+	position: absolute;
+	top: 39%;
+	left: 40%
+}
+
+.qrcode-integration .qrcode-loading {
+	position: absolute;
+	top: 36%;
+	left: 38%
+}
+
+body {
+	background: #eff0f1;
+}
+
+#header {
+	height: 60px;
+	background-color: #fff;
+	border-bottom: 1px solid #d9d9d9;
+	margin-top: 0px;
+}
+
+#header .logo-title {
+	font-size: 18px;
+	font-weight: normal;
+	font-family: "Microsoft YaHei", 微软雅黑, "宋体";
+	border-left: 1px solid #676d70;
+	color: #676d70;
+	height: 20px;
+	float: left;
+	margin-top: 15px;
+	margin-left: 10px;
+	padding-top: 10px;
+	padding-left: 10px;
+}
+
+.header-container {
+	width: 950px;
+	margin: 0 auto;
+}
+
+.payAmount-area {
+	bottom: 36px;
+}
+
+.alipay-logo {
+	display: block;
+	width: 114px;
+	position: relative;
+	left: 0;
+	top: 10px;
+	float: left;
+	height: 40px;
+	background-position: 0 0;
+	background-repeat: no-repeat;
+	background-image: url(https://t.alipayobjects.com/images/T1HHFgXXVeXXXXXXXX.png);
+}
+
+
+/* 扫码页面样式 */
+
+.cashier-center-container {
+	overflow: hidden;
+	position: relative;
+	z-index: 1;
+	width: 950px;
+	min-height: 460px;
+	background-color: #fff;
+	border-bottom: 3px solid #b3b3b3;
+}
+
+.cashier-center-view {
+	position: relative;
+	width: 900px;
+}
+
+
+/* 扫码头部信息 */
+
+.qrcode-integration .qrcode-header {
+	display: block;
+	width: auto;
+	margin: 0;
+	padding: 0;
+	margin-top: 75px;
+	margin-bottom: 16px;
+}
+
+.qrcode-header-money {
+	font-size: 26px;
+	font-weight: 700;
+	color: #f60;
+}
+
+.qrcode-integration .qrcode-img-area {
+	width: 168px;
+	height: 168px;
+	text-align: center;
+}
+
+.qrcode-integration .qrcode-loading {
+	top: 70px;
+	left: 60px;
+}
+
+.qrcode-integration .qrcode-img-wrapper {
+	position: relative;
+	width: 168px;
+	height: auto;
+	min-height: 168px;
+	margin: 0 auto;
+	padding: 6px;
+	border: 1px solid #d3d3d3;
+	-webkit-box-shadow: 1px 1px 1px #ccc;
+	box-shadow: 1px 1px 1px #ccc;
+}
+
+
+/* 扫码图片下方提示 */
+
+.qrcode-img-explain {
+	padding: 10px 0 6px;
+}
+
+.qrcode-img-explain img {
+	margin-left: 20px;
+	margin-top: 5px;
+}
+
+.qrcode-img-explain div {
+	margin-left: 10px;
+}
+
+.qrcode-foot {
+	text-align: center;
+}

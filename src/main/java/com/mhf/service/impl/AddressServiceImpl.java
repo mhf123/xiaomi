@@ -31,7 +31,7 @@ public class AddressServiceImpl implements IAddressService {
         shippingMapper.insert(shipping);
         // 3、返回结果
         Map<String, Integer> map = Maps.newHashMap();
-        map.put("shippingId",shipping.getId());
+        map.put("shippingId", shipping.getId());
         return ServerResponse.serverResponseBySuccess(map);
     }
 
@@ -45,7 +45,7 @@ public class AddressServiceImpl implements IAddressService {
         // 2、删除
         int result = shippingMapper.deleteByUserIdAndShippingId(userId, shippingId);
         // 3、返回结果
-        if(result > 0){
+        if (result > 0) {
             return ServerResponse.serverResponseBySuccess();
         }
         return ServerResponse.serverResponseByError("删除失败");
@@ -62,7 +62,7 @@ public class AddressServiceImpl implements IAddressService {
         int result = shippingMapper.updateBySelectiveKey(shipping);
 
         // 3、返回结果
-        if(result > 0){
+        if (result > 0) {
             return ServerResponse.serverResponseBySuccess();
         }
         return ServerResponse.serverResponseByError("更新失败");
@@ -83,7 +83,7 @@ public class AddressServiceImpl implements IAddressService {
     @Override
     public ServerResponse list(Integer pageNum, Integer pageSize) {
         //分页查询
-        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.startPage(pageNum, pageSize);
         List<Shipping> shippingList = shippingMapper.selectAll();
         PageInfo pageInfo = new PageInfo(shippingList);
 

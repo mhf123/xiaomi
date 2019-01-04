@@ -7,7 +7,7 @@ public interface ICartService {
     /**
      * 购物车添加商品接口
      */
-    ServerResponse add(Integer userId,Integer productId, Integer count);
+    ServerResponse add(Integer userId, Integer productId, Integer count);
 
     /**
      * 购物车列表接口
@@ -27,10 +27,11 @@ public interface ICartService {
     /**
      * 购物车选中某个商品接口
      */
-    ServerResponse select(Integer userId, Integer productId,Integer check);
+    ServerResponse select(Integer userId, Integer productId, Integer check);
 
     /**
      * 购物车商品数量
+     *
      * @param userId
      * @return
      */

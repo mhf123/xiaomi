@@ -1,0 +1,542 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>米迦商城-我的订单</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
+    <script src="js/jquery-3.3.1.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/bootstrap.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="css/orderList.css"/>
+    <script type="text/javascript">
+        //订单状态
+        var status = "未付款";
+        //是否是第一页
+        var isFirstPage;
+        //是否是最后一页
+        var isLastPage;
+        //当前页数
+        var pageNo = 1;
+        $(document).ready(function () {
+            //修改购物车按钮中购物车数量颜色
+            $("#d").hover(function () {
+                $("#num").css({"background-color": "#FF6700"});
+            }, function () {
+                $("#num").css({"background-color": "#777777"});
+            });
+            //获取购物车商品数量
+            $.ajax({
+                type: "post",
+                url: "/cart/getCartProductCount",
+                success: function (data) {
+                    if (data.status == 0) {
+                        $("#num").text(data.data);
+                    }
+                },
+                dataType: "JSON"
+            })
+            //初始化订单列表(未付款)
+            list(10);
+            //修改点击状态颜色
+            $(".hh1").click(function () {
+                $(".hh1").css({
+                    "color": "#757575"
+                });
+                $(this).css({
+                    "color": "#FF6700"
+                });
+            })
+        })
+
+        //根据订单状态查询订单列表
+        function onStatus(th) {
+            pageNo = 1;
+            status = $(th).text();
+            orderList(status);
+        }
+
+        //换页
+        function onPage(th) {
+            if ($(th).val() == "+") {
+                if (isLastPage != true) {
+                    pageNo = parseInt(pageNo) + 1;
+                    orderList(status, pageNo);
+                }
+            } else if ($(th).val() == "-") {
+                if (isFirstPage != true) {
+                    pageNo = parseInt(pageNo) - 1;
+                    orderList(status, pageNo);
+                }
+            } else {
+                pageNo = $(th).val();
+                orderList(status, pageNo);
+            }
+
+        }
+
+        //改变当前页码的样式
+        function cPage(th) {
+            $(".bu9:nth-of-type(" + th + ")").css({
+                "color": "#FF6700"
+            });
+        }
+
+        //判断显示不同状态的orderList
+        function orderList(sta, pageNum) {
+            switch (sta) {
+                case "未付款":
+                    list(10, pageNum);
+                    break;
+                case "已付款":
+                    list(20, pageNum);
+                    break;
+                case "已发货":
+                    list(40, pageNum);
+                    break;
+                case "交易成功":
+                    list(50, pageNum);
+                    break;
+                case "交易关闭":
+                    list(60, pageNum);
+                    break;
+                case "已取消":
+                    list(0, pageNum);
+                    break;
+            }
+        }
+
+        //显示orderList
+        function list(statusNo, pageNum) {
+            if (pageNum == undefined) {
+                //默认第一页
+                pageNum = 1;
+            }
+            //根据状态获取订单信息
+            $.ajax({
+                type: "post",
+                url: "/order/list",
+                data: {
+                    "status": statusNo,
+                    "pageNum": pageNum
+                },
+                success: function (data) {
+                    if (data.status == 0) {
+                        isFirstPage = data.data.pageInfo.isFirstPage;
+                        isLastPage = data.data.pageInfo.isLastPage;
+                        //订单信息
+                        var str = "";
+                        //换页功能显示
+                        var page = "";
+                        for (var i = 0; i < data.data.list.length; i++) {
+                            //日期格式转换
+                            var createTime = toDate(data.data.list[i].createTime);
+                            //订单商品详细信息
+                            var str1 = "";
+                            for (var j = 0; j < data.data.list[i].orderItemVoList.length; j++) {
+                                str1 += "<div class='d3-2-2-1'>" +
+                                    "         <span hidden>" + data.data.list[i].orderItemVoList[j].productName + "</span>" +
+                                    "         <img class='img3' onclick='toProduct(this)' src='" + data.data.list[i].orderItemVoList[j].productImage + "'/>" +
+                                    "         <div>" +
+                                    "              <span hidden>" + data.data.list[i].orderItemVoList[j].productName + "</span>" +
+                                    "              <p class='p3' id='p1' onclick='toProduct(this)'>" + data.data.list[i].orderItemVoList[j].productName + " " + data.data.list[i].orderItemVoList[j].productDetail + " " + data.data.list[i].orderItemVoList[j].productColor + "</p>" +
+                                    "              <p class='p3'>" + data.data.list[i].orderItemVoList[j].currentUnitPrice + " × " + data.data.list[i].orderItemVoList[j].quantity + "</p>" +
+                                    "         </div>" +
+                                    "    </div>";
+                            }
+                            str += "    <div class='d3-2'>" +
+                                "            <h3 class='hh3'>" + data.data.list[i].statusDesc + "</h3>" +
+                                "            <div class='d3-2-1'>" +
+                                "                <p class='p1' id='time'>" + createTime + "</p>" +
+                                "                <div class='d3-2-1-1'></div>" +
+                                "                <p class='p1' id='name'>" + data.data.list[i].receiverName + "</p>" +
+                                "                <div class='d3-2-1-1'></div>" +
+                                "                <p class='p1'>订单号：</p>" +
+                                "                <p class='p1' id='orderNo'>" + data.data.list[i].orderNo + "</p>" +
+                                "                <div class='d3-2-1-1'></div>" +
+                                "                <p class='p1' id='paymentTypeDesc'>" + data.data.list[i].paymentTypeDesc + "</p>" +
+                                "                <span class='sp2'>价格：<span class='sp3' id='price'>" + data.data.list[i].payment + "</span>&nbsp;元</span>" +
+                                "            </div>" +
+                                "            <div class='d3-2-2' id='div5'>" +
+                                "                <div id='div7'>" + str1 +
+                                "                </div>" +
+                                "                <div class='d3-2-2-3'>" +
+                                "                    <button class='bu6' id='zf' value='" + data.data.list[i].orderNo + "' onclick='zhifu(this)'>立即支付</button>" +
+                                "                    <button class='bu7' id='qx' value='" + data.data.list[i].orderNo + "' onclick='quxiao(this)'>取消订单</button>" +
+                                "                </div>" +
+                                "                <div class='d3-2-2-2'>" +
+                                "                    <button class='bu5' onclick='addr(this)'>收货信息<span class='caret'></span></button>" +
+                                "                    <div id='div6' hidden>" +
+                                "                        <p class='p2'>姓&emsp;&emsp;名：<span id='name2'>" + data.data.list[i].shippingVo.receiverName + "</span></p>" +
+                                "                        <p class='p2'>联系电话：<span id='phone'>" + data.data.list[i].shippingVo.receiverMobile + "</span></p>" +
+                                "                        <p class='p4'>收货地址：<span id='address'>" + data.data.list[i].shippingVo.receiverProvince + data.data.list[i].shippingVo.receiverCity + data.data.list[i].shippingVo.receiverDistrict + data.data.list[i].shippingVo.receiverAddress + "</span></p>" +
+                                "                    </div>" +
+                                "                </div>" +
+                                "            </div>" +
+                                "        </div>";
+                        }
+                        for (var k = 1; k <= data.data.pageInfo.pages; k++) {
+                            page += "<button class='bu9' onclick='onPage(this)' value='" + k + "'>" +
+                                k +
+                                "    </button>";
+                        }
+                        $("#div7").show();
+                        $("#pageNumber").html(page);
+                        $("#div4").html(str);
+                        $("#div4").css({"text-align": "left"});
+                        //修改当前页数样式
+                        cPage(pageNo);
+                        //根据订单状态修改样式
+                        if (statusNo == 10) {
+                            $(".d3-2").css({"border-color": "#FF6700"});
+                            $(".d3-2-1").css({"border-color": "#FECCAC"});
+                            $(".hh3").css({"color": "#FF6700"});
+                            $("#price").css({"color": "#FF6700"});
+                        } else if (statusNo == 20) {
+                            $(".bu6").text("提醒发货");
+                            $(".bu6").attr("onclick"," alert('提醒发货成功！');");
+                            $('.bu7').hide();
+                        } else if (statusNo == 40) {
+                            $('.bu7').hide();
+                            $(".bu6").text("确认收货");
+                            $(".bu6").attr("onclick","confirmReceipt(this)");
+                        } else {
+                            $(".bu6").hide();
+                            $('.bu7').hide();
+                        }
+                    } else if (data.msg == "未查询到订单信息") {
+                        var str = "<span class='noOrder'>没有此类订单</span>";
+                        $("#div4").css({"text-align": "center"});
+                        $("#div4").html(str);
+                        $("#div7").hide();
+                    } else {
+                        alert("获取订单信息失败！" + data.msg);
+                    }
+                },
+            })
+        }
+
+        //跳转到商品详情
+        function toProduct(th) {
+            var productName = $(th).prev().text();
+            open("/xiangqing.jsp?name=" + encodeURI(productName));
+        }
+
+        //日期格式转换
+        function toDate(da) {
+            var date = new Date(da);
+            var str = "";
+            var month = toDate1(date.getMonth() + 1);
+            var day = toDate1(date.getDate());
+            var hours = toDate1(date.getHours());
+            var minutes = toDate1(date.getMinutes());
+            str += date.getFullYear() + "年" + month + "月" + day + "日" + " "
+                + hours + ":" + minutes;
+            return str;
+        }
+
+        //日期不足10前面补0
+        function toDate1(s) {
+            if (parseInt(s) < 10) {
+                return "0" + s;
+            } else {
+                return s;
+            }
+        }
+
+        //展开和隐藏收货信息
+        function addr(th) {
+            if ($(th).next().is(":hidden")) {
+                $(th).next().show();
+            } else {
+                $(th).next().hide();
+            }
+        }
+
+        //点击支付
+        function zhifu(th) {
+            var orderNo = $(th).val();
+            location.href = "fukuan.jsp?orderNo=" + orderNo;
+        }
+
+        //点击确认收货
+        function confirmReceipt(th) {
+            var orderNo = $(th).val();
+            var t = confirm("确认收货吗？");
+            if (t == true) {
+                $.ajax({
+                    type: "post",
+                    url: "/order/confirm/" + orderNo,
+                    success: function (data) {
+                        if (data.status == 0) {
+                            location.reload();
+                        } else {
+                            alert("确认收货失败！" + data.msg);
+                        }
+                    },
+                    dataType: "json"
+                })
+            }
+        }
+
+        //点击取消订单
+        function quxiao(th) {
+            var orderNo = $(th).val();
+            var t = confirm("确认取消当前订单吗？");
+            if (t == true) {
+                $.ajax({
+                    type: "post",
+                    url: "/order/cancel/" + orderNo,
+                    success: function (data) {
+                        if (data.status == 0) {
+                            location.reload();
+                        } else {
+                            alert("取消当前订单失败！" + data.msg);
+                        }
+                    },
+                    dataType: "json"
+                })
+            }
+        }
+
+        //点击购物车
+        function on2() {
+            if ("${current_user}" == "") {
+                var t = confirm("你还未登录，是否前往登录？")
+                if (t == true) {
+                    window.location.href = "denglu1.jsp";
+                }
+            }
+            else
+                window.location.href = "gouwuche.jsp";
+        }
+
+        /**
+         * 搜索提示功能
+         */
+
+        //点击其他地方关闭搜索提示框
+        function close_xiala() {
+            $("#div1").hide();
+        }
+
+        //鼠标悬停事件
+        function xiala1(th) {
+            $(th).css({
+                "background": "#DCDCDC",
+                "color": "#FF6700"
+            })
+        }
+
+        //鼠标点击事件
+        function xiala2(th) {
+            $("#search").val($(th).text());
+            $("#div1").hide();
+        }
+
+        //鼠标移开事件
+        function xiala3(th) {
+            $(th).css({
+                "background": "white",
+                "color": "black"
+            })
+        }
+
+        //每按一次键盘，进行一次搜索提示
+        function fsearch(th) {
+            //获取搜索框输入的数据
+            var val = $(th).val();
+            var str = "";
+            $("#div1").show();
+            //搜索为空则不提示
+            if (val == "") {
+                $("#div1").hide();
+            }
+            $.ajax({
+                type: "post",
+                url: "/product/suggestList/" + val,
+                //获取搜索提示的数据并输出
+                success: function (data) {
+                    if (data.status == 0) {
+                        if (data.data.list.length > 0)
+                            $("#div1").css("border", "1px solid #A6A6A6");
+                        for (var i = 0; i < data.data.list.length; i++)
+                            str += "<div style='line-height:30px' onmousemove='xiala1(this)' onclick='xiala2(this)' onmouseout='xiala3(this)'>"
+                                + data.data.list[i].name + "</div>";
+                        $("#div1").html(str);
+                    }
+                },
+                dataType: "JSON"
+            })
+
+        }
+
+        /**
+         * 退出登录
+         */
+        function logout() {
+            $.ajax({
+                type: "post",
+                url: "/user/logout",
+                success: function (data) {
+                    if (data.status == 0) {
+                        location.href = "zhuye.jsp";
+                    } else {
+                        alert("退出登录失败！")
+                    }
+                },
+                dataType: "JSON"
+            })
+        }
+    </script>
+</head>
+
+<body>
+<div class="container-fluid">
+    <!--1-->
+    <div class="row">
+        <img class="img2" src="img/zhuye/zhuye1.png"/>
+    </div>
+    <!--2-->
+    <div class="d1 row">
+        <div class="d1-1">
+            <a href="index.jsp" class="a1">小米商城&nbsp;</a> <span class="sp1">|&nbsp;</span>
+            <a href="" class="a1">MIUI&nbsp;</a> <span class="sp1">|&nbsp;</span>
+            <a href="" class="a1">loT&nbsp;</a> <span class="sp1">|&nbsp;</span>
+            <a href="" class="a1">云服务&nbsp;</a> <span class="sp1">|&nbsp;</span>
+            <a href="" class="a1">金融&nbsp;</a> <span class="sp1">|&nbsp;</span>
+            <a href="" class="a1">有品&nbsp;</a> <span class="sp1">|&nbsp;</span>
+            <a href="" class="a1">小爱开放平台&nbsp;</a> <span class="sp1">|&nbsp;</span>
+            <a href="" class="a1">政企服务&nbsp;</a> <span class="sp1">|&nbsp;</span>
+            <a href="" class="a1">Select Region</a>
+        </div>
+        <div id="div3">
+            <!--下拉式菜单-->
+            <div class="d1-2 dropdown">
+                <button class="bu1" onclick="on1()" id="dLabel" type="button" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                    <span id="dl">
+                        <c:if test="${!empty current_user}">${current_user.username}</c:if>
+                        <c:if test="${empty current_user}">
+                            你好，请登录
+                        </c:if>
+                    </span>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dLabel">
+                    <li>
+                        <a class="a2" href="#">个人中心</a>
+                    </li>
+                    <li>
+                        <a class="a2" href="#">评价晒单</a>
+                    </li>
+                    <li>
+                        <a class="a2" href="#">我的喜欢</a>
+                    </li>
+                    <li>
+                        <a class="a2" href="#">小米账户</a>
+                    </li>
+                    <li>
+                        <a class="a2" onclick="logout()">退出登录</a>
+                    </li>
+                </ul>
+            </div>
+            <span class="sp1">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+            <a href="" class="a1">消息通知&nbsp;&nbsp;</a>
+            <span class="sp1">|&nbsp;&nbsp;</span>
+            <a href="" class="a1">我的订单</a>
+            <button class="bu2" id="d" onclick="on2()">
+                <span class="glyphicon glyphicon-shopping-cart">购物车</span>
+                <span class="badge" id="num">0</span>
+            </button>
+        </div>
+    </div>
+    <!--3-->
+    <div class="d2 row">
+        <div>
+            <img class="img1" src="img/zhuye/zhuye2.png"/>
+        </div>
+        <div class="d2-1">
+            <div class="d2-1-1">
+                <a class="a3" href="">小米手机</a>
+            </div>
+            <div class="d2-1-1">
+                <a class="a3" href="">&nbsp;红米</a>
+            </div>
+            <div class="d2-1-1">
+                <a class="a3" href="">电视</a>
+            </div>
+            <div class="d2-1-1">
+                <a class="a3" href="">笔记本</a>
+            </div>
+            <div class="d2-1-1">
+                <a class="a3" href="">盒子</a>
+            </div>
+            <div class="d2-1-1">
+                <a class="a3" href="">新品&nbsp;</a>
+            </div>
+            <div class="d2-1-1">
+                <a class="a3" href="">路由器&nbsp;&nbsp;</a>
+            </div>
+            <div class="d2-1-1">
+                <a class="a3" href="">&nbsp;智能硬件</a>
+            </div>
+            <div class="d2-1-1">
+                <a class="a3" href="">&nbsp;服务</a>
+            </div>
+            <div class="d2-1-1">
+                <a class="a3" href="">社区</a>
+            </div>
+        </div>
+        <div class="d2-2">
+            <div class="d2-2-1">
+                <form>
+                    <input class="in1" id="search" type="text" onkeyup="fsearch(this)" placeholder="小米8 小米MIX 2s">
+                    <button class="bu4" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                    <div id="div1"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="d3">
+        <h1 class='hh2'>我的订单</h1>
+        <div class='d3-1'>
+            <h4 class='hh1' style="color: #FF6700" onclick='onStatus(this)'>未付款</h4>
+            <div class='d3-1-1'>
+            </div>
+            <h4 class='hh1' onclick='onStatus(this)'>已付款</h4>
+            <div class='d3-1-1'>
+            </div>
+            <h4 class='hh1' onclick='onStatus(this)'>已发货</h4>
+            <div class='d3-1-1'>
+            </div>
+            <h4 class='hh1' onclick='onStatus(this)'>交易成功</h4>
+            <div class='d3-1-1'>
+            </div>
+            <h4 class='hh1' onclick='onStatus(this)'>交易关闭</h4>
+            <div class='d3-1-1'>
+            </div>
+            <h4 class='hh1' onclick='onStatus(this)'>已取消</h4>
+        </div>
+        <div id="div4">
+        </div>
+        <div class="d4" id="div7">
+            <button class="bu8" value="-" onclick="onPage(this)">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+            </button>
+            <div id="pageNumber">
+            </div>
+            <button class="bu8" value="+" onclick="onPage(this)">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+            </button>
+        </div>
+    </div>
+
+</div>
+</body>
+
+</html>

@@ -15,9 +15,11 @@ public class CartProductVo implements Serializable {
     private BigDecimal productPrice;
     private Integer productStatus;
     private BigDecimal productTotalPrice;
-    private Integer prodyctStock;
+    private Integer productStock;
     private Integer productChecked;
     private String limitQuantity;
+    private String productDetail;
+    private String productColor;
 
     public Integer getId() {
         return id;
@@ -99,12 +101,12 @@ public class CartProductVo implements Serializable {
         this.productTotalPrice = productTotalPrice;
     }
 
-    public Integer getProdyctStock() {
-        return prodyctStock;
+    public Integer getProductStock() {
+        return productStock;
     }
 
-    public void setProdyctStock(Integer prodyctStock) {
-        this.prodyctStock = prodyctStock;
+    public void setProductStock(Integer productStock) {
+        this.productStock = productStock;
     }
 
     public Integer getProductChecked() {
@@ -121,5 +123,21 @@ public class CartProductVo implements Serializable {
 
     public void setLimitQuantity(String limitQuantity) {
         this.limitQuantity = limitQuantity;
+    }
+
+    public String getProductDetail() {
+        return productDetail;
+    }
+
+    public void setProductDetail(String productDetail) {
+        this.productDetail = productDetail;
+    }
+
+    public String getProductColor() {
+        return productColor;
+    }
+
+    public void setProductColor(String productColor) {
+        this.productColor = productColor;
     }
 }

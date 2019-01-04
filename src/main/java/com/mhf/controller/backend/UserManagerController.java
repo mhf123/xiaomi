@@ -34,26 +34,26 @@ public class UserManagerController {
      * 管理员登录
      */
     @RequestMapping(value = "/login/{username}/{password}")
-    public ServerResponse login(HttpServletRequest request, HttpServletResponse response,HttpSession session, @PathVariable("username")String username, @PathVariable("password")String password){
-        ServerResponse serverResponse = iUserService.login(username,password);
-        if(serverResponse.isSuccess()){
+    public ServerResponse login(HttpServletRequest request, HttpServletResponse response, HttpSession session, @PathVariable("username") String username, @PathVariable("password") String password) {
+        ServerResponse serverResponse = iUserService.login(username, password);
+        if (serverResponse.isSuccess()) {
             User user = (User) serverResponse.getData();
-            if(user.getRole() == Const.RoleEnum.ROLE_CUS.getCode()){
+            if (user.getRole() == Const.RoleEnum.ROLE_CUS.getCode()) {
                 return ServerResponse.serverResponseByError("没有登陆权限");
             }
-            session.setAttribute(Const.CURRENTUSER,user);
+            session.setAttribute(Const.CURRENTUSER, user);
             //生成自动登录autoLoginToken
             String ip = IPUtils.getRemoteAddress(request);
             try {
                 String mac = IPUtils.getMACAddress(ip);
                 String token = MD5Utils.GetMD5Code(mac);
                 //把token保存到数据库
-                iUserService.saveTokenByUserId(user.getId(),token);
+                iUserService.saveTokenByUserId(user.getId(), token);
                 //token作为cookie响应到客户端
-                Cookie cookie = new Cookie(Const.AUTOLOGINCOOKIE,token);
+                Cookie cookie = new Cookie(Const.AUTOLOGINCOOKIE, token);
                 cookie.setPath("/");
                 //设置时长7天
-                cookie.setMaxAge(60*60*24*7);
+                cookie.setMaxAge(60 * 60 * 24 * 7);
                 response.addCookie(cookie);
 
             } catch (UnknownHostException e) {

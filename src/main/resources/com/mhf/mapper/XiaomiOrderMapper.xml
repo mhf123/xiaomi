@@ -96,14 +96,19 @@
     where user_id = #{userId} and order_no = #{orderNo}
   </select>
 
-  <select id="findOrderByUserId" parameterType="int" resultMap="BaseResultMap">
+  <select id="findOrderByUserId" parameterType="map" resultMap="BaseResultMap">
     <!--
-      根据userId查询订单
+      根据userId和订单状态查询订单
     -->
     select id, user_id, order_no, shipping_id, payment, payment_type, postage, status,
     payment_time, send_time, end_time, close_time, create_time, update_time
     from xiaomi_order
-    where user_id = #{userId}
+    <where>
+        user_id = #{userId}
+      <if test="status != null">
+         and status = #{status}
+      </if>
+    </where>
   </select>
 
   <select id="findOrderByOrderNo" parameterType="long" resultMap="BaseResultMap">
@@ -125,6 +130,5 @@
     from xiaomi_order
     where status = #{orderStatus} and <![CDATA[create_time <= #{time}]]>
   </select>
-
 
 </mapper>

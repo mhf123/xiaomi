@@ -51,13 +51,14 @@
         <mvc:interceptor>
             <mvc:mapping path="/manager1/**"/>
             <mvc:exclude-mapping path="/manager1/user/login/**"></mvc:exclude-mapping>
+            <mvc:exclude-mapping path="/manager1/category/getCategory/**"></mvc:exclude-mapping>
             <bean class="com.mhf.controller.common.interceptor.AuthorityInterceptor"></bean>
         </mvc:interceptor>
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
-            <mvc:exclude-mapping path="/product/list/**"></mvc:exclude-mapping>
-            <mvc:exclude-mapping path="/product/detail/**"></mvc:exclude-mapping>
+            <mvc:exclude-mapping path="/product/**"></mvc:exclude-mapping>
             <mvc:exclude-mapping path="/manager1/user/login/**"></mvc:exclude-mapping>
+            <mvc:exclude-mapping path="/manager1/category/getCategory/**"></mvc:exclude-mapping>
             <mvc:exclude-mapping path="/user/login/**"></mvc:exclude-mapping>
             <mvc:exclude-mapping path="/user/register"></mvc:exclude-mapping>
             <mvc:exclude-mapping path="/user/getQuestion/**"></mvc:exclude-mapping>
@@ -65,8 +66,14 @@
             <mvc:exclude-mapping path="/user/resetPassword/**"></mvc:exclude-mapping>
             <mvc:exclude-mapping path="/user/checkValid/**"></mvc:exclude-mapping>
             <mvc:exclude-mapping path="/user/logout"></mvc:exclude-mapping>
+            <mvc:exclude-mapping path="/user/verificationCode/**"></mvc:exclude-mapping>
+            <mvc:exclude-mapping path="/user/loginCheckPhone/**"></mvc:exclude-mapping>
+            <mvc:exclude-mapping path="/user/loginByPhone/**"></mvc:exclude-mapping>
+            <mvc:exclude-mapping path="/user/resetPasswordByPhone/**"></mvc:exclude-mapping>
+            <mvc:exclude-mapping path="/order/alipayCallback.do"></mvc:exclude-mapping>
             <bean class="com.mhf.controller.common.interceptor.AuthorityInterceptor2"></bean>
         </mvc:interceptor>
     </mvc:interceptors>
+
 
 </beans>

@@ -52,9 +52,15 @@ public interface UserMapper {
     int checkUsername(String username);
 
     /**
+     * 检查手机号是否存在
+     */
+    int checkPhone(String phone);
+
+    /**
      * 根据用户名密码查询用户信息
      */
-    User selectUserByUsernameAndPassword(@Param("username") String username,@Param("password") String password);
+    User selectUserByUsernameAndPassword(@Param("username") String username,
+                                         @Param("password") String password);
 
     /**
      * 检查邮箱是否存在
@@ -96,4 +102,30 @@ public interface UserMapper {
      * 修改用户对应token为空
      */
     Integer updateTokenByUserId(User user);
+
+    /**
+     * 根据手机号密码查找信息
+     */
+    User selectUserByPhoneAndPassword(String username, String password);
+
+    /**
+     * 检查用户名或手机号是否存在
+     */
+    int checkUsernameOrPhone(String username);
+    /**
+     * 根据用户名或手机号-密码查找信息
+     */
+    User selectUserByUsernameOrPhoneAndPassword(@Param("username") String username,
+                                                @Param("password") String password);
+
+    /**
+     * 根据手机号查找信息
+     */
+    User selectUserByPhone(String phone);
+
+    /**
+     * 通过手机验证码修改用户密码
+     */
+    int updatePasswordByPhone(@Param("phone") String phone,
+                              @Param("password") String password);
 }

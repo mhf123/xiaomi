@@ -19,7 +19,7 @@ public class CategoryManageController {
      * 获取品类子节点（平级）
      */
     @RequestMapping(value = "/getCategory/{id}")
-    public ServerResponse getCategory(@PathVariable("id") Integer id){
+    public ServerResponse getCategory(@PathVariable("id") Integer id) {
 
         //获取子节点
         ServerResponse category = iCategoryService.getCategory(id);
@@ -30,10 +30,10 @@ public class CategoryManageController {
      * 增加节点
      */
     @RequestMapping(value = "/addCategory")
-    public ServerResponse addCategory(@RequestParam(required = false,defaultValue = "0") Integer parentId,String categoryName){
+    public ServerResponse addCategory(@RequestParam(required = false, defaultValue = "0") Integer parentId, String categoryName) {
 
         //获取子节点
-        ServerResponse category = iCategoryService.addCategory(parentId,categoryName);
+        ServerResponse category = iCategoryService.addCategory(parentId, categoryName);
         return category;
     }
 
@@ -42,10 +42,10 @@ public class CategoryManageController {
      */
     @RequestMapping(value = "/setCategoryName/{categoryId}/{categoryName}")
     public ServerResponse setCategoryName(@PathVariable("categoryId") Integer categoryId,
-                                          @PathVariable("categoryName") String categoryName){
+                                          @PathVariable("categoryName") String categoryName) {
 
         //获取子节点
-        ServerResponse category = iCategoryService.setCategoryName(categoryId,categoryName);
+        ServerResponse category = iCategoryService.setCategoryName(categoryId, categoryName);
         return category;
     }
 
@@ -53,7 +53,7 @@ public class CategoryManageController {
      * 获取当前分类id以及递归子节点
      */
     @RequestMapping(value = "/getDeepCategory/{categoryId}")
-    public ServerResponse getDeepCategory(@PathVariable("categoryId") Integer categoryId){
+    public ServerResponse getDeepCategory(@PathVariable("categoryId") Integer categoryId) {
 
         //获取子节点
         ServerResponse category = iCategoryService.getDeepCategory(categoryId);

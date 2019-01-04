@@ -23,18 +23,17 @@ public class AuthorityInterceptor2 implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(Const.CURRENTUSER);
-
         if (user == null) {
             Cookie[] cookies = request.getCookies();
             if (cookies != null && cookies.length > 0) {
                 for (Cookie cookie : cookies) {
                     String name = cookie.getName();
-                    if (name.equals(Const.AUTOLOGINCOOKIE)){
+                    if (name.equals(Const.AUTOLOGINCOOKIE)) {
                         String autoLoginToken = cookie.getValue();
                         //根据token查询用户信息
                         user = iUserService.findUserByToken(autoLoginToken);
-                        if (user != null){
-                            session.setAttribute(Const.CURRENTUSER,user);
+                        if (user != null) {
+                            session.setAttribute(Const.CURRENTUSER, user);
                         }
                         break;
                     }

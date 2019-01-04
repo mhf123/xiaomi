@@ -12,6 +12,8 @@ public class OrderItemVo implements Serializable {
     private Integer quantity;
     private BigDecimal totalPrice;
     private String createTime;
+    private String productColor;
+    private String productDetail;
 
     public Long getOrderNo() {
         return orderNo;
@@ -75,5 +77,21 @@ public class OrderItemVo implements Serializable {
 
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
+    }
+
+    public String getProductColor() {
+        return productColor;
+    }
+
+    public void setProductColor(String productColor) {
+        this.productColor = productColor;
+    }
+
+    public String getProductDetail() {
+        return productDetail;
+    }
+
+    public void setProductDetail(String productDetail) {
+        this.productDetail = productDetail;
     }
 }

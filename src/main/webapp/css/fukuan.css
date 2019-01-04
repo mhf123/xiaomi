@@ -70,6 +70,7 @@
 }
 
 .a1 {
+    cursor: pointer;
     color: #A6A6A6;
     text-decoration: none;
 }
@@ -92,7 +93,7 @@
 .bu1 {
     border: 0;
     height: 40px;
-    width: 70px;
+    width: 85px;
     background-color: white;
     color: #737373;
 }
@@ -144,4 +145,52 @@
 .sp7 {
     color: #757575;
     margin-bottom: 40px;
+}
+#dl{
+    display: inline-block;
+    max-width: 75px;
+    word-break:keep-all;      /* 不换行 */
+    white-space:nowrap;       /* 不换行 */
+    overflow:hidden;          /* 内容超出宽度时隐藏超出部分的内容 */
+    text-overflow:ellipsis;
+    float: left;
+}
+
+.d3-1-1 {
+    padding: 0 20px 20px 20px;
+}
+
+#zfb {
+    display: flex;
+    border: 1px solid #E0E0E0;
+    height: 60px;
+    width: 200px;
+    background-color: white;
+    transition-duration: 0.2s;
+    padding-left: 30px;
+    margin-left: 25px;
+    margin-top: 20px;
+}
+
+#zfb:hover {
+    border-color: #FF6700;
+}
+
+#zfb:focus {
+    outline: none;
+}
+
+#img1 {
+    float: left;
+    width: 27%;
+    height: 80%;
+}
+
+#span5 {
+    display: block;
+    margin-left: 15px;
+    line-height: 45px;
+    font-size: 25px;
+    font-family: "楷体";
+    font-weight: bold;
 }

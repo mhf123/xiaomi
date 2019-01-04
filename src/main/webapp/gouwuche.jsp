@@ -22,35 +22,160 @@
          * 网页加载完成后
          */
         $(document).ready(function () {
-            //如果合计为0，则不能结算
-            heji();
-            //重置所有复选框为未选中
-            $("input:checkbox").prop("checked", false);
+
+            //获取购物车商品列表
+            $.ajax({
+                type: "post",
+                url: "/cart/list",
+                success: function (data) {
+                    if (data.status == 0) {
+                        list(data);
+                    } else {
+                        alert("获取数据失败，" + data.msg);
+                    }
+                },
+                dataType: "json"
+            })
+
         })
 
-        //计算选中几种商品
-        function cc() {
-            var m = 0;
-            for (var i = 0; i < $("[name = cart]:checkbox").length; i++) {
-                //如果有一个选中，则种数+1
-                if ($("[name = cart]:checkbox:eq(" + i + ")").is(":checked") == true) {
-                    m += 1;
+
+        /**
+         * 显示购物车商品数据
+         */
+        function list(data) {
+            //判断购物车是否为空
+            if (data.data.cartProductVos == "") {
+                var str = "<th> <h1 style='color: #949da8'>您的购物车还是空的！</h1><a id='a1'href='zhuye.jsp'>马上去购物</a></th>"
+                $("#table1").html(str);
+                $("#div1").hide();
+            } else {
+                $("#div1").show();
+                //选中商品数量
+                var checkedQuantity = 0;
+                var str = "<tr class='tr1'>" +
+                    "                    <th class='col-lg-2 col-md-2'>" +
+                    "                        <div class='j-check'>" +
+                    "                            <input type='checkbox' id='allCheck' name='allCart' onclick='check(this)'/>" +
+                    "                            <label><span style='display: block; width: 110px;'> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;全选</span></label>" +
+                    "                        </div>" +
+                    "                    </th>" +
+                    "                    <th class='col-lg-4 col-md-4'>" +
+                    "                        商品名称" +
+                    "                    </th>" +
+                    "                    <th>" +
+                    "                        单价" +
+                    "                    </th>" +
+                    "                    <th class='col-lg-3 col-md-3'>" +
+                    "                        数量" +
+                    "                    </th>" +
+                    "                    <th class='col-lg-1 col-md-1'>" +
+                    "                        小计" +
+                    "                    </th>" +
+                    "                    <th class='col-lg-1 col-md-1'>" +
+                    "                        操作" +
+                    "                    </th>" +
+                    "                </tr>";
+                //遍历商品
+                for (var i = 0; i < data.data.cartProductVos.length; i++) {
+                    if (data.data.cartProductVos[i].productChecked == 1) {
+                        checkedQuantity += data.data.cartProductVos[i].quantity;
+                    }
+                    if (data.data.cartProductVos[i].productChecked == 1) {
+                        str += "<tr class='tr2'><td><div class='i-check'><input value='"
+                            + data.data.cartProductVos[i].productId
+                            + "' type='checkbox' name='cart'checked='checked' onclick='check1(this)'/><label></label> <img class='img1' src='"
+                            + data.data.cartProductVos[i].productMainImage
+                            + "'/> </div> </td> <td> <h4>"
+                            + data.data.cartProductVos[i].productName + "&nbsp;"
+                            + data.data.cartProductVos[i].productDetail + "&nbsp;"
+                            + data.data.cartProductVos[i].productColor
+                            + "</h4> </td> <td> <h4>"
+                            + data.data.cartProductVos[i].productPrice + "元"
+                            + "</h4> </td> <td> <div class='d2-1-1 row'> <button class='bu2 col-lg-3 col-md-3' value='"
+                            + data.data.cartProductVos[i].productId
+                            + "'onclick='dec(this)'><span class='sp2'>-</span></button><div class='d2-1-1-1 col-lg-6 col-md-6'> <span class='sp2'>"
+                            + data.data.cartProductVos[i].quantity
+                            + "</span> </div> <button class='bu2 col-lg-3 col-md-3' value='"
+                            + data.data.cartProductVos[i].productId
+                            + "' onclick='add(this)'> <span class='sp2'>+</span></button><button value='"
+                            + data.data.cartProductVos[i].quantity
+                            + "' style='display: none'></button> </div> </td> <td> <h4 class='hh44' id='hh4'>"
+                            + data.data.cartProductVos[i].productTotalPrice + "元"
+                            + "</h4> </td> <td> <span class='sp2'><button class='bu3' onclick='del(this)' value='"
+                            + data.data.cartProductVos[i].productId
+                            + "'>×</button></span> </td> </tr>"
+                    } else {
+                        str += "<tr class='tr2'><td><div class='i-check'><input value='"
+                            + data.data.cartProductVos[i].productId
+                            + "' type='checkbox' name='cart' onclick='check1(this)'/><label></label> <img class='img1' src='"
+                            + data.data.cartProductVos[i].productMainImage
+                            + "'/> </div> </td> <td> <h4>"
+                            + data.data.cartProductVos[i].productName + "&nbsp;"
+                            + data.data.cartProductVos[i].productDetail + "&nbsp;"
+                            + data.data.cartProductVos[i].productColor
+                            + "</h4> </td> <td> <h4>"
+                            + data.data.cartProductVos[i].productPrice + "元"
+                            + "</h4> </td> <td> <div class='d2-1-1 row'> <button class='bu2 col-lg-3 col-md-3' value='"
+                            + data.data.cartProductVos[i].productId
+                            + "'onclick='dec(this)'><span class='sp2'>-</span></button><div class='d2-1-1-1 col-lg-6 col-md-6'> <span class='sp2'>"
+                            + data.data.cartProductVos[i].quantity
+                            + "</span> </div> <button class='bu2 col-lg-3 col-md-3' value='"
+                            + data.data.cartProductVos[i].productId
+                            + "' onclick='add(this)'> <span class='sp2'>+</span></button><button value='"
+                            + data.data.cartProductVos[i].quantity
+                            + "' style='display: none'></button> </div> </td> <td> <h4 class='hh44' id='hh4'>"
+                            + data.data.cartProductVos[i].productTotalPrice + "元"
+                            + "</h4> </td> <td> <span class='sp2'><button class='bu3' onclick='del(this)' value='"
+                            + data.data.cartProductVos[i].productId
+                            + "'>×</button></span> </td> </tr>"
+                    }
+                    //判断商品数量是否达到库存
+                    if (data.data.cartProductVos[i].limitQuantity != "LIMIT_NUM_SUCCESS") {
+                        alert("商品达到可以购买的最大数量！");
+                    }
                 }
+                $("#table1").html(str);
+
+                //购物车商品数量
+                $.ajax({
+                    type: "post",
+                    url: "/cart/getCartProductCount",
+                    success: function (data) {
+                        if (data.status == 0) {
+                            $("#span1").html("&nbsp;" + data.data + "&nbsp;");
+                        } else {
+                            alert("购物车商品数量获取失败！" + data.msg);
+                        }
+                    },
+                    dataType: "json"
+                })
+
+                //选中商品数量
+                $("#sp4").text(checkedQuantity);
+                //判断是否全选
+                if (data.data.allChecked == true) {
+                    $("#allCheck").prop("checked", true);
+                } else {
+                    $("#allCheck").prop("checked", false);
+                }
+                //合计
+                $("#span2").text(data.data.cartTotalPrice);
+                var hj = $("#span2").text();
+                //如果合计为0，则不能结算
+                heji(hj);
+
             }
-            //显示到页面相应位置
-            $("#sp4").text(m);
         }
+
 
         /**
          * 如果合计为0，则不能结算
          */
 
-        function heji() {
-            //获取总计值
-            var hj = $("#hj").text();
-            hj = hj.substring(3, hj.length - 2);
+        function heji(hj) {
             //修改按钮样式
-            if (hj == "0") {
+            if (hj == 0) {
                 $("#sp7").attr("class", "sp77");
                 $("#bu4").attr("class", "bu44");
                 $("#bu4").attr("disabled", true);
@@ -62,29 +187,35 @@
 
         }
 
-        /**
-         * 修改合计
-         */
-        function sum(bm, am) {
-            //获取合计价钱
-            var hj = $("#hj").text();
-            hj = hj.substring(3, hj.length - 1);
-            //让合计价钱-修改前的总价后+修改后的总价,然后重新显示
-            $("#hj").html("<span class='sp5' id='hj'>合计：<span class='sp6'>" + (parseInt(hj) - parseInt(bm) + parseInt(am)) + "&nbsp;</span>元</span>");
-        }
 
         /**
-         * 删除点击的购物车商品
+         * 删除勾选的购物车商品
          */
-        function del(th) {
-            //获取商品编号
-            var code = $(th).val();
+        function del() {
+            //获取已选中商品的productIds
+            var productIds = new Array();
+            $("input[name = 'cart']:checked").each(function () {
+                productIds.push($(this).val());
+            })
+            if (productIds == ""){
+                alert("您未勾选任何商品！");
+                return;
+            }
             //弹出删除确认框
-            var t = confirm("确认删除吗？")
-            var hr = "DeleteCartServlet?code=" + code;
+            var t = confirm("确认移除已勾选的商品吗？");
             if (t == true) {
-                //转到后台
-                window.location.href = hr;
+                $.ajax({
+                    type: "post",
+                    url: "/cart/deleteProduct/" + productIds,
+                    success: function (data) {
+                        if (data.status == 0) {
+                            list(data);
+                        } else {
+                            alert("移除购物车商品失败！" + data.msg);
+                        }
+                    },
+                    dataType: "json"
+                })
             }
         }
 
@@ -93,46 +224,23 @@
          */
         //点击"-"按钮商品数量-1
         function dec(th) {
-            //获取当前商品数量,并转成int型
+            //获取当前商品数量
             var v = $(th).next().find("span").text();
-            var num = parseInt(v);
+            //当前商品数量-1
+            var quantity = parseInt(v) - 1;
             //获取当前商品编号
-            var code = $(th).val();
-            //判断商品数量是否等于1，如果为1则不能减少
-            if (num > 1) {
-                //传回商品编号，使后台购物车商品数量-1
+            var productId = $(th).val();
+            //判断-1后商品数量是否<1，如果<1则不能减少
+            if (quantity >= 1) {
                 $.ajax({
                     type: "post",
-                    url: "/xiaomi/DecCartServlet",
-                    data: {
-                        "code": code
-                    },
-                    //获取商品数量的json
+                    url: "/cart/update/" + productId + "/" + quantity,
                     success: function (data) {
-                        //商品数量-1
-                        code = code - 1;
-                        //页面显示商品数量-1
-                        $(th).next().find("span").text(data[0].number);
-                        //获取商品单价
-                        var a = $(th).parent().parent().prev().find("h4").text();
-                        var price = a.substring(0, a.length - 1);
-                        //获取商品数量
-                        var number = $(th).next().find("span").text();
-                        //获取商品修改前的总价
-                        var bm = $(th).parent().parent().next().find("h4").text();
-                        bm = bm.substring(0, bm.length - 1);
-                        //更改商品总价,并获取
-                        $(th).parent().parent().next().find("h4").text(price * number + "元");
-                        var am = $(th).parent().parent().next().find("h4").text();
-                        am = am.substring(0, am.length - 1);
-                        //判断当前商品是否选中
-                        if ($(th).parent().parent().prev().prev().prev().find("input").is(":checked")) {
-                            //修改合计
-                            sum(bm, am);
+                        if (data.status == 0) {
+                            list(data);
+                        } else {
+                            alert("修改数量失败，" + data.msg);
                         }
-                        //判断合计是否为0,如果是则改变按钮样式
-                        heji();
-
                     },
                     dataType: "Json"
                 })
@@ -141,44 +249,95 @@
 
         //点击"+"按钮商品数量+1
         function add(th) {
-            //获取当前商品数量,并转成int型
+            //获取当前商品数量
             var v = $(th).prev().find("span").text();
-            var num = parseInt(v);
-            //获取当前商品库存和商品编号,并将库存转成int型
-            var code = $(th).val();
-            var s = $(th).next().val();
-            var stock = parseInt(s);
-            //判断商品数量+1后是否大于库存，如果大于，则增加失败,否则数量+1
-            if (num + 1 > stock) {
-                alert("库存不足！");
-            } else {
-                //传回商品编号，使后台购物车商品数量+1
+            //当前商品数量+1
+            var quantity = parseInt(v) + 1;
+            //获取当前商品编号
+            var productId = $(th).val();
+            $.ajax({
+                type: "post",
+                url: "/cart/update/" + productId + "/" + quantity,
+                success: function (data) {
+                    if (data.status == 0) {
+                        list(data);
+                    } else {
+                        alert("修改数量失败，" + data.msg);
+                    }
+                },
+                dataType: "Json"
+            })
+
+        }
+
+        /**
+         * 复选框操作
+         */
+
+        //全选和全不选
+        function check(th) {
+            if (th.checked) {
+                //全选
                 $.ajax({
                     type: "post",
-                    url: "/xiaomi/AddCartServlet",
-                    data: {
-                        "code": code
-                    },
+                    url: "/cart/selectAll",
                     //获取操作结果
                     success: function (data) {
-                        //获取商品数量的json
-                        $(th).prev().find("span").text(data[0].number);
-                        //获取商品单价
-                        var a = $(th).parent().parent().prev().find("h4").text();
-                        var price = a.substring(0, a.length - 1);
-                        //获取商品数量
-                        var number = $(th).prev().find("span").text();
-                        //获取商品修改前的总价
-                        var bm = $(th).parent().parent().next().find("h4").text();
-                        bm = bm.substring(0, bm.length - 1);
-                        //更改商品总价,并获取
-                        $(th).parent().parent().next().find("h4").text(price * number + "元");
-                        var am = $(th).parent().parent().next().find("h4").text();
-                        am = am.substring(0, am.length - 1);
-                        //判断当前商品是否选中
-                        if ($(th).parent().parent().prev().prev().prev().find("input").is(":checked")) {
-                            //修改合计
-                            sum(bm, am);
+                        if (data.status == 0) {
+                            list(data);
+                        } else {
+                            alert("操作失败，" + data.msg);
+                        }
+                    },
+                    dataType: "Json"
+                })
+            } else {
+                //全不选
+                $.ajax({
+                    type: "post",
+                    url: "/cart/unselectAll",
+                    //获取操作结果
+                    success: function (data) {
+                        if (data.status == 0) {
+                            list(data);
+                        } else {
+                            alert("操作失败，" + data.msg);
+                        }
+                    },
+                    dataType: "Json"
+                })
+            }
+        }
+
+        //选中或不选单个复选框
+        function check1(th) {
+            var id = $(th).val();
+            if (th.checked) {
+                //选中
+                $.ajax({
+                    type: "post",
+                    url: "/cart/select/" + id,
+                    //获取操作结果
+                    success: function (data) {
+                        if (data.status == 0) {
+                            list(data);
+                        } else {
+                            alert("操作失败，" + data.msg);
+                        }
+                    },
+                    dataType: "Json"
+                })
+            } else {
+                //取消选中
+                $.ajax({
+                    type: "post",
+                    url: "/cart/unselect/" + id,
+                    //获取操作结果
+                    success: function (data) {
+                        if (data.status == 0) {
+                            list(data);
+                        } else {
+                            alert("操作失败，" + data.msg);
                         }
                     },
                     dataType: "Json"
@@ -187,142 +346,39 @@
         }
 
         /**
-         *
-         * 复选框操作
-         */
-
-        //全选和全不选
-        function check(th) {
-            if (th.checked) {
-                //全选
-                $("[name = cart]:checkbox").prop("checked", true);
-                //所有商品的总价变量
-                var sum = 0;
-                //遍历购物车商品，获得所有商品总价
-                for (var i = 0; i < $(".hh44").length; i++) {
-                    //获取此商品总价
-                    var m = $(".hh44:eq(" + i + ")").text();
-                    m = m.substring(0, m.length - 1);
-                    // 遍历计算总价和
-                    sum += parseInt(m);
-                }
-                //修改后的合计价钱显示到相应位置
-                $("#hj").html("<span class='sp5' id='hj'>合计：<span class='sp6'>" + sum + "&nbsp;</span>元</span>");
-                //判断合计是否为0,如果是则改变按钮样式
-                heji();
-                //计算选中的商品种类数
-                cc();
-            } else {
-                //全不选
-                $("[name = cart]:checkbox").prop("checked", false);
-                //修改后合计价钱为0，并显示到相应位置
-                $("#hj").html("<span class='sp5' id='hj'>合计：<span class='sp6'>0&nbsp;</span>元</span>");
-                //判断合计是否为0,如果是则改变按钮样式
-                heji();
-                //计算选中的商品种类数
-                cc();
-            }
-        }
-
-        //选中或不选单个复选框
-        function check1(th) {
-            //选中
-            if (th.checked) {
-                //判断是不是全部复选框都选中，如果是，选中全选框
-                var flag = true;
-                //遍历复选框，判断是否全部选中
-                for (var i = 0; i < $("[name = cart]:checkbox").length; i++) {
-                    //如果有一个未选中，则退出循环
-                    if ($("[name = cart]:checkbox:eq(" + i + ")").is(":checked") == false) {
-                        flag = false;
-                        break;
-                    }
-                }
-                //如果全部选中则选中全选框
-                if (flag == true) {
-                    $("[name = allCart]:checkbox").prop("checked", true);
-                }
-                //获取此商品总价
-                var m = $(th).parent().parent().next().next().next().next().find("h4").text();
-                m = m.substring(0, m.length - 1);
-                //获取合计价钱
-                var hj = $("#hj").text();
-                hj = hj.substring(3, hj.length - 1);
-                //修改后的价钱显示到相应位置
-                $("#hj").html("<span class='sp5' id='hj'>合计：<span class='sp6'>" + (parseInt(hj) + parseInt(m)) + "&nbsp;</span>元</span>");
-                //判断合计是否为0,如果是则改变按钮样式
-                heji();
-                //计算选中的商品种类数
-                cc();
-
-            } else {
-                //不选中全选框
-                $("[name = allCart]:checkbox").prop("checked", false);
-                //获取此商品总价
-                var m = $(th).parent().parent().next().next().next().next().find("h4").text();
-                m = m.substring(0, m.length - 1);
-                //获取合计价钱
-                var hj = $("#hj").text();
-                hj = hj.substring(3, hj.length - 1);
-                //修改后的价钱显示到相应位置
-                $("#hj").html("<span class='sp5' id='hj'>合计：<span class='sp6'>" + (parseInt(hj) - parseInt(m)) + "&nbsp;</span>元</span>");
-                //判断合计是否为0,如果是则改变按钮样式
-                heji();
-                //计算选中的商品种类数
-                cc();
-            }
-        }
-
-        /**
          * 点击结算按钮
          */
         function jiesuan() {
-            //声明商品编号数组变量
-            var cartCode = new Array();
-            //遍历复选框，添加选中的商品信息
-            for (var i = 0; i < $("[name = cart]:checkbox").length; i++) {
-                //如果选中，添加商品编号
-                if ($("[name = cart]:checkbox:eq(" + i + ")").is(":checked") == true) {
-                    cartCode.push($("[name = cart]:checkbox:eq(" + i + ")").val());
-                }
-            }
-            var hr = "ClearingServlet?codes=" + cartCode;
-            location.href = hr;
+            location.href = "dingdan.jsp";
+        }
 
-           /* //判断是否已经有订单，如果有，需要先处理之前订单
+        /**
+         * 退出登录
+         */
+        function logout() {
             $.ajax({
                 type: "post",
-                url: "/xiaomi/CheckOrderServlet",
-                data: {
-                    "code": 1
-                },
-                //获取操作结果
+                url: "/user/logout",
                 success: function (data) {
-                    //如果有未处理订单提示前往处理
-                    if (data == "false") {
-                        var t = confirm("您有未处理的订单，是否前往结算？")
-                        if (t == true) {
-                            var str = "ProcessOrderServlet";
-                            window.location.href = str;
-                        }
+                    if (data.status == 0) {
+                        location.href = "zhuye.jsp";
                     } else {
-                        //声明商品编号数组变量
-                        var cartCode = new Array();
-                        //遍历复选框，添加选中的商品信息
-                        for (var i = 0; i < $("[name = cart]:checkbox").length; i++) {
-                            //如果选中，添加商品编号
-                            if ($("[name = cart]:checkbox:eq(" + i + ")").is(":checked") == true) {
-                                cartCode.push($("[name = cart]:checkbox:eq(" + i + ")").val());
-                            }
-                        }
-                        var hr = "ClearingServlet?codes=" + cartCode;
-                        location.href = hr;
+                        alert("退出登录失败！"+data.msg);
                     }
                 },
-                dataType: "text"
+                dataType: "JSON"
             })
-*/
+        }
 
+        /**
+         * 点击我的订单
+         */
+        function orderList(){
+            if ("${current_user}" == "") {
+                location.href="denglu1.jsp";
+            }else {
+                location.href="orderList.jsp";
+            }
         }
     </script>
 </head>
@@ -341,9 +397,11 @@
             <div class="d1-2-1 dropdown">
                 <button class="bu1" id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="false">
-                    <span>
-                        <c:if test="${iflogin == 1}">${sessionScope.name}</c:if>
-                        <c:if test="${empty iflogin}">你好，请登录</c:if>
+                    <span id="dl">
+                        <c:if test="${!empty current_user}">${current_user.username}</c:if>
+                        <c:if test="${empty current_user}">
+                            你好，请登录
+                        </c:if>
                     </span>
                     <span class="caret"></span>
                 </button>
@@ -361,112 +419,66 @@
                         <a class="a2" href="#">小米账户</a>
                     </li>
                     <li>
-                        <a class="a2" href="LogOutServlet">退出登录</a>
+                        <a class="a2" onclick="logout()">退出登录</a>
                     </li>
                 </ul>
             </div>
             <div class="d1-4">
                 <span class="sp1">|</span>
-                <a class="a1" href="">我的订单</a>
+                <a class="a1" onclick="orderList()">我的订单</a>
             </div>
         </div>
     </div>
     <div class="row d2">
         <div class="col-lg-12 col-md-12 d2-1">
-            <table class="tab1">
-                <c:if test="${empty gwc}">
-                    <th>
-                        <h1 style="color: #949da8">您的购物车还是空的！</h1>
+            <table id="table1" class="tab1">
+
+                <tr class='tr1'>
+                    <th class='col-lg-2 col-md-2'>
+                        <div class='j-check'>
+                            <input type='checkbox' name='allCart' onclick='check(this)'/>
+                            <label><span style='display: block; width: 110px;'> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;全选</span></label>
+                        </div>
                     </th>
-                </c:if>
-                <c:if test="${!empty gwc}">
-                    <tr class="tr1">
-                        <th class="col-lg-2 col-md-2">
-                            <div class="j-check">
-                                <input type="checkbox" name="allCart" onclick="check(this)"/>
-                                <label><span style="display: block; width: 110px;"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;全选</span></label>
-                            </div>
-                        </th>
-                        <th class="col-lg-4 col-md-4">
-                            商品名称
-                        </th>
-                        <th>
-                            单价
-                        </th>
-                        <th class="col-lg-3 col-md-3">
-                            数量
-                        </th>
-                        <th class="col-lg-1 col-md-1">
-                            小计
-                        </th>
-                        <th class="col-lg-1 col-md-1">
-                            操作
-                        </th>
-                    </tr>
-                    <%--循环遍历购物车--%>
-                    <c:forEach items="${gwc}" var="car">
-                        <tr class="tr2">
-                            <td>
-                                    <%--复选框--%>
-                                <div class="i-check">
-                                    <input value="${car[5]}" type="checkbox" name="cart" onclick="check1(this)"/>
-                                    <label></label>
-                                    <img class="img1" src="img/gouwuche/gouwuche1-1.png"/>
-                                </div>
-                            </td>
-                            <td>
-                                <h4>${car[0]}&nbsp;${car[1]}&nbsp;${car[2]}</h4>
-                            </td>
-                            <td>
-                                <h4>${car[3]}元</h4>
-                            </td>
-                            <td>
-                                <div class="d2-1-1 row">
-                                    <button class="bu2 col-lg-3 col-md-3" value="${car[5]}" onclick="dec(this)"><span
-                                            class="sp2">-</span></button>
-                                    <div class="d2-1-1-1 col-lg-6 col-md-6">
-                                        <span class="sp2">${car[4]}</span>
-                                    </div>
-                                    <button class="bu2 col-lg-3 col-md-3" value="${car[5]}" onclick="add(this)"><span
-                                            class="sp2">+</span></button>
-                                    <button value="${car[6]}" style="display: none"></button>
-                                </div>
-                            </td>
-                            <td>
-                                <h4 class="hh44" id="hh4">${car[3] * car[4]}元</h4>
-                            </td>
-                            <td>
-                                <span class="sp2"><button class="bu3" onclick="del(this)"
-                                                          value="${car[5]}">×</button></span>
-                            </td>
-                        </tr>
-                    </c:forEach>
-                </c:if>
+                    <th class='col-lg-4 col-md-4'>
+                        商品名称
+                    </th>
+                    <th>
+                        单价
+                    </th>
+                    <th class='col-lg-3 col-md-3'>
+                        数量
+                    </th>
+                    <th class='col-lg-1 col-md-1'>
+                        小计
+                    </th>
+                    <th class='col-lg-1 col-md-1'>
+                        操作
+                    </th>
+                </tr>
             </table>
         </div>
 
     </div>
 
     <div class="d3 row">
-        <c:if test="${!empty gwc}">
-            <div class="d3-1">
-                <div class="col-lg-4 col-md-4 d3-1-1">
-                    <a class="a3" href="index.jsp">继续购物</a>
-                    <span class="sp3">&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    <span class="sp1">共<span class="sp4">&nbsp;${count}&nbsp;</span>种商品，已选择
-						<span id="sp4" class="sp4">0</span>&nbsp;种</span>
-                </div>
-                <div class="col-lg-4 col-md-4">
-                </div>
-                <div class="col-lg-2 col-md-2">
-                    <span class="sp5" id="hj">合计：<span class="sp6">0&nbsp;</span>元</span>
-                </div>
-                <div class="col-lg-2 col-md-2 d3-1-2 d3-1-2">
+        <div id="div1" class="d3-1">
+            <div class="col-lg-4 col-md-4 d3-1-1">
+                <a class="a3" href="zhuye.jsp">继续购物</a>
+                <span class="sp3">&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span class="sp1">共<span id="span1" class="sp4"></span>件商品，已选择
+						<span id="sp4" class="sp4">0</span>&nbsp;件</span>
+            </div>
+            <div class="col-lg-4 col-md-4">
+            </div>
+            <div class="col-lg-2 col-md-2">
+                <span class="sp5" id="hj">合计：<span id="span2" class="sp6">0</span>&nbsp;元</span>
+            </div>
+            <div class="col-lg-2 col-md-2 d3-1-2 d3-1-2">
                     <span id="sp7" class="sp77"><button id="bu4" class="bu44"
                                                         onclick="jiesuan()">去结算</button></span>
-                </div>
             </div>
-        </c:if>
+        </div>
         <div class="row d3-2">
             <div class="col-lg-4 col-md-4 d3-2-1">
             </div>

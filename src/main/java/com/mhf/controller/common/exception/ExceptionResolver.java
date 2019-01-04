@@ -17,8 +17,8 @@ public class ExceptionResolver implements HandlerExceptionResolver {
         ex.printStackTrace();
 
         ModelAndView modelAndView = new ModelAndView(new MappingJackson2JsonView());
-        modelAndView.addObject("status",ResponseCode.Error);
-        modelAndView.addObject("msg","接口调用出错");
+        modelAndView.addObject("status", ResponseCode.Error);
+        modelAndView.addObject("msg", "接口调用出错");
         modelAndView.addObject("data", ex.toString());
 
         return modelAndView;

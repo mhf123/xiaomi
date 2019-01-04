@@ -46,6 +46,10 @@ public class CartServiceImpl implements ICartService {
         if (product.getStatus() != Const.ProductStatusEnum.PRODUCT_ONLINE.getCode()) {
             return ServerResponse.serverResponseByError("商品已下架");
         }
+        //判断商品库存
+        if (product.getStock() < count) {
+            return ServerResponse.serverResponseByError("商品库存不足");
+        }
         // 2、通过productId、userId查询购物信息
         Cart cart = cartMapper.selectCartByUserIdAndProductId(userId, productId);
         if (cart == null) {
@@ -163,8 +167,10 @@ public class CartServiceImpl implements ICartService {
                     cartProductVo.setProductName(product.getName());
                     cartProductVo.setProductPrice(product.getPrice());
                     cartProductVo.setProductStatus(product.getStatus());
-                    cartProductVo.setProdyctStock(product.getStock());
+                    cartProductVo.setProductStock(product.getStock());
                     cartProductVo.setProductSubtitle(product.getSubtitle());
+                    cartProductVo.setProductDetail(product.getDetail());
+                    cartProductVo.setProductColor(product.getColor2());
 
                     //设置商品数量
                     int stock = product.getStock();

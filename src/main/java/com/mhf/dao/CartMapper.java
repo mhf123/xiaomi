@@ -71,11 +71,13 @@ public interface CartMapper {
 
     /**
      * 购物车选中、反选
+     *
      * @param check 1:选中 0:取消选中
      */
     int selectOrUnselectProduct(@Param(value = "userId") Integer userId,
                                 @Param(value = "productId") Integer productId,
                                 @Param(value = "check") Integer check);
+
     /**
      * 购物车商品数量
      */

@@ -74,4 +74,22 @@ public interface ProductMapper {
      * 根据商品id查询商品库存
      */
     Integer findStockById(Integer id);
+
+    /**
+     * 根据分类查找商品名称列表
+     */
+    List<Product> nameList(@Param("integerSet")Set<Integer> integerSet,
+                           @Param("orderBy")String orderBy);
+
+    /**
+     * 按需查询未下架的商品列表
+     */
+    List<Product> selectByDemand(@Param("productName")String productName,
+                                 @Param("detail")String detail,
+                                 @Param("color")String color);
+
+    /**
+     * 按关键字模糊查询未下架的商品名称列表
+     */
+    List<Product> selectSuggestListByKeyword(String keyword);
 }

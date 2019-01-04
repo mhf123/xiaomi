@@ -34,8 +34,8 @@ public class ProductManagerController {
      * 产品上下架
      */
     @RequestMapping(value = "/setSaleStatus/{productId}/{status}")
-    public ServerResponse setSaleStatus(@PathVariable("productId")Integer productId,
-                                        @PathVariable("status")Integer status) {
+    public ServerResponse setSaleStatus(@PathVariable("productId") Integer productId,
+                                        @PathVariable("status") Integer status) {
 
         ServerResponse serverResponse = iProductService.setSaleStatus(productId, status);
         return serverResponse;
@@ -55,10 +55,10 @@ public class ProductManagerController {
      * 查询商品列表
      */
     @RequestMapping(value = "/list")
-    public ServerResponse detail(@RequestParam(value = "pageNum",required = false,defaultValue = "1") Integer pageNum,
-                                 @RequestParam(value = "pageSize",required = false, defaultValue = "10") Integer pageSize) {
+    public ServerResponse detail(@RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
-        ServerResponse serverResponse = iProductService.list(pageNum,pageSize);
+        ServerResponse serverResponse = iProductService.list(pageNum, pageSize);
         return serverResponse;
     }
 
@@ -66,12 +66,12 @@ public class ProductManagerController {
      * 产品搜索
      */
     @RequestMapping(value = "/search")
-    public ServerResponse search(@RequestParam(value = "productId",required = false) Integer productId,
-                                 @RequestParam(value = "productName",required = false) String productName,
-                                 @RequestParam(value = "pageNum",required = false,defaultValue = "1") Integer pageNum,
-                                 @RequestParam(value = "pageSize",required = false, defaultValue = "10") Integer pageSize) {
+    public ServerResponse search(@RequestParam(value = "productId", required = false) Integer productId,
+                                 @RequestParam(value = "productName", required = false) String productName,
+                                 @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
-        ServerResponse serverResponse = iProductService.search(productId,productName,pageNum,pageSize);
+        ServerResponse serverResponse = iProductService.search(productId, productName, pageNum, pageSize);
         return serverResponse;
     }
 
@@ -79,12 +79,12 @@ public class ProductManagerController {
      * 图片上传
      */
     @RequestMapping(value = "/upload.do")
-    public ServerResponse upload(@RequestParam(value = "productId",required = false) Integer productId,
-                                 @RequestParam(value = "productName",required = false) String productName,
-                                 @RequestParam(value = "pageNum",required = false,defaultValue = "1") Integer pageNum,
-                                 @RequestParam(value = "pageSize",required = false, defaultValue = "10") Integer pageSize) {
+    public ServerResponse upload(@RequestParam(value = "productId", required = false) Integer productId,
+                                 @RequestParam(value = "productName", required = false) String productName,
+                                 @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
-        ServerResponse serverResponse = iProductService.search(productId,productName,pageNum,pageSize);
+        ServerResponse serverResponse = iProductService.search(productId, productName, pageNum, pageSize);
         return serverResponse;
     }
 }

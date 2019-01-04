@@ -1,18 +1,14 @@
 package com.mhf.service;
 
 import com.mhf.common.ServerResponse;
-import com.mhf.pojo.XiaomiOrder;
-import org.apache.ibatis.annotations.Param;
-import org.omg.PortableInterceptor.INACTIVE;
 
-import java.util.List;
 import java.util.Map;
 
 public interface IOrderService {
     /**
      * 创建订单接口
      */
-    ServerResponse createOrder(Integer userId,Integer shippingId);
+    ServerResponse createOrder(Integer userId, Integer shippingId);
 
     /**
      * 获取购物车中订单的商品明细接口
@@ -27,7 +23,7 @@ public interface IOrderService {
     /**
      * 订单列表接口
      */
-    ServerResponse list(Integer userId,Integer pageNum,Integer pageSize);
+    ServerResponse list(Integer userId, Integer pageNum, Integer pageSize, Integer status);
 
     /**
      * 订单详情接口
@@ -52,10 +48,20 @@ public interface IOrderService {
     /**
      * 支付宝回调接口
      */
-    ServerResponse alipayCallback(Map<String,String> map);
+    ServerResponse alipayCallback(Map<String, String> map);
 
     /**
      * 根据创建时间查询订单
      */
     void orderClose(String time);
+
+    /**
+     * 确认收货接口
+     *
+     * @param userId
+     * @param orderNo
+     * @return
+     */
+    ServerResponse confirm(Integer userId, Long orderNo);
+
 }

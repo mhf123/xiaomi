@@ -61,15 +61,16 @@ public class OrderController {
     }
 
     /**
-     * 订单列表
+     * 按状态查询订单列表
      */
     @RequestMapping(value = "list")
     public ServerResponse list(HttpSession session,
+                               @RequestParam(required = false) Integer status,
                                @RequestParam(required = false, defaultValue = "1") Integer pageNum,
                                @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
         User user = (User) session.getAttribute(Const.CURRENTUSER);
 
-        ServerResponse serverResponse = iOrderService.list(user.getId(), pageNum, pageSize);
+        ServerResponse serverResponse = iOrderService.list(user.getId(), pageNum, pageSize, status);
         return serverResponse;
     }
 
@@ -82,7 +83,6 @@ public class OrderController {
         ServerResponse serverResponse = iOrderService.detail(orderNo);
         return serverResponse;
     }
-
 
 
     /**
@@ -109,26 +109,25 @@ public class OrderController {
      * 支付宝回调应用服务器
      */
     @RequestMapping(value = "alipayCallback.do")
-    public ServerResponse  alipayCallback(HttpServletRequest request) {
-
-        Map<String,String[]> map = request.getParameterMap();
-        Map<String,String> requestMap = Maps.newHashMap();
+    public ServerResponse alipayCallback(HttpServletRequest request) {
+        Map<String, String[]> map = request.getParameterMap();
+        Map<String, String> requestMap = Maps.newHashMap();
         Iterator<String> it = map.keySet().iterator();
-        while (it.hasNext()){
+        while (it.hasNext()) {
             String key = it.next();
             String[] strArr = map.get(key);
             String value = "";
-            for (int i = 0;i < strArr.length;i++){
-                value = (i == strArr.length-1) ?value + strArr[i] : value + strArr[i] + ",";
+            for (int i = 0; i < strArr.length; i++) {
+                value = (i == strArr.length - 1) ? value + strArr[i] : value + strArr[i] + ",";
             }
-            requestMap.put(key,value);
+            requestMap.put(key, value);
         }
 
         // 1、支付宝验证签名
         try {
             requestMap.remove("sign_type");
             boolean b = AlipaySignature.rsaCheckV2(requestMap, Configs.getAlipayPublicKey(), "UTF-8", Configs.getSignType());
-            if (!b){
+            if (!b) {
                 return ServerResponse.serverResponseByError("非法请求，验证不通过");
             }
         } catch (AlipayApiException e) {
@@ -137,6 +136,16 @@ public class OrderController {
         // 处理业务逻辑
         ServerResponse serverResponse = iOrderService.alipayCallback(requestMap);
 
+        return serverResponse;
+    }
+
+    /**
+     * 确认收货
+     */
+    @RequestMapping(value = "/confirm/{orderNo}")
+    public ServerResponse confirm(HttpSession session, @PathVariable("orderNo") Long orderNo) {
+        User user = (User) session.getAttribute(Const.CURRENTUSER);
+        ServerResponse serverResponse = iOrderService.confirm(user.getId(),orderNo);
         return serverResponse;
     }
 

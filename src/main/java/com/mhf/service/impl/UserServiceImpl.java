@@ -36,6 +36,7 @@ public class UserServiceImpl implements IUserService {
         if (result == 0) {
             return ServerResponse.serverResponseByError("用户名不存在");
         }
+
         // 3、根据用户名/手机号-密码查找信息
         User user = userMapper.selectUserByUsernameOrPhoneAndPassword(username, MD5Utils.GetMD5Code(password));
 
@@ -44,6 +45,7 @@ public class UserServiceImpl implements IUserService {
         } else {
             user.setPassword("");
         }
+
         // 4、返回结果
         return ServerResponse.serverResponseBySuccess(user);
     }

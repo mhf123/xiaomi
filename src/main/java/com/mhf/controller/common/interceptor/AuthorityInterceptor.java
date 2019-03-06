@@ -23,20 +23,19 @@ public class AuthorityInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         HttpSession session = request.getSession();
-        User user = (User) session.getAttribute(Const.CURRENTUSER);
+        User user = (User) session.getAttribute(Const.CURRENTMANAGERUSER);
 
         if (user == null) {
             Cookie[] cookies = request.getCookies();
             if (cookies != null && cookies.length > 0) {
                 for (Cookie cookie : cookies) {
                     String name = cookie.getName();
-                    if (name.equals(Const.AUTOLOGINCOOKIE)) {
+                    if (name.equals(Const.MANAGERAUTOLOGINCOOKIE)) {
                         String autoLoginToken = cookie.getValue();
                         //根据token查询用户信息
                         user = iUserService.findUserByToken(autoLoginToken);
-                        if (user != null) {
-                            session.setAttribute(Const.CURRENTUSER, user);
-
+                        if (user != null && user.getRole() == Const.RoleEnum.ROLE_ADMIN.getCode()) {
+                            session.setAttribute(Const.CURRENTMANAGERUSER, user);
                         }
                         break;
                     }
@@ -44,7 +43,7 @@ public class AuthorityInterceptor implements HandlerInterceptor {
             }
         }
         //重构HttpServletResponse
-        if (user == null || user.getRole() != Const.RoleEnum.ROLE_ADMIN.getCode()) {
+        if (user == null) {
             response.reset();
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json;charset=UTF-8");

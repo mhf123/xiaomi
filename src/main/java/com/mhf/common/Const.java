@@ -1,11 +1,19 @@
 package com.mhf.common;
 
 public class Const {
+    //普通用户ssession
     public static final String CURRENTUSER = "current_user";
+
+    //管理员session
+    public static final String CURRENTMANAGERUSER = "current_manager_user";
 
     public static final String TRADE_SUCCESS = "TRADE_SUCCESS";
 
+    //普通用户Cookie
     public static final String AUTOLOGINCOOKIE = "autoLoginCookie";
+
+    //管理员Cookie
+    public static final String MANAGERAUTOLOGINCOOKIE = "managerAutoLoginCookie";
 
     public enum ResponseCodeEnum {
         NEED_LOGIN(2, "需要登录"),
@@ -202,8 +210,8 @@ public class Const {
 
     public enum ProductStatusEnum {
         PRODUCT_ONLINE(1, "在售"),
-        PRODUCT_OFFLINE(2, "下架"),
-        PRODUCT_DELETE(3, "删除");
+        PRODUCT_OFFLINE(2, "已下架"),
+        PRODUCT_DELETE(3, "已删除");
         private int code;
         private String desc;
 
@@ -226,6 +234,15 @@ public class Const {
 
         public void setDesc(String desc) {
             this.desc = desc;
+        }
+
+        public static ProductStatusEnum condeOf(Integer code) {
+            for (ProductStatusEnum productStatusEnum : values()) {
+                if (code == productStatusEnum.getCode()) {
+                    return productStatusEnum;
+                }
+            }
+            return null;
         }
 
     }

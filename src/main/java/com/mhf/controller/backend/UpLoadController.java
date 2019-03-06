@@ -28,7 +28,7 @@ public class UpLoadController {
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse upload1(@RequestParam(value = "upload_file", required = false) MultipartFile[] fileArray) {
+    public ServerResponse upload1(@RequestParam(value = "file", required = false) MultipartFile[] fileArray) {
         String path = PropertiesUtils.readByKey("imagePath");
         List<Map<String,String>> mapList = Lists.newArrayList();
         for (MultipartFile file : fileArray) {
@@ -41,6 +41,8 @@ public class UpLoadController {
             map = iProductService.upload(file, path);
             mapList.add(map);
         }
+
+        //System.out.println(fileArray[0]);
         return ServerResponse.serverResponseBySuccess(mapList);
     }
 

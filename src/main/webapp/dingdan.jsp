@@ -98,7 +98,7 @@
                                 + receiverMobile
                                 + "</span> <span class=\"span3\">"
                                 + data.data.list[i].receiverProvince + ' ' + data.data.list[i].receiverCity + ' ' + data.data.list[i].receiverDistrict + ' ' + data.data.list[i].receiverAddress
-                                + "</span> </div> <span class='sp15' onclick='deladdrO(this)'>删除</span> </button>";
+                                + "</span> </div> <span class='sp20' onclick='deladdrO(this)'>删除</span> </button>";
                         }
                         str += " <span id=\"span4\" class=\"sp2\"><button class=\"bu2\" data-toggle=\"modal\" data-target=\"#myModal\"><div class=\"d2-1-1-1\"><span class=\"sp1\">+</span></div>添加新地址</button></span>"
                         $("#div5").html(str);
@@ -119,7 +119,7 @@
             $(".bu7").css("border-color", "#DCDCDC");
             $(th).css("border-color", "#FF6700");
             //显示删除按钮
-            $(".sp15").hide();
+            $(".sp20").hide();
             $(th).children("div").next().show();
             //获取地址id
             addrid = $(th).val();
@@ -154,7 +154,7 @@
                                                 + data.data.list[i].receiverMobile
                                                 + "</span> <span class=\"span3\">"
                                                 + data.data.list[i].receiverProvince + ' ' + data.data.list[i].receiverCity + ' ' + data.data.list[i].receiverDistrict + ' ' + data.data.list[i].receiverAddress
-                                                + "</span> </div> <span class='sp15' onclick='deladdrO(this)'>删除</span> </button>";
+                                                + "</span> </div> <span class='sp20' onclick='deladdrO(this)'>删除</span> </button>";
                                         }
                                         str += " <span id=\"span4\" class=\"sp2\"><button class=\"bu2\" data-toggle=\"modal\" data-target=\"#myModal\"><div class=\"d2-1-1-1\"><span class=\"sp1\">+</span></div>添加新地址</button></span>"
                                         $("#div5").html(str);
@@ -792,7 +792,7 @@
             <div class="modal-content">
                 <div class="d11" id="div3"><span class="sp14" id="span2"></span></div>
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <button type="button" class="close close1" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title" id="myModalLabel">添加收货地址</h4>
                 </div>
                 <div class="modal-body">

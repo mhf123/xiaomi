@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>商品编辑</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+
+    <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/addProduct.css">
+    <script src="../plugins/jquery/jquery-2.2.3.min.js"></script>
+    <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+
+    <script src="../js/angular.min.js"></script>
+
+    <script type="text/javascript">
+
+        //定义模块
+        var app = angular.module('myApp', []);
+        //定义控制器
+        app.controller('addProduct', function ($scope, $http) {
+            //获取用户信息
+            $scope.findCategory = function () {
+                $http.post('/manager1/category/getCategory/9').success(
+                    function (response) {
+                        if (response.status == 0) {
+                            $scope.category = response.data;
+                        } else {
+                            alert("获取分类信息失败！" + response.msg);
+                        }
+                    }
+                )
+            };
+        });
+
+        //显示颜色
+        function color() {
+            var color = $("#color1").val();
+            $("#showColor").css("background-color", color);
+        }
+
+        //提交商品
+        function submitProduct() {
+            //获取商品信息
+            var categoryId = $("#category").val();
+            var name = $("#name").val();
+            var subtitle = $("#subtitle").val();
+            var price = $("#price").val();
+            var stock = $("#stock").val();
+            var detail = $("#detail").val();
+            var color1 = $("#color1").val();
+            var color2 = $("#color2").val();
+            //验证格式
+            if (categoryId == "" || name == "" || subtitle == "" || price == "" || stock == "" || detail == "" || color1 == "" || color2 == "") {
+                alert("请补全商品信息！");
+            }else if(price < 0 || stock < 0){
+                alert("请输入合法的商品信息！");
+            } else if (imgFile.length != 3) {
+                alert("请选择三张商品图片！");
+            } else {
+                //上传图片
+                var formdata = new FormData();
+                for (var i = 0; i < imgFile.length; i++) {
+                    formdata.append("file", imgFile[i]);
+                }
+                if (upUrl && formdata) {
+                    $.ajax({
+                        type: "post",
+                        url: upUrl,
+                        async: true,
+                        data: formdata,
+                        traditional: true,
+                        processData: false,
+                        contentType: false,
+                        success: function (pictureData) {
+                            if (pictureData.status == 0) {
+                                //添加图片地址
+                                var subImages = pictureData.data[0].url;
+                                for (var j = 1; j < pictureData.data.length; j++) {
+                                    subImages += "," + pictureData.data[j].url;
+                                }
+                                //向后台添加商品
+                                $.ajax({
+                                    type: "post",
+                                    url: "/manager1/product/saveOrUpdate",
+                                    data: {
+                                        "categoryId": categoryId,
+                                        "name": name,
+                                        "subtitle": subtitle,
+                                        "price": price,
+                                        "stock": stock,
+                                        "detail": detail,
+                                        "color1": color1,
+                                        "color2": color2,
+                                        "subImages": subImages
+                                    },
+                                    success: function (productData) {
+                                        if (productData.status == 0) {
+                                            alert("添加商品成功！");
+                                        } else {
+                                            alert("添加商品失败！" + productData.msg);
+                                        }
+                                    },
+                                    dataType: 'JSON'
+                                });
+                            } else {
+                                alert("图片上传失败！" + pictureData.msg);
+                            }
+                        },
+                        dataType: 'JSON'
+                    });
+                }
+            }
+        }
+
+    </script>
+
+</head>
+
+<body class="hold-transition skin-red sidebar-mini" ng-app="myApp" ng-controller="addProduct" ng-init="findCategory()">
+
+<!-- 正文区域 -->
+<section class="content">
+
+    <div class="box-body">
+
+        <!--tab页-->
+        <div class="nav-tabs-custom">
+
+            <!--tab头-->
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a href="#home" data-toggle="tab">商品基本信息</a>
+                </li>
+            </ul>
+            <!--tab头/-->
+
+            <!--tab内容-->
+            <div class="tab-content">
+
+                <!--表单内容-->
+                <div class="tab-pane active" id="home">
+                    <div class="row data-type">
+                        <div class="col-md-2 title">商品分类</div>
+                        <div class="col-md-10 data">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <select class="form-control" style="width: 100px" id="category" ng-cloak>
+                                            <option ng-repeat="cate in category" value="{{cate.id}}">
+                                                {{cate.name}}
+                                            </option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </div>
+
+
+                        <div class="col-md-2 title">商品名称</div>
+                        <div class="col-md-10 data">
+                            <input id="name" type="text" class="form-control" placeholder="商品名称" value="">
+                        </div>
+
+                        <div class="col-md-2 title">品牌</div>
+                        <div class="col-md-10 data">
+                            <select class="form-control" style="width: 100px">
+                                <option value="小米">小米</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-2 title">副标题</div>
+                        <div class="col-md-10 data">
+                            <input id="subtitle" type="text" class="form-control" placeholder="副标题" value="">
+                        </div>
+
+                        <div class="col-md-2 title">价格</div>
+                        <div class="col-md-10 data">
+                            <div class="input-group">
+                                <span class="input-group-addon">¥</span>
+                                <input id="price" type="number" class="form-control" placeholder="价格" value="">
+                            </div>
+                        </div>
+
+                        <!-- <div class="col-md-2 title editer">商品介绍</div>
+                         <div class="col-md-10 data editer">
+                             <textarea name="content" style="width:800px;height:400px;visibility:hidden;"></textarea>
+                         </div>-->
+
+                        <div class="col-md-2 title">版本</div>
+                        <div class="col-md-10 data">
+                            <input id="detail" type="text" class="form-control" placeholder="版本" value="">
+                        </div>
+
+                        <div class="col-md-2 title rowHeight2x">颜色</div>
+                        <div class="col-md-10 data rowHeight2x">
+                            <div class="d1">
+                                <input id="color1" type="text" class="form-control" placeholder="颜色代码"
+                                       onkeyup="color()"/>
+                                <div class="showColor" id="showColor"></div>
+                            </div>
+                            <input id="color2" type="text" class="form-control" placeholder="颜色名称"/>
+                        </div>
+
+                        <div class="col-md-2 title">库存</div>
+                        <div class="col-md-10 data">
+                            <input id="stock" type="number" class="form-control" placeholder="库存" value="">
+                        </div>
+
+                        <div class="col-md-2 title rowHeight3x">图片</div>
+                        <div class="col-md-10 data rowHeight3x">
+                            <div style="width: 100%;height: 100px;position: relative;">
+                                <div id="upBox">
+                                    <button class="btn btn-default" id="inputBox">
+                                        <input type="file" title="请选择图片" id="file" onchange="picture()" multiple/>
+                                        选择图片
+                                    </button>
+                                    <span style="color: gray">请选择三张商品图片</span>
+                                    <div id="imgBox">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="btn-toolbar list-toolbar" style="padding-left: 20px">
+        <button class="btn btn-primary" onclick="submitProduct()">&emsp;提交&emsp;</button>
+        <button type="button" class="btn btn-default" title="清空" onclick="window.location.reload();"><i class="fa fa-refresh"></i> 清空</button>
+    </div>
+
+</section>
+
+</body>
+<script type="text/javascript">
+    /**
+     * 图片上传
+     */
+    var imgSrc = []; //图片路径
+    var imgFile = []; //文件流
+    var imgName = []; //图片名字
+    var upUrl; //图片上传url
+    function picture() {
+        imgUpload({
+            inputId: 'file', //input框id
+            imgBox: 'imgBox', //图片容器id
+            upUrl: '/manager1/product/upload' //提交地址
+        })
+    }
+
+    //选择图片
+    function imgUpload(obj) {
+        var oInput = '#' + obj.inputId;
+        var imgBox = '#' + obj.imgBox;
+        upUrl = obj.upUrl;
+        // $(oInput).on("change", function () {
+        var fileImg = $(oInput)[0];
+        var fileList = fileImg.files;
+        for (var i = 0; i < fileList.length; i++) {
+            var imgSrcI = getObjectURL(fileList[i]);
+            imgName.push(fileList[i].name);
+            imgSrc.push(imgSrcI);
+            imgFile.push(fileList[i]);
+        }
+        addNewContent(imgBox);
+
+        // })
+
+    }
+
+    //图片展示
+    function addNewContent(obj) {
+        $(obj).html("");
+        for (var a = 0; a < imgSrc.length; a++) {
+            var oldBox = $(obj).html();
+            $(obj).html(oldBox + '<div class="imgContainer"><img title=' + imgName[a] + ' alt=' + imgName[a] + ' src=' + imgSrc[a] + ' onclick="imgDisplay(this)"><p onclick="removeImg(this,' + a + ')" class="imgDelete">删除</p></div>');
+        }
+    }
+
+    //删除
+    function removeImg(obj, index) {
+        imgSrc.splice(index, 1);
+        imgFile.splice(index, 1);
+        imgName.splice(index, 1);
+        var boxId = "#" + $(obj).parent('.imgContainer').parent().attr("id");
+        addNewContent(boxId);
+    }
+
+    //图片灯箱
+    function imgDisplay(obj) {
+        var src = $(obj).attr("src");
+        var imgHtml = '<div style="width: 100%;height: 100%;overflow: auto;background: rgba(0,0,0,0.5);text-align: center;position: fixed;top: 0;left: 0;z-index: 1000;"><img src=' + src + ' style="margin-top: 100px; height:60%; margin-bottom: 100px;"/><p style="font-size: 50px;position: fixed;top: 30px;right: 30px;color: white;cursor: pointer;" onclick="closePicture(this)">×</p></div>'
+        $('body').append(imgHtml);
+    }
+
+    //关闭
+    function closePicture(obj) {
+        $(obj).parent("div").remove();
+    }
+
+    //图片预览路径
+    function getObjectURL(file) {
+        var url = null;
+        if (window.createObjectURL != undefined) { // basic
+            url = window.createObjectURL(file);
+        } else if (window.URL != undefined) { // mozilla(firefox)
+            url = window.URL.createObjectURL(file);
+        } else if (window.webkitURL != undefined) { // webkit or chrome
+            url = window.webkitURL.createObjectURL(file);
+        }
+        return url;
+    }
+</script>
+
+
+</html>

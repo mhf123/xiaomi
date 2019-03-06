@@ -127,7 +127,6 @@
                         url: "/user/loginByPhone/" + val1,
                         dataType: "json",
                         success: function (data) {
-                            alert(1)
                             if (data.status == 1) {
                                 alert(data.msg + "！");
                             } else if (data.status == 0) {

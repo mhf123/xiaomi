@@ -133,8 +133,11 @@
         update_time, sub_images, detail ,color1 ,color2
         from product
         <where>
+            <if test="status != null">
+                status = #{status}
+            </if>
             <if test="productId != null">
-                id = #{productId}
+                and id = #{productId}
             </if>
             <if test="productName != null">
                 and name like #{productName}
@@ -158,15 +161,16 @@
                 and name like #{keyword}
             </if>
         </where>
+        group by name
 
     </select>
-    <select id="selectByName" parameterType="string" resultType="int">
+    <select id="selectByNameAndDetailAndColor" parameterType="com.mhf.pojo.Product" resultType="int">
         <!--
-          根据商品名字查询
+          根据商品name、detail、color查询
         -->
         select count(1)
         from product
-        where name = #{name}
+        where name = #{name} and detail = #{detail} and color2 = #{color2}
     </select>
 
     <select id="findStockById" parameterType="int" resultType="int">
@@ -181,7 +185,8 @@
 
     <!-- 根据分类查找商品名称列表 -->
     <select id="nameList" parameterType="map" resultMap="BaseResultMap">
-        select id,name,main_image
+        select  id, category_id, name, subtitle, main_image, price, stock, status, create_time,
+        update_time, sub_images, detail ,color1 ,color2
         from product
         <where>
             <if test="integerSet != null and integerSet.size > 0">

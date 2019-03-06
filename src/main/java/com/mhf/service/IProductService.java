@@ -30,7 +30,7 @@ public interface IProductService {
     /**
      * 后台-搜索商品
      */
-    ServerResponse search(Integer productId, String productName, Integer pageNum, Integer pageSize);
+    ServerResponse search(Integer productId, String productName, Integer status, Integer pageNum, Integer pageSize);
 
     /**
      * 图片上传

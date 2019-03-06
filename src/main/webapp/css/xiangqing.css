@@ -81,6 +81,7 @@
 }
 
 .d4-2-2 {
+    background-color: #FFFFFF;
     margin-top: 20px;
     height: 100px;
     border: 1px #DBDBDB solid;
@@ -102,14 +103,15 @@
     text-align: center;
     padding-top: 2px;
     border: 1px #DBDBDB solid;
+    transition-duration: 0.1s;
+}
+
+.d4-2-3-1:active{
+    box-shadow:0px 1px 2px 1px #DBDBDB inset;
 }
 
 .d4-2-3-1:FOCUS {
     outline: none;
-}
-
-.d4-2-3-1:hover {
-    border: 1px #FF6700 solid;
 }
 
 .d4-2-4 {
@@ -130,10 +132,11 @@
     align-items: center;
     justify-content: center;
     background-color: white;
+    transition-duration: 0.1s;
 }
 
-.d4-2-4-1:hover {
-    border-color: #FF6700;
+.d4-2-4-1:active{
+    box-shadow:0px 1px 2px 1px #DBDBDB inset;
 }
 
 .d4-2-4-1:focus {
@@ -246,6 +249,12 @@
     background-color: #F5F5F5;
 }
 
+.d11 {
+    position: absolute;
+    top: 20px;
+    left: 400px
+}
+
 .a1 {
     cursor: pointer;
     text-decoration: none;
@@ -261,7 +270,7 @@
 
 .a2 {
     color: #A6A6A6;
-    cursor:pointer;
+    cursor: pointer;
     transition-duration: 0.3s;
 }
 
@@ -295,6 +304,7 @@
 .a5 {
     color: #FF6700;
     text-decoration: none;
+    cursor: pointer;
 }
 
 .a5:hover {
@@ -425,6 +435,46 @@
     outline: none;
 }
 
+.bu5 {
+    width: 150px;
+    height: 40px;
+    margin-left: 15px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid;
+    color: white;
+    background-color: #9D9D9D;
+    transition-duration: 0.3s;
+}
+
+.bu5:hover {
+    background-color: #757575;
+}
+
+.bu5:focus {
+    outline: none;
+}
+
+.bu6 {
+    width: 150px;
+    height: 40px;
+    margin-left: 15px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid;
+    color: white;
+    background-color: #FF6700;
+    transition-duration: 0.3s;
+}
+
+.bu6:hover {
+    background-color: #F25807;
+}
+
+.bu6:focus {
+    outline: none;
+}
+
 .in1 {
     height: 50px;
     width: 200px;
@@ -475,18 +525,54 @@
     z-index: 1;
 }
 
-#div3{
+#div3 {
     display: flex;
     float: right;
     margin-right: 30px;
 }
 
-#dl{
+#dl {
     display: inline-block;
     max-width: 94px;
-    word-break:keep-all;      /* 不换行 */
-    white-space:nowrap;       /* 不换行 */
-    overflow:hidden;          /* 内容超出宽度时隐藏超出部分的内容 */
-    text-overflow:ellipsis;
+    word-break: keep-all; /* 不换行 */
+    white-space: nowrap; /* 不换行 */
+    overflow: hidden; /* 内容超出宽度时隐藏超出部分的内容 */
+    text-overflow: ellipsis;
     float: left;
+}
+
+.info select {
+    color: #3c3c3c;
+    border: 1px #A9A9A9 solid;
+    background: #FFFFFF;
+}
+
+.info {
+    margin: 5px;
+    text-align: center;
+}
+
+.info #show {
+    color: #FF6700;
+}
+
+.dz1 {
+    width: 170px;
+    height: 35px;
+    margin-bottom: 10px;
+    border: 1px #d0d2d1 solid !important;
+}
+
+.dz1:focus {
+    border: 1px #FF6700 solid !important;
+    outline: none;
+}
+
+.sp14 {
+    color: red;
+}
+
+.close1:focus {
+    color: #FF6700;
+    outline: none;
 }

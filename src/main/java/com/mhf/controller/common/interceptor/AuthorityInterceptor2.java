@@ -32,7 +32,7 @@ public class AuthorityInterceptor2 implements HandlerInterceptor {
                         String autoLoginToken = cookie.getValue();
                         //根据token查询用户信息
                         user = iUserService.findUserByToken(autoLoginToken);
-                        if (user != null) {
+                        if (user != null && user.getRole() == Const.RoleEnum.ROLE_CUS.getCode()) {
                             session.setAttribute(Const.CURRENTUSER, user);
                         }
                         break;

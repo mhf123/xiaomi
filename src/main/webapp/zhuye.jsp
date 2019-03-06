@@ -185,6 +185,17 @@
         }
 
         /**
+         * 搜索
+         */
+        function search(th) {
+            var searchContent = $(th).prev().val();
+            if (searchContent != "") {
+                location.href = "category.jsp?searchContent=" + encodeURI(searchContent);
+            }
+        }
+
+
+        /**
          * 跳转商品详情
          */
         function xiangqing(th) {
@@ -227,12 +238,19 @@
         /**
          * 点击我的订单
          */
-        function orderList(){
+        function orderList() {
             if ("${current_user}" == "") {
-                location.href="denglu1.jsp";
-            }else {
-                location.href="orderList.jsp";
+                location.href = "denglu1.jsp";
+            } else {
+                location.href = "orderList.jsp";
             }
+        }
+
+        /**
+         * 点击轮播图
+         */
+        function onxq(name) {
+            location.href = "xiangqing.jsp?name=" + name;
         }
     </script>
 </head>
@@ -321,13 +339,11 @@
         </div>
         <div class="d2-2">
             <div class="d2-2-1">
-                <form>
-                    <input class="in1" id="search" type="text" onkeyup="fsearch(this)" placeholder="小米8 小米MIX 2s">
-                    <button class="bu4" type="submit">
-                        <span class="glyphicon glyphicon-search"></span>
-                    </button>
-                    <div id="div1"></div>
-                </form>
+                <input class="in1" id="search" type="text" onkeyup="fsearch(this)" placeholder="小米8 小米MIX 2s">
+                <button class="bu4" onclick="search(this)">
+                    <span class="glyphicon glyphicon-search"></span>
+                </button>
+                <div id="div1"></div>
             </div>
         </div>
     </div>
@@ -345,13 +361,13 @@
             </ol>
             <div class="carousel-inner">
                 <div class="item active d3-2-1-1">
-                    <a href=""><img class="img3" src="img/zhuye/zhuye2-1.png" alt="First slide"></a>
+                    <a class="a8" onclick="onxq('小米8')"><img  class="img3" src="img/zhuye/zhuye2-1.jpg" alt="First slide"></a>
                 </div>
                 <div class="item d3-2-1-1">
-                    <a href=""><img class="img3" src="img/zhuye/zhuazye2-2.png" alt="Second slide"></a>
+                    <a class="a8" onclick="onxq('小米Play')"><img class="img3" src="img/zhuye/zhuye2-2.jpg" alt="Second slide"></a>
                 </div>
                 <div class="item d3-2-1-1">
-                    <a href=""><img class="img3" src="img/zhuye/zhuye2-3.png" alt="Third slide"></a>
+                    <a class="a8" onclick="onxq('小米笔记本Air')"><img class="img3" src="img/zhuye/zhuye2-3.jpg" alt="Third slide"></a>
                 </div>
             </div>
             <a class="left carousel-control" href="#myCarousel" role="button"
@@ -421,7 +437,7 @@
             <span class="glyphicon glyphicon-headphones"></span>
         </a>
         <a class="a7 tooltip-test" data-toggle="tooltip" data-placement="left"
-           title="购物车" href="">
+           title="购物车" href="gouwuche.jsp">
             <span class="glyphicon glyphicon-shopping-cart"></span>
         </a>
     </div>

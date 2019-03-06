@@ -1,4 +1,8 @@
 
+.d77{
+    background-color: white;
+}
+
 .d7 {
     display: flex;
     height: 200px;
@@ -47,7 +51,7 @@
     color: #424242;
 }
 
-.sp12 {
+.sp15 {
     font-size: 30px;
     color: #ADADAD;
     font-family: "楷体";

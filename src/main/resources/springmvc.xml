@@ -16,7 +16,7 @@
     </context:component-scan>
 
 
-    <!--配置控制前可以返回json格式的数据-->
+    <!--配置控制器可以返回json格式的数据-->
     <mvc:annotation-driven>
         <mvc:message-converters>
             <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
@@ -30,6 +30,18 @@
     </mvc:annotation-driven>
 
     <!--视图解析器-->
+    <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <property name="templateLoaderPath">
+            <value>/html/</value>
+        </property>
+    </bean>
+
+    <bean id="htmlViewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <property name="prefix" value="/admin/"/>
+        <property name="suffix" value=".html"/>
+        <property name="order" value="0"></property>
+        <property name="contentType" value="text/html;charset=UTF-8"></property>
+    </bean>
     <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
         <property name="prefix" value="/WEB-INF/jsp/"/>
@@ -57,8 +69,7 @@
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
             <mvc:exclude-mapping path="/product/**"></mvc:exclude-mapping>
-            <mvc:exclude-mapping path="/manager1/user/login/**"></mvc:exclude-mapping>
-            <mvc:exclude-mapping path="/manager1/category/getCategory/**"></mvc:exclude-mapping>
+            <mvc:exclude-mapping path="/manager1/**"></mvc:exclude-mapping>
             <mvc:exclude-mapping path="/user/login/**"></mvc:exclude-mapping>
             <mvc:exclude-mapping path="/user/register"></mvc:exclude-mapping>
             <mvc:exclude-mapping path="/user/getQuestion/**"></mvc:exclude-mapping>
@@ -75,5 +86,5 @@
         </mvc:interceptor>
     </mvc:interceptors>
 
-
+    <mvc:default-servlet-handler/>
 </beans>

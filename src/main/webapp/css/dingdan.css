@@ -424,7 +424,7 @@ textarea:focus {
     outline: none;
 }
 
-.sp15 {
+.sp20 {
     position: relative;
     color: #FF6700;
     bottom: 20px;
@@ -432,7 +432,7 @@ textarea:focus {
     display: none;
 }
 
-.sp15:hover {
+.sp20:hover {
     color: red;
 }
 
@@ -482,4 +482,10 @@ textarea:focus {
     overflow: hidden; /* 内容超出宽度时隐藏超出部分的内容 */
     text-overflow: ellipsis;
     float: left;
+}
+
+
+.close1:focus{
+    color: #FF6700;
+    outline: none;
 }

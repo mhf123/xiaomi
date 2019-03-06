@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>商品管理</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/pagination.css">
+    <script src="../plugins/jquery/jquery-2.2.3.min.js"></script>
+    <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../js/angular.min.js"></script>
+    <script src="../js/pagination.js"></script>
+    <style>
+        .inputs {
+            width: 15px;
+            height: 15px;
+        }
+
+        .selectStatus {
+            display: inline;
+            width: 150px;
+            height: 33px
+        }
+    </style>
+
+    <script>
+        //搜索关键字和商品状态全局变量
+        var productName;
+        var productStatus;
+        //修改商品状态结果
+        var changeStatusResult;
+        //定义模块
+        var app = angular.module('myApp', ['pagination']);
+        //var batchChangeStatus,changeStatus,changeStatusUtil;
+        //定义控制器
+        app.controller('manageProduct', function ($scope, $http) {
+            //获取用户信息
+            $scope.getProductList = function (pageNum, pageSize, productName, status) {
+                //搜索或筛选切换到第一页
+                if (pageNum == undefined) {
+                    pageNum = 1;
+                }
+
+                if (productName == undefined && status == undefined) {
+                    $http.post('/manager1/product/list?pageNum=' + pageNum + '&pageSize=' + pageSize).success(
+                        function (response) {
+                            if (response.status == 0) {
+                                $scope.productList = response.data.list;
+                                $scope.paginationConf.totalItems = response.data.pageInfo.total;
+                            } else {
+                                alert("获取商品信息失败！" + response.msg);
+                            }
+                        }
+                    )
+                } else if (productName == undefined && status != undefined) {
+                    $http.post('/manager1/product/search?pageNum=' + pageNum + '&status=' + status + '&pageSize=' + pageSize).success(
+                        function (response) {
+                            if (response.status == 0) {
+                                $scope.productList = response.data.list;
+                                $scope.paginationConf.totalItems = response.data.pageInfo.total;
+                            } else {
+                                alert("获取商品信息失败！" + response.msg);
+                            }
+                        }
+                    )
+                } else if (productName != undefined && status == undefined) {
+                    $http.post('/manager1/product/search?productName=' + productName + '&pageSize=' + pageSize + '&pageNum=' + pageNum).success(
+                        function (response) {
+                            if (response.status == 0) {
+                                $scope.productList = response.data.list;
+                                $scope.paginationConf.totalItems = response.data.pageInfo.total;
+                            } else {
+                                alert("获取商品信息失败！" + response.msg);
+                            }
+                        }
+                    )
+                } else if (productName != undefined && status != undefined) {
+                    $http.post('/manager1/product/search?productName=' + productName + '&status=' + status + '&pageSize=' + pageSize + '&pageNum=' + pageNum).success(
+                        function (response) {
+                            if (response.status == 0) {
+                                $scope.productList = response.data.list;
+                                $scope.paginationConf.totalItems = response.data.pageInfo.total;
+                            } else {
+                                alert("获取商品信息失败！" + response.msg);
+                            }
+                        }
+                    )
+                } else {
+                    alert("参数错误！");
+                }
+
+            };
+            //重新加载列表 数据
+            $scope.reloadList = function () {
+                if (productName == "") {
+                    productName = undefined
+                }
+                if (productStatus == "") {
+                    productStatus = undefined;
+                }
+                //切换页码
+                $scope.getProductList($scope.paginationConf.currentPage, $scope.paginationConf.itemsPerPage, productName, productStatus);
+            }
+            //分页控件配置
+            $scope.paginationConf = {
+                currentPage: 1,
+                totalItems: 10,
+                itemsPerPage: 20,
+                perPageOptions: [10, 20, 30, 40, 50],
+                onChange: function () {
+                    $scope.reloadList();//重新加载
+                }
+            };
+            //分页
+            $scope.findPage = function (page, rows) {
+                $http.get('../brand/findPage.do?page=' + page + '&rows=' + rows).success(
+                    function (response) {
+                        $scope.list = response.rows;
+                        $scope.paginationConf.totalItems = response.total;//更新总记录数
+                    }
+                );
+            }
+
+            //选择商品状态
+            selectStatus = function (th) {
+                //获取商品状态
+                productStatus = $(th).val();
+                //获取搜索框内容
+                productName = $("#search").val();
+
+                if (productName == "") {
+                    if (productStatus == "") {
+                        $scope.getProductList(undefined, $scope.paginationConf.itemsPerPage);
+                    } else {
+                        $scope.getProductList(undefined, $scope.paginationConf.itemsPerPage, undefined, productStatus);
+                    }
+                } else {
+                    if (productStatus == "") {
+                        $scope.getProductList(undefined, $scope.paginationConf.itemsPerPage, productName, undefined);
+                    } else {
+                        $scope.getProductList(undefined, $scope.paginationConf.itemsPerPage, productName, productStatus);
+                    }
+                }
+            }
+
+            //搜索
+            search = function () {
+                //获取商品状态
+                productStatus = $("#selectStatus").val();
+                //获取搜索框内容
+                productName = $("#search").val();
+
+                //alert(productStatus + productName)
+                if (productName == "") {
+                    if (productStatus == "") {
+                        $scope.getProductList(undefined, $scope.paginationConf.itemsPerPage);
+                    } else {
+                        $scope.getProductList(undefined, $scope.paginationConf.itemsPerPage, undefined, productStatus);
+                    }
+                } else {
+                    if (productStatus == "") {
+                        $scope.getProductList(undefined, $scope.paginationConf.itemsPerPage, productName, undefined);
+                    } else {
+                        $scope.getProductList(undefined, $scope.paginationConf.itemsPerPage, productName, productStatus);
+                    }
+                }
+            }
+
+            //批量上架、下架或删除
+            batchChangeStatus = function (status) {
+                //获取已勾选的商品id
+                var productIds = getSelectedProuductId();
+                if (status == "sale") {
+                    //批量上架
+                    if (productIds.length == 0) {
+                        alert("请选中要上架的商品！")
+                    } else {
+                        var t = confirm("确认上架已选中商品？")
+                        if (t == true) {
+                            batchChangeStatusUtil(productIds, 1, 0);
+                        }
+                    }
+                } else if (status == "noSale") {
+                    //批量下架
+                    if (productIds.length == 0) {
+                        alert("请选中要下架的商品！")
+                    } else {
+                        var t = confirm("确认下架已选中商品？")
+                        if (t == true) {
+                            batchChangeStatusUtil(productIds, 2, 0);
+                        }
+                    }
+                } else if (status == "delete") {
+                    //批量删除
+                    if (productIds.length == 0) {
+                        alert("请选中要删除的商品！")
+                    } else {
+                        var t = confirm("确认删除已选中商品？")
+                        if (t == true) {
+                            batchChangeStatusUtil(productIds, 3, 0);
+                        }
+                    }
+                } else {
+                    alert("参数错误！");
+                }
+            }
+
+
+            //单个上架、下架或删除
+            changeStatus = function (status, th) {
+                if (status == "sale") {
+                    //上架
+                    //获取商品id
+                    var productId = $(th).val();
+                    //上架操作
+                    changeStatusUtil(productId, 1).then(function (result) {
+                        if (result == true) {
+                            //更新列表
+                            $scope.getProductList($scope.paginationConf.currentPage, $scope.paginationConf.itemsPerPage, productName, productStatus);
+                        } else {
+                            alert("操作失败！" + result);
+                        }
+                    });
+
+                } else if (status == "noSale") {
+                    //下架
+                    //获取商品id
+                    var productId = $(th).val();
+                    //下架操作
+                    changeStatusUtil(productId, 2).then(function (result) {
+                        if (result == true) {
+                            //更新列表
+                            $scope.getProductList($scope.paginationConf.currentPage, $scope.paginationConf.itemsPerPage, productName, productStatus);
+                        } else {
+                            alert("操作失败！" + result);
+                        }
+                    });
+                } else if (status == "delete") {
+                    //删除
+                    //获取商品id
+                    var productId = $(th).val();
+                    //删除操作
+                    changeStatusUtil(productId, 3).then(function (result) {
+                        if (result == true) {
+                            //更新列表
+                            $scope.getProductList($scope.paginationConf.currentPage, $scope.paginationConf.itemsPerPage, productName, productStatus);
+                        } else {
+                            alert("操作失败！" + result);
+                        }
+                    });
+                } else {
+                    alert("参数错误！");
+                }
+            }
+
+            //递归批量修改商品状态工具函数
+            batchChangeStatusUtil = function (productIds, status, index) {
+                if (index >= productIds.length) {
+                    //更新页面
+                    $scope.getProductList($scope.paginationConf.currentPage, $scope.paginationConf.itemsPerPage, productName, productStatus);
+                    //修改全选框为未选中状态
+                    $("#selectAll").prop("checked", false);
+                    return;
+                }
+                $http.post('/manager1/product/setSaleStatus/' + productIds[index] + '/' + status).success(
+                    function (response) {
+                        if (response.status == 0) {
+                            batchChangeStatusUtil(productIds, status, index + 1);
+                        } else {
+                            alert("操作失败！" + response.msg);
+                            return;
+                        }
+                    }
+                );
+            }
+
+            //修改商品状态工具函数
+            changeStatusUtil = function (productId, status) {
+                var result = $.Deferred();
+                $http.post('/manager1/product/setSaleStatus/' + productId + '/' + status).success(
+                    function (response) {
+                        if (response.status == 0) {
+                            result.resolve(true);
+                        } else {
+                            result.resolve(response.msg);
+                        }
+                    }
+                );
+                return result;
+            }
+
+
+            //修改商品信息
+            alter = function (th) {
+
+            }
+
+        });
+
+        //获取已勾选的商品id
+        function getSelectedProuductId() {
+            var productIds = [];
+            $('.check').each(function () {
+                if ($(this).prop("checked")) {
+                    productIds.push($(this).val());
+                }
+            });
+            return productIds;
+        }
+
+        //全选与全不选
+        function selectAll(th) {
+            if ($(th).is(":checked")) {
+                //全选
+                $("input:checkbox[name='select']").prop("checked", true);
+            } else {
+                //全不选
+                $("input:checkbox[name='select']").prop("checked", false);
+            }
+        }
+
+        //单选与反选
+        function selectOne(th) {
+            if ($(th).is(":checked")) {
+                var flag = true;
+                $("input:checkbox[name='select']").each(function () {
+                    if ($(this).is(":checked") == false) {
+                        flag = false;
+                    }
+                });
+                if (flag == true) {
+                    $("#selectAll").prop("checked", true);
+                }
+            } else {
+                $("#selectAll").prop("checked", false);
+            }
+        }
+    </script>
+</head>
+
+<body class="hold-transition skin-red sidebar-mini" ng-app="myApp" ng-controller="manageProduct">
+<!-- .box-body -->
+
+<div class="box-header with-border">
+    <h3 class="box-title">商品管理</h3>
+</div>
+
+<div class="box-body">
+
+    <!-- 数据表格 -->
+    <div class="table-box" style="min-height: 480px">
+
+        <!--工具栏-->
+        <div class="pull-left">
+            <div class="form-group form-inline">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default" title="添加"
+                            onclick="window.location.href='goods_edit.html';"><i class="fa fa-file-o"></i> 添加
+                    </button>
+                    <button type="button" class="btn btn-default" title="上架" onclick="batchChangeStatus('sale')"><i
+                            class="fa fa-trash-o"></i> 上架
+                    </button>
+                    <button type="button" class="btn btn-default" title="下架" onclick="batchChangeStatus('noSale')"><i
+                            class="fa fa-trash-o"></i> 下架
+                    </button>
+                    <button type="button" class="btn btn-default" title="删除" onclick="batchChangeStatus('delete')"><i
+                            class="fa fa-trash-o"></i> 删除
+                    </button>
+                    <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i
+                            class="fa fa-refresh"></i> 刷新
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <div class="has-feedback">
+                状态：<select id="selectStatus" onchange="selectStatus(this)">
+                <option value="">全部</option>
+                <option value="1">在售</option>
+                <option value="2">已下架</option>
+                <option value="3">已删除</option>
+            </select>
+                商品名称：<input class="form-control selectStatus" type="text" id="search">
+                <button class="btn btn-default" onclick="search()">查询</button>
+            </div>
+        </div>
+        <!--工具栏/-->
+
+        <!--数据列表-->
+        <table id="dataList" class="table table-bordered table-striped table-hover dataTable">
+            <thead>
+            <tr>
+                <th class="sorting" style="text-align: center;">
+                    <input id="selectAll" type="checkbox" class="inputs" onclick="selectAll(this)">
+                </th>
+                <th class="sorting_asc">商品ID</th>
+                <th class="sorting">商品名称</th>
+                <th class="sorting">品牌</th>
+                <th class="sorting">分类</th>
+                <th class="sorting">版本</th>
+                <th class="sorting">颜色</th>
+                <th class="sorting">价格（元）</th>
+                <th class="sorting">库存</th>
+                <th class="sorting">状态</th>
+                <th class="text-center">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="product in productList">
+                <td style="text-align: center;"><input value="{{product.id}}" type="checkbox" class="inputs check"
+                                                       name="select" onclick="selectOne(this)"></td>
+                <td>{{product.id}}</td>
+                <td>{{product.name}}</td>
+                <td>小米</td>
+                <td>{{product.categoryName}}</td>
+                <td>{{product.detail}}</td>
+                <td>{{product.color2}}</td>
+                <td>{{product.price}}</td>
+                <td>{{product.stock}}</td>
+                <td>{{product.statusDesc}}</td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-primary btn-xs" value="{{product.id}}" onclick="alter(this)">
+                        修改
+                    </button>
+                    <button type="button" class="btn bg-olive btn-xs" ng-if="product.status != 1"
+                            onclick="changeStatus('sale',this)" value="{{product.id}}">上架
+                    </button>
+                    <button type="button" class="btn btn-default btn-xs" ng-if="product.status != 2"
+                            onclick="changeStatus('noSale',this)" value="{{product.id}}">下架
+                    </button>
+                    <button type="button" class="btn bg-red btn-xs" ng-if="product.status != 3"
+                            onclick="changeStatus('delete',this)" value="{{product.id}}">删除
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!--数据列表/-->
+
+
+    </div>
+    <!-- 分页 -->
+    <tm-pagination conf="paginationConf"></tm-pagination>
+    <!-- 数据表格 /-->
+
+
+</div>
+
+<!-- /.box-body -->
+
+</body>
+
+</html>

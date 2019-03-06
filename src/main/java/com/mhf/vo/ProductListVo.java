@@ -7,13 +7,49 @@ public class ProductListVo implements Serializable {
 
     private Integer id;
     private Integer categoryId;
+    private String categoryName;
     private String name;
     private String subtitle;
     private String mainImage;
     private Integer status;
+    private String statusDesc;
     private BigDecimal price;
+    private String detail;
     private String color1;
     private String color2;
+    private Integer stock;
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getStatusDesc() {
+        return statusDesc;
+    }
+
+    public void setStatusDesc(String statusDesc) {
+        this.statusDesc = statusDesc;
+    }
 
     public String getColor1() {
         return color1;
@@ -86,4 +122,5 @@ public class ProductListVo implements Serializable {
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
+
 }

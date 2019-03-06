@@ -40,6 +40,10 @@ public class UserController {
         ServerResponse serverResponse = iUserService.login(username, password);
         if (serverResponse.isSuccess()) {
             User user = (User) serverResponse.getData();
+            // 检查权限
+            if (user.getRole() != Const.RoleEnum.ROLE_CUS.getCode()) {
+                return ServerResponse.serverResponseByError("用户名或密码错误");
+            }
             session.setAttribute(Const.CURRENTUSER, user);
             //生成自动登录autoLoginToken
             String ip = IPUtils.getRemoteAddress(request);
@@ -175,6 +179,9 @@ public class UserController {
     public ServerResponse getUser(HttpSession session) {
 
         User user = (User) session.getAttribute(Const.CURRENTUSER);
+        if (user == null){
+            return ServerResponse.serverResponseByError("未登录");
+        }
 
         User newuser = new User();
         newuser.setId(user.getId());

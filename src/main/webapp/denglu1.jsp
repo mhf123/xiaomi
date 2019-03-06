@@ -18,26 +18,24 @@
                 $("#dd").html("请输入用户名！");
             } else if (val2 == "") {
                 $("#dd").html("请输入密码！");
-            }
-            $.ajax({
-                type: "post",
-                url: "/user/login/" + val1 + "/" + val2,
-                dataType: "json",
-                success: function (data) {
-                    if (data.status == 1) {
-                        $("#dd").html(data.msg + "！");
-                    } else if (data.status == 0) {
-                        location.href = "zhuye.jsp";
-                    } else {
-                        $("#dd").html("未知错误！");
+            }else {
+                $.ajax({
+                    type: "post",
+                    url: "/user/login/" + val1 + "/" + val2,
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.status == 1) {
+                            $("#dd").html(data.msg + "！");
+                        } else if (data.status == 0) {
+                            location.href = "zhuye.jsp";
+                        } else {
+                            $("#dd").html("未知错误！");
+                        }
                     }
-                    // if(s == "false")
-                    // 	$("#dd").html("用户名或密码错误！")
-                    // else
-                    // 	window.location.href = "IndexServlet";
-                }
 
-            })
+                })
+            }
+
         }
 
         // 进行用户名格式验证

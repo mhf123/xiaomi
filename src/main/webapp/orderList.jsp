@@ -374,6 +374,16 @@
         }
 
         /**
+         * 点击搜索按钮
+         */
+        function search(th) {
+            var searchContent = $(th).prev().val();
+            if (searchContent != "") {
+                location.href = "category.jsp?searchContent=" + encodeURI(searchContent);
+            }
+        }
+
+        /**
          * 退出登录
          */
         function logout() {
@@ -492,13 +502,11 @@
         </div>
         <div class="d2-2">
             <div class="d2-2-1">
-                <form>
-                    <input class="in1" id="search" type="text" onkeyup="fsearch(this)" placeholder="小米8 小米MIX 2s">
-                    <button class="bu4" type="submit">
-                        <span class="glyphicon glyphicon-search"></span>
-                    </button>
-                    <div id="div1"></div>
-                </form>
+                <input class="in1" id="search" type="text" onkeyup="fsearch(this)" placeholder="小米8 小米MIX 2s">
+                <button class="bu4" onclick="search(this)">
+                    <span class="glyphicon glyphicon-search"></span>
+                </button>
+                <div id="div1"></div>
             </div>
         </div>
     </div>
@@ -535,8 +543,8 @@
             </button>
         </div>
     </div>
-
 </div>
+<%@include file="bottom.jsp"%>
 </body>
 
 </html>

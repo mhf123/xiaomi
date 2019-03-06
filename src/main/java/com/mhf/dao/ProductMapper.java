@@ -56,7 +56,8 @@ public interface ProductMapper {
      * 通过id或name模糊查询
      */
     List<Product> findProductByIdOrName(@Param("productId") Integer productId,
-                                        @Param("productName") String productName);
+                                        @Param("productName") String productName,
+                                        @Param("status") Integer status);
 
     /**
      * 前台—搜索商品
@@ -66,9 +67,9 @@ public interface ProductMapper {
                                 @Param("orderBy")String orderBy);
 
     /**
-     * 前台—根据商品名字查询
+     * 后台—根据商品name、detail、color查询
      */
-    int selectByName(String name);
+    int selectByNameAndDetailAndColor(Product product);
 
     /**
      * 根据商品id查询商品库存

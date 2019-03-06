@@ -29,7 +29,7 @@ public class ProductController {
     public ServerResponse list(@RequestParam(required = false) Integer categoryId,
                                @RequestParam(required = false) String keyword,
                                @RequestParam(required = false,defaultValue = "1") Integer pageNum,
-                               @RequestParam(required = false,defaultValue = "10") Integer pageSize,
+                               @RequestParam(required = false,defaultValue = "28") Integer pageSize,
                                @RequestParam(required = false,defaultValue = "") String orderBy){
         ServerResponse serverResponse = iProductService.listPortal(categoryId,keyword,pageNum,pageSize,orderBy);
         return serverResponse;
@@ -62,7 +62,7 @@ public class ProductController {
     /**
      * 按需查询商品列表
      */
-    @RequestMapping(value = "listByDemand/{productName}")
+    @RequestMapping(value = "listByDemand/{productName:.+}")
     public ServerResponse listByDemand(@PathVariable("productName") String productName,
                                        @RequestParam(required = false) String detail,
                                        @RequestParam(required = false) String color){

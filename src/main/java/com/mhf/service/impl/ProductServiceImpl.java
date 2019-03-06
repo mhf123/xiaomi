@@ -16,6 +16,7 @@ import com.mhf.service.IProductService;
 import com.mhf.utils.DateUtils;
 import com.mhf.utils.FtpUtils;
 import com.mhf.utils.PropertiesUtils;
+import com.mhf.vo.PageInfoVo;
 import com.mhf.vo.ProductDetailVo;
 import com.mhf.vo.ProductListVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,11 @@ public class ProductServiceImpl implements IProductService {
         }
         // 3、商品更新or新增
         if (product.getId() == null) {
+            //判断是否重复添加
+            int result1 = productMapper.selectByNameAndDetailAndColor(product);
+            if (result1 > 0) {
+                return ServerResponse.serverResponseByError("商品重复添加");
+            }
             //新增
             product.setStatus(Const.ProductStatusEnum.PRODUCT_ONLINE.getCode());
             int result = productMapper.insert(product);
@@ -138,13 +144,14 @@ public class ProductServiceImpl implements IProductService {
             }
         }
         // 2、结果集合转成分页对象，并返回
-        PageInfo pageInfo = new PageInfo(productListVos);
+        PageInfo pageInfo = new PageInfo(products);
+        PageInfoVo pageInfoVo = new PageInfoVo(pageInfo, productListVos);
 
-        return ServerResponse.serverResponseBySuccess(pageInfo);
+        return ServerResponse.serverResponseBySuccess(pageInfoVo);
     }
 
     @Override
-    public ServerResponse search(Integer productId, String productName, Integer pageNum, Integer pageSize) {
+    public ServerResponse search(Integer productId, String productName, Integer status, Integer pageNum, Integer pageSize) {
         // 1、分页插件显示、productName非空判断
         PageHelper.startPage(pageNum, pageSize);
 
@@ -152,7 +159,7 @@ public class ProductServiceImpl implements IProductService {
             productName = "%" + productName + "%";
         }
         // 2、通过id或name模糊查询
-        List<Product> products = productMapper.findProductByIdOrName(productId, productName);
+        List<Product> products = productMapper.findProductByIdOrName(productId, productName, status);
         List<ProductListVo> productListVos = Lists.newArrayList();
         if (products != null && products.size() > 0) {
             for (Product product : products) {
@@ -161,9 +168,10 @@ public class ProductServiceImpl implements IProductService {
             }
         }
         // 2、结果集合转成分页对象,并返回
-        PageInfo pageInfo = new PageInfo(productListVos);
+        PageInfo pageInfo = new PageInfo(products);
+        PageInfoVo pageInfoVo = new PageInfoVo(pageInfo, productListVos);
 
-        return ServerResponse.serverResponseBySuccess(pageInfo);
+        return ServerResponse.serverResponseBySuccess(pageInfoVo);
     }
 
     @Override
@@ -261,7 +269,11 @@ public class ProductServiceImpl implements IProductService {
         } else {
             String[] orderByArr = orderBy.split("_");
             if (orderByArr.length > 1) {
-                PageHelper.startPage(pageNum, pageSize, orderByArr[0] + " " + orderByArr[1]);
+                String orderByArray = orderByArr[0];
+                for (int i = 1; i < orderByArr.length - 1; i++) {
+                    orderByArray += "_" + orderByArr[i];
+                }
+                PageHelper.startPage(pageNum, pageSize, orderByArray + " " + orderByArr[orderByArr.length - 1]);
             } else {
                 PageHelper.startPage(pageNum, pageSize);
             }
@@ -269,16 +281,21 @@ public class ProductServiceImpl implements IProductService {
         // 4、List<Product> -> List<ProductVo>
         List<Product> products = productMapper.searchProduct(integerSet, keyword, orderBy);
         List<ProductListVo> productListVos = Lists.newArrayList();
+        //获取类别名称Set集合
+        Set set = Sets.newHashSet();
         if (products != null && products.size() > 0) {
             for (Product product : products) {
                 ProductListVo productListVo = toProductListVo(product);
                 productListVos.add(productListVo);
+                Category category = categoryMapper.selectByPrimaryKey(product.getCategoryId());
+                set.add(category);
             }
         }
-
+        List productListVosAndCategoryNames = Lists.newArrayList();
+        productListVosAndCategoryNames.add(productListVos);
+        productListVosAndCategoryNames.add(set);
         // 3、分页
-        PageInfo pageInfo = new PageInfo();
-        pageInfo.setList(productListVos);
+        PageInfo pageInfo = new PageInfo(productListVosAndCategoryNames);
         // 4、返回结果
         return ServerResponse.serverResponseBySuccess(pageInfo);
     }
@@ -342,7 +359,7 @@ public class ProductServiceImpl implements IProductService {
             return ServerResponse.serverResponseByError("参数为空");
         }
         // 2、按需查询未下架的商品列表
-        List<Product> products = productMapper.selectByDemand(productName,detail,color);
+        List<Product> products = productMapper.selectByDemand(productName, detail, color);
         if (products == null && products.size() == 0) {
             return ServerResponse.serverResponseByError("商品不存在或已下架");
         }
@@ -411,13 +428,17 @@ public class ProductServiceImpl implements IProductService {
         ProductListVo productListVo = new ProductListVo();
         productListVo.setId(product.getId());
         productListVo.setCategoryId(product.getCategoryId());
+        productListVo.setCategoryName(categoryMapper.selectByPrimaryKey(product.getCategoryId()).getName());
         productListVo.setMainImage(product.getMainImage());
         productListVo.setName(product.getName());
         productListVo.setPrice(product.getPrice());
         productListVo.setStatus(product.getStatus());
+        productListVo.setStatusDesc(Const.ProductStatusEnum.condeOf(product.getStatus()).getDesc());
         productListVo.setSubtitle(product.getSubtitle());
         productListVo.setColor1(product.getColor1());
         productListVo.setColor2(product.getColor2());
+        productListVo.setDetail(product.getDetail());
+        productListVo.setStock(product.getStock());
 
         return productListVo;
     }

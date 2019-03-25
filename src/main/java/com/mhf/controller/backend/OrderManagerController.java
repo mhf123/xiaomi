@@ -16,7 +16,7 @@ public class OrderManagerController {
     IOrderService iOrderService;
 
     /**
-     * 订单列表
+     * 按状态查询订单列表
      */
     @RequestMapping(value = "list")
     public ServerResponse list(@RequestParam(required = false) Integer status,
@@ -44,6 +44,16 @@ public class OrderManagerController {
     public ServerResponse sendGoods(@PathVariable("orderNo") Long orderNo) {
 
         ServerResponse serverResponse = iOrderService.sendGoods(orderNo);
+        return serverResponse;
+    }
+
+    /**
+     * 订单关闭
+     */
+    @RequestMapping(value = "close/{orderNo}")
+    public ServerResponse close(@PathVariable("orderNo") Long orderNo) {
+
+        ServerResponse serverResponse = iOrderService.cancel(null, orderNo);
         return serverResponse;
     }
 }

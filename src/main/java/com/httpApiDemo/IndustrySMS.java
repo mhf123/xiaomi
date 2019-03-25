@@ -11,6 +11,7 @@ import java.net.URLEncoder;
  * @ClassName: IndustrySMS
  * @Description: 验证码通知短信接口
  */
+
 public class IndustrySMS {
     private static String operation = "/industrySMS/sendSMS";
 

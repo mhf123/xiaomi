@@ -663,7 +663,7 @@
                                                 + data.data.list[i].receiverMobile
                                                 + "</span> <span class=\"span3\">"
                                                 + data.data.list[i].receiverProvince + ' ' + data.data.list[i].receiverCity + ' ' + data.data.list[i].receiverDistrict + ' ' + data.data.list[i].receiverAddress
-                                                + "</span> </div> <span class='sp15' onclick='deladdrO(this)'>删除</span> </button>";
+                                                + "</span> </div> <span class='sp20' onclick='deladdrO(this)'>删除</span> </button>";
                                         }
                                         str += " <span id=\"span4\" class=\"sp2\"><button class=\"bu2\" data-toggle=\"modal\" data-target=\"#myModal\"><div class=\"d2-1-1-1\"><span class=\"sp1\">+</span></div>添加新地址</button></span>"
                                         $("#div5").html(str);
@@ -808,9 +808,7 @@
                         </div>
                         <div id="show"></div>
                     </div>
-
                 </div>
-
                 <div class="modal-footer d9">
                     <button type="button" class="bu5" data-dismiss="modal">关闭</button>
                     <button type="button" class="bu6" onclick="address()">提交</button>

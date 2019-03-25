@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/pagination.css">
+
+    <link rel="stylesheet" href="../css/addProduct.css">
+
     <script src="../plugins/jquery/jquery-2.2.3.min.js"></script>
     <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
     <script src="../js/angular.min.js"></script>
@@ -28,9 +31,63 @@
             width: 150px;
             height: 33px
         }
+
+        .bu5 {
+            width: 150px;
+            height: 40px;
+            margin-left: 15px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid;
+            color: white;
+            background-color: #9D9D9D;
+            transition-duration: 0.3s;
+        }
+
+        .bu5:hover {
+            background-color: #757575;
+        }
+
+        .bu5:focus {
+            outline: none;
+        }
+
+        .bu6 {
+            width: 150px;
+            height: 40px;
+            margin-left: 15px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid;
+            color: white;
+            background-color: steelblue;
+            transition-duration: 0.3s;
+        }
+
+        .bu6:hover {
+            background-color: #187bb1;
+        }
+
+        .bu6:focus {
+            outline: none;
+        }
+
+        .d9 {
+            display: flex;
+            padding-left: 120px;
+        }
+
+        .productImg {
+            margin-top: -6px;
+            margin-right: 10px;
+            width: 37px;
+            height: 37px;
+        }
     </style>
 
     <script>
+        //商品id全局变量
+        var productId;
         //搜索关键字和商品状态全局变量
         var productName;
         var productStatus;
@@ -182,7 +239,7 @@
                     if (productIds.length == 0) {
                         alert("请选中要上架的商品！")
                     } else {
-                        var t = confirm("确认上架已选中商品？")
+                        var t = confirm("确认上架已选中商品？");
                         if (t == true) {
                             batchChangeStatusUtil(productIds, 1, 0);
                         }
@@ -296,10 +353,67 @@
                 return result;
             }
 
-
             //修改商品信息
             alter = function (th) {
+                //获取商品id
+                productId = $(th).val();
+                //根据id查询商品信息
+                $http.post('/manager1/product/detail/' + productId).success(
+                    function (response) {
+                        if (response.status == 0) {
+                            $scope.productDetail = response.data;
+                            $("#category").val(response.data.category);
+                            $("#subtitle").val(response.data.subtitle);
+                            $("#price").val(response.data.price);
+                            $("#stock").val(response.data.stock);
+                        } else {
+                            alert("获取商品信息失败！" + response.msg);
+                        }
+                    }
+                )
+                //查询分类信息
+                $http.post('/manager1/category/getCategory/9').success(
+                    function (response) {
+                        if (response.status == 0) {
+                            $scope.categoryList = response.data;
+                        } else {
+                            alert("获取商品信息失败！" + response.msg);
+                        }
+                    }
+                )
+            }
 
+            //修改商品信息提交
+            submitProduct = function () {
+                //获取商品信息
+                var categoryId = $("#category").val();
+                var subtitle = $("#subtitle").val();
+                var price = $("#price").val();
+                var stock = $("#stock").val();
+                //提交修改
+                $.ajax({
+                    type: "post",
+                    url: "/manager1/product/saveOrUpdate",
+                    data: {
+                        "id": productId,
+                        "categoryId": categoryId,
+                        "subtitle": subtitle,
+                        "price": price,
+                        "stock": stock
+                    },
+                    //获取地址信息显示在页面
+                    success: function (data) {
+                        if (data.status == 0) {
+                            //更新商品列表
+                            $scope.reloadList();
+                            //关闭模态窗
+                            $("#myModal").modal("hide");
+                        } else {
+                            alert("修改商品信息失败！" + data.msg);
+                        }
+                    },
+                    dataType: "JSON"
+                })
             }
 
         });
@@ -426,7 +540,8 @@
                 <td>{{product.stock}}</td>
                 <td>{{product.statusDesc}}</td>
                 <td class="text-center">
-                    <button type="button" class="btn btn-primary btn-xs" value="{{product.id}}" onclick="alter(this)">
+                    <button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-xs"
+                            value="{{product.id}}" onclick="alter(this)">
                         修改
                     </button>
                     <button type="button" class="btn bg-olive btn-xs" ng-if="product.status != 1"
@@ -444,14 +559,88 @@
         </table>
 
         <!--数据列表/-->
-
-
     </div>
     <!-- 分页 -->
     <tm-pagination conf="paginationConf"></tm-pagination>
     <!-- 数据表格 /-->
 
 
+</div>
+
+<!--修改商品信息模态框-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="d11" id="div3"><span class="sp14" id="span2"></span></div>
+            <div class="modal-header">
+                <button type="button" class="close close1" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">修改商品信息</h4>
+            </div>
+            <div class="modal-body">
+                <div class="tab-pane active" id="home">
+                    <div class="row data-type">
+
+                        <div class="col-md-2 title">商品名称</div>
+                        <div class="col-md-10 data">
+                            <div style="margin-top: 4px"><img class="productImg" src="{{productDetail.mainImage}}"/>{{productDetail.name}}&nbsp;{{productDetail.detail}}&nbsp;{{productDetail.color2}}
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 title">商品分类</div>
+                        <div class="col-md-10 data">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <select class="form-control" style="width: 100px" id="category" ng-cloak>
+                                            <option class="productCategory"
+                                                    ng-selected="category.id == productDetail.categoryId"
+                                                    ng-repeat="category in categoryList" value="{{category.id}}">
+                                                {{category.name}}
+                                            </option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="col-md-2 title">品牌</div>
+                        <div class="col-md-10 data">
+                            <select class="form-control" style="width: 100px">
+                                <option value="小米">小米</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-2 title">副标题</div>
+                        <div class="col-md-10 data">
+                            <input id="subtitle" type="text" class="form-control" placeholder="副标题"
+                                   value="{{productDetail.subtitle}}">
+                        </div>
+
+                        <div class="col-md-2 title">价格</div>
+                        <div class="col-md-10 data">
+                            <div class="input-group">
+                                <span class="input-group-addon">¥</span>
+                                <input id="price" type="number" class="form-control" placeholder="价格"
+                                       value="{{productDetail.price}}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 title">库存</div>
+                        <div class="col-md-10 data">
+                            <input id="stock" type="number" class="form-control" placeholder="库存"
+                                   value="{{productDetail.stock}}">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer d9">
+                <button type="button" class="bu5" data-dismiss="modal">关闭</button>
+                <button type="button" class="bu6" onclick="submitProduct()">提交</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- /.box-body -->

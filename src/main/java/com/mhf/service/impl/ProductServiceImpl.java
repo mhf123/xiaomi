@@ -204,7 +204,6 @@ public class ProductServiceImpl implements IProductService {
 
             //删除应用服务器上的图片
             file1.delete();
-
             return map;
 
         } catch (IOException e) {
@@ -467,6 +466,7 @@ public class ProductServiceImpl implements IProductService {
 
         Category category = categoryMapper.selectByPrimaryKey(product.getCategoryId());
         if (category != null) {
+            productDetailVo.setCategory(category.getName());
             productDetailVo.setParentCategoryId(category.getParentId());
         } else {
             productDetailVo.setParentCategoryId(0);

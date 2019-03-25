@@ -147,26 +147,52 @@ public class OrderServiceImpl implements IOrderService {
         if (orderNo == null) {
             return ServerResponse.serverResponseByError("参数不能为空");
         }
-        // 2、根据userId和orderNo查询订单
-        XiaomiOrder order = xiaomiOrderMapper.findOrderByUserIdAndOrderNo(userId, orderNo);
-        if (order == null) {
-            return ServerResponse.serverResponseByError("订单不存在");
-        }
-        // 3、判断订单状态并取消
-        if (order.getStatus() != Const.OrderStatusEnum.ORDER_UN_PAY.getCode()) {
-            return ServerResponse.serverResponseByError("订单不可取消");
-        }
-        // 4、恢复商品库存
-        ServerResponse serverResponse = recoverProductStock(orderNo);
-        if (!serverResponse.isSuccess()) {
-            return serverResponse;
-        }
-        // 5、返回结果
-        order.setStatus(Const.OrderStatusEnum.ORDER_CANCELED.getCode());
-        order.setCloseTime(new Date());
-        int result = xiaomiOrderMapper.updateByPrimaryKey(order);
-        if (result > 0) {
-            return ServerResponse.serverResponseBySuccess("订单取消成功");
+        if (userId == null){
+            //后台关闭订单
+            // 2、根据orderNo查询订单
+            XiaomiOrder order = xiaomiOrderMapper.findOrderByOrderNo(orderNo);
+            if (order == null) {
+                return ServerResponse.serverResponseByError("订单不存在");
+            }
+            // 3、判断订单状态并取消
+            if (order.getStatus() != Const.OrderStatusEnum.ORDER_UN_PAY.getCode() && order.getStatus() != Const.OrderStatusEnum.ORDER_PAYED.getCode()) {
+                return ServerResponse.serverResponseByError("订单不可关闭");
+            }
+            // 4、恢复商品库存
+            ServerResponse serverResponse = recoverProductStock(orderNo);
+            if (!serverResponse.isSuccess()) {
+                return serverResponse;
+            }
+            // 5、返回结果
+            order.setStatus(Const.OrderStatusEnum.ORDER_CANCELED.getCode());
+            order.setCloseTime(new Date());
+            int result = xiaomiOrderMapper.updateByPrimaryKey(order);
+            if (result > 0) {
+                return ServerResponse.serverResponseBySuccess("订单关闭成功");
+            }
+        }else {
+            //前台取消订单
+            // 2、根据userId和orderNo查询订单
+            XiaomiOrder order = xiaomiOrderMapper.findOrderByUserIdAndOrderNo(userId, orderNo);
+            if (order == null) {
+                return ServerResponse.serverResponseByError("订单不存在");
+            }
+            // 3、判断订单状态并取消
+            if (order.getStatus() != Const.OrderStatusEnum.ORDER_UN_PAY.getCode()) {
+                return ServerResponse.serverResponseByError("订单不可取消");
+            }
+            // 4、恢复商品库存
+            ServerResponse serverResponse = recoverProductStock(orderNo);
+            if (!serverResponse.isSuccess()) {
+                return serverResponse;
+            }
+            // 5、返回结果
+            order.setStatus(Const.OrderStatusEnum.ORDER_CANCELED.getCode());
+            order.setCloseTime(new Date());
+            int result = xiaomiOrderMapper.updateByPrimaryKey(order);
+            if (result > 0) {
+                return ServerResponse.serverResponseBySuccess("订单取消成功");
+            }
         }
         return ServerResponse.serverResponseBySuccess("订单取消失败");
     }
@@ -177,7 +203,7 @@ public class OrderServiceImpl implements IOrderService {
         List<XiaomiOrder> orderList = Lists.newArrayList();
         if (userId == null) {
             // 1、查询所有用户订单
-            orderList = xiaomiOrderMapper.selectAll();
+            orderList = xiaomiOrderMapper.selectAllByStatus(status);
         } else {
             // 1、按订单状态查询当前用户订单
             orderList = xiaomiOrderMapper.findOrderByUserId(status, userId);

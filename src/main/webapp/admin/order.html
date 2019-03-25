@@ -5,19 +5,370 @@
     <!-- 页面meta -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>商品管理</title>
+    <title>订单管理</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
     <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
     <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
     <link rel="stylesheet" href="../css/style.css">
-    <script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <link rel="stylesheet" href="../css/pagination.css">
+    <link rel="stylesheet" href="../css/addProduct.css">
+    <script src="../plugins/jquery/jquery-2.2.3.min.js"></script>
     <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../js/angular.min.js"></script>
+    <script src="../js/pagination.js"></script>
+    <style>
+        p {
+            margin-bottom: 5px;
+        }
 
+        .inputs {
+            width: 15px;
+            height: 15px;
+        }
+
+        .selectStatus {
+            display: inline;
+            width: 150px;
+            height: 33px
+        }
+
+        #search {
+            width: 163px;
+        }
+
+        .bu5 {
+            width: 150px;
+            height: 40px;
+            margin-left: 15px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid;
+            color: white;
+            background-color: #9D9D9D;
+            transition-duration: 0.3s;
+        }
+
+        .bu5:hover {
+            background-color: #757575;
+        }
+
+        .bu5:focus {
+            outline: none;
+        }
+
+        .order {
+            margin-top: 7px;
+        }
+
+        .div11 {
+            border-top: 1px solid #d4d4d4;
+            border-right: 1px solid #d4d4d4;
+            text-align: center;
+            background-color: #ECECEC;
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            padding-top: 10px;
+        }
+
+        .div12 {
+            height: auto;
+            overflow: auto;
+            position: relative;
+            padding: 0;
+        }
+
+        .productImg {
+            height: 35px;
+            width: 35px;
+            margin: 0px 2px 0px 2px;
+        }
+
+        .productImgs {
+            padding: 0px !important;
+            display: flex;
+            justify-content: center;
+        }
+
+        #orderDetail {
+            float: right;
+            height: auto;
+            width: 500px;
+            padding: 9px 12px 3px 12px;
+        }
+    </style>
+
+    <script>
+        //搜索订单号和订单状态全局变量
+        var orderNo;
+        var orderStatus;
+        //定义模块
+        var app = angular.module('myApp', ['pagination']);
+        //定义控制器
+        app.controller('manageOrder', function ($scope, $http) {
+            //获取订单信息
+            $scope.getOrderList = function (pageNum, pageSize, status, orderNo) {
+                //搜索或筛选切换到第一页
+                if (pageNum == undefined) {
+                    pageNum = 1;
+                }
+                if (orderNo == undefined) {
+                    if (status == undefined) {
+                        //初始化订单列表
+                        $http.post('/manager1/order/list?pageNum=' + pageNum + '&pageSize=' + pageSize).success(
+                            function (response) {
+                                if (response.status == 0) {
+                                    $scope.orderList = response.data.list;
+                                    $scope.paginationConf.totalItems = response.data.pageInfo.total;
+                                } else if (response.msg == "未查询到订单信息") {
+                                    $scope.orderList = null;
+                                    $scope.paginationConf.totalItems = response.data.pageInfo.total;
+                                } else {
+                                    alert("获取商品信息失败！" + response.msg);
+                                }
+                            }
+                        )
+                    } else if (status != undefined) {
+                        //按订单状态查询订单列表
+                        $http.post('/manager1/order/list?pageNum=' + pageNum + '&pageSize=' + pageSize + '&status=' + status).success(
+                            function (response) {
+                                if (response.status == 0) {
+                                    $scope.orderList = response.data.list;
+                                    $scope.paginationConf.totalItems = response.data.pageInfo.total;
+                                } else if (response.msg == "未查询到订单信息") {
+                                    $scope.orderList = null;
+                                    $scope.paginationConf.totalItems = response.data.pageInfo.total;
+                                } else {
+                                    alert("获取商品信息失败！" + response.msg);
+                                }
+                            }
+                        )
+                    }
+                } else {
+                    //订单搜索
+                    $http.post('/manager1/order/detail/' + orderNo).success(
+                        function (response) {
+                            if (response.status == 0) {
+                                //alert(response.data)
+                                var list = [];
+                                list.push(response.data);
+                                $scope.orderList = list;
+                                $scope.paginationConf.totalItems = 1;
+                            } else {
+                                alert("查询订单失败！" + response.msg);
+                            }
+                        }
+                    )
+                }
+            }
+            //重新加载列表 数据
+            $scope.reloadList = function () {
+                if (orderStatus == "") {
+                    orderStatus = undefined;
+                }
+                if (orderNo != "" && orderNo != undefined) {
+                    $scope.getOrderList(undefined, undefined, undefined, orderNo);
+                } else {
+                    //切换页码
+                    $scope.getOrderList($scope.paginationConf.currentPage, $scope.paginationConf.itemsPerPage, orderStatus);
+                }
+
+            }
+            //分页控件配置
+            $scope.paginationConf = {
+                currentPage: 1,
+                totalItems: 10,
+                itemsPerPage: 20,
+                perPageOptions: [10, 20, 30, 40, 50],
+                onChange: function () {
+                    $scope.reloadList();//重新加载
+                }
+            };
+            //分页
+            $scope.findPage = function (page, rows) {
+                $http.get('../brand/findPage.do?page=' + page + '&rows=' + rows).success(
+                    function (response) {
+                        $scope.list = response.rows;
+                        $scope.paginationConf.totalItems = response.total;//更新总记录数
+                    }
+                );
+            }
+
+            //选择订单状态
+            selectStatus = function (th) {
+                //清空订单号
+                orderNo = "";
+                $("#search").val("");
+                //获取订单状态
+                orderStatus = $(th).val();
+                //按状态查询订单列表
+                if (orderStatus == "") {
+                    $scope.getOrderList(undefined, $scope.paginationConf.itemsPerPage, undefined);
+                } else {
+                    $scope.getOrderList(undefined, $scope.paginationConf.itemsPerPage, orderStatus);
+                }
+
+            }
+
+            //订单查询
+            search = function () {
+                //获取搜索框的订单号
+                orderNo = $("#search").val();
+                if (orderNo == "") {
+                    //查询所有订单列表
+                    $scope.getOrderList();
+                } else {
+                    //订单查询
+                    $scope.getOrderList(undefined, undefined, undefined, orderNo);
+                }
+            }
+
+            //单个订单发货、关闭或查看
+            changeStatus = function (status, th) {
+                if (status == "deliver") {
+                    //发货
+                    //获取订单号
+                    var orderNo = $(th).val();
+                    //发货操作
+                    $http.post('/manager1/order/sendGoods/' + orderNo).success(
+                        function (response) {
+                            if (response.status == 0) {
+                                //更新订单列表
+                                $scope.reloadList();
+                            } else {
+                                alert("发货失败！" + response.msg)
+                            }
+                        }
+                    );
+
+                } else if (status == "close") {
+                    //关闭
+                    var t = confirm("确认关闭此订单？");
+                    if (t == true) {
+                        //获取订单号
+                        var orderNo = $(th).val();
+                        //关闭操作
+                        $http.post('/manager1/order/close/' + orderNo).success(
+                            function (response) {
+                                if (response.status == 0) {
+                                    //更新订单列表
+                                    $scope.reloadList();
+                                } else {
+                                    alert("关闭失败！" + response.msg)
+                                }
+                            }
+                        );
+                    }
+                } else {
+                    alert("参数错误！");
+                }
+            }
+
+            //修改订单状态工具函数
+            changeStatusUtil = function (productId, status) {
+                var result = $.Deferred();
+                $http.post('/manager1/product/setSaleStatus/' + productId + '/' + status).success(
+                    function (response) {
+                        if (response.status == 0) {
+                            result.resolve(true);
+                        } else {
+                            result.resolve(response.msg);
+                        }
+                    }
+                );
+                return result;
+            }
+
+            //查看订单信息
+            findOrder = function (th) {
+                //获取订单号
+                var orderNo = $(th).val();
+                //获取订单信息
+                $.ajax({
+                    type: "post",
+                    url: "/manager1/order/detail/" + orderNo,
+                    //获取地址信息显示在页面
+                    success: function (data) {
+                        if (data.status == 0) {
+                            //页面显示数据
+                            $("#orderId").html(orderNo);
+                            var str = "";
+                            for (var i = 0; i < data.data.orderItemVoList.length; i++) {
+                                str += "<p>" + data.data.orderItemVoList[i].productName + "&nbsp;" + data.data.orderItemVoList[i].productDetail + "&nbsp;" + data.data.orderItemVoList[i].productColor + "&nbsp;×&nbsp;" + data.data.orderItemVoList[i].quantity + "</p>";
+                            }
+                            $("#orderDetail").html(str);
+                            $("#orderStatus").html(data.data.statusDesc);
+                            $("#payMethod").html(data.data.paymentTypeDesc);
+                            $("#price").html("￥" + data.data.payment);
+                            $("#receiverName").html(data.data.receiverName);
+                            $("#receiverMobile").html(data.data.shippingVo.receiverMobile);
+                            $("#receiverAddress").html(data.data.shippingVo.receiverProvince + data.data.shippingVo.receiverCity + data.data.shippingVo.receiverDistrict + data.data.shippingVo.receiverAddress);
+                            $("#createTime").html(data.data.createTime);
+                            if (data.data.paymentTime == null) {
+                                $("#paymentTime").html("----");
+                            } else {
+                                $("#paymentTime").html(data.data.paymentTime);
+                            }
+                            if (data.data.sendTime == null) {
+                                $("#sendTime").html("----");
+                            } else {
+                                $("#sendTime").html(data.data.sendTime);
+                            }
+                            if (data.data.endTime == null) {
+                                $("#endTime").html("----");
+                            } else {
+                                $("#endTime").html(data.data.endTime);
+                            }
+                            if (data.data.closeTime == null) {
+                                $("#closeTime").html("----");
+                            } else {
+                                $("#closeTime").html(data.data.closeTime);
+                            }
+                        } else {
+                            alert("获取订单信息失败！" + data.msg);
+                        }
+                    },
+                    dataType: "JSON"
+                })
+            }
+
+        });
+
+        //全选与全不选
+        function selectAll(th) {
+            if ($(th).is(":checked")) {
+                //全选
+                $("input:checkbox[name='select']").prop("checked", true);
+            } else {
+                //全不选
+                $("input:checkbox[name='select']").prop("checked", false);
+            }
+        }
+
+        //单选与反选
+        function selectOne(th) {
+            if ($(th).is(":checked")) {
+                var flag = true;
+                $("input:checkbox[name='select']").each(function () {
+                    if ($(this).is(":checked") == false) {
+                        flag = false;
+                    }
+                });
+                if (flag == true) {
+                    $("#selectAll").prop("checked", true);
+                }
+            } else {
+                $("#selectAll").prop("checked", false);
+            }
+        }
+    </script>
 </head>
 
-<body class="hold-transition skin-red sidebar-mini" >
+<body class="hold-transition skin-red sidebar-mini" ng-app="myApp" ng-controller="manageOrder">
 <!-- .box-body -->
 
 <div class="box-header with-border">
@@ -27,31 +378,30 @@
 <div class="box-body">
 
     <!-- 数据表格 -->
-    <div class="table-box">
+    <div class="table-box" style="min-height: 480px">
 
         <!--工具栏-->
         <div class="pull-left">
             <div class="form-group form-inline">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-default" title="新建" ><i class="fa fa-file-o"></i> 新建</button>
-                    <button type="button" class="btn btn-default" title="删除" ><i class="fa fa-trash-o"></i> 删除</button>
-                    <button type="button" class="btn btn-default" title="提交审核" ><i class="fa fa-check"></i> 提交审核</button>
-                    <button type="button" class="btn btn-default" title="屏蔽" onclick='confirm("你确认要屏蔽吗？")'><i class="fa fa-ban"></i> 屏蔽</button>
-                    <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i class="fa fa-refresh"></i> 刷新</button>
+                    <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i
+                            class="fa fa-refresh"></i> 刷新
+                    </button>
                 </div>
             </div>
         </div>
         <div class="box-tools pull-right">
             <div class="has-feedback">
-                状态：<select>
+                状态：<select id="selectStatus" onchange="selectStatus(this)">
                 <option value="">全部</option>
-                <option value="0">未申请</option>
-                <option value="1">申请中</option>
-                <option value="2">审核通过</option>
-                <option value="3">已驳回</option>
+                <option value="10">未付款</option>
+                <option value="20">已付款</option>
+                <option value="40">已发货</option>
+                <option value="50">交易成功</option>
+                <option value="0">已取消</option>
             </select>
-                商品名称：<input >
-                <button class="btn btn-default" >查询</button>
+                订单号：<input class="form-control selectStatus" type="text" id="search">
+                <button class="btn btn-default" onclick="search()">查询</button>
             </div>
         </div>
         <!--工具栏/-->
@@ -60,58 +410,178 @@
         <table id="dataList" class="table table-bordered table-striped table-hover dataTable">
             <thead>
             <tr>
-                <th class="" style="padding-right:0px">
-                    <input id="selall" type="checkbox" class="icheckbox_square-blue">
+                <th class="sorting" style="text-align: center;">
+                    <input id="selectAll" type="checkbox" class="inputs" onclick="selectAll(this)">
                 </th>
-                <th class="sorting_asc">商品ID</th>
-                <th class="sorting">商品名称</th>
-                <th class="sorting">商品价格</th>
-                <th class="sorting">一级分类</th>
-                <th class="sorting">二级分类</th>
-                <th class="sorting">三级分类</th>
+                <th class="sorting_asc">订单号</th>
+                <th class="sorting">订单商品</th>
+                <th class="sorting">实付金额(元)</th>
+                <th class="sorting">支付方式</th>
+                <th class="sorting">收货人</th>
+                <th class="sorting">手机号</th>
                 <th class="sorting">状态</th>
+                <th class="sorting">创建时间</th>
                 <th class="text-center">操作</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td><input  type="checkbox"></td>
-                <td>1</td>
-                <td>小米6S手机</td>
-                <td>1090</td>
-                <td>数码</td>
-                <td>手机</td>
-                <td>国产手机</td>
-                <td>
-		                                  	<span>
-		                                  		未申请
-		                                  	</span>
-                    <span >
-		                                  		申请中
-		                                  	</span>
-                    <span>
-		                                  		审核通过
-		                                  	</span>
-                    <span>
-		                                  		已驳回
-		                                  	</span>
+            <tr ng-repeat="order in orderList">
+                <td style="text-align: center;"><input value="{{product.id}}" type="checkbox" class="inputs check"
+                                                       name="select" onclick="selectOne(this)"></td>
+                <td>{{order.orderNo}}</td>
+                <td class="productImgs">
+                    <img class="productImg" ng-repeat="orderItemVoList in order.orderItemVoList"
+                         src="{{orderItemVoList.productImage}}"/>
                 </td>
+                <td>{{order.payment}}</td>
+                <td>{{order.paymentTypeDesc}}</td>
+                <td>{{order.receiverName}}</td>
+                <td>{{order.shippingVo.receiverMobile}}</td>
+                <td>{{order.statusDesc}}</td>
+                <td>{{order.createTime}}</td>
                 <td class="text-center">
-                    <button type="button" class="btn bg-olive btn-xs">修改</button>
+                    <button type="button" class="btn bg-olive btn-xs" ng-if="order.status == 20"
+                            onclick="changeStatus('deliver',this)" value="{{order.orderNo}}">发货
+                    </button>
+                    <button type="button" class="btn btn-default btn-xs"
+                            ng-if="order.status == 20 || order.status == 10"
+                            onclick="changeStatus('close',this)" value="{{order.orderNo}}">关闭
+                    </button>
+                    <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#myModal"
+                            onclick="findOrder(this)" value="{{order.orderNo}}">查看
+                    </button>
                 </td>
             </tr>
             </tbody>
         </table>
+
         <!--数据列表/-->
 
 
     </div>
+    <!-- 分页 -->
+    <tm-pagination conf="paginationConf"></tm-pagination>
     <!-- 数据表格 /-->
 
 
 </div>
+
 <!-- /.box-body -->
 
+<!--订单详细信息模态框-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="d11" id="div3"><span class="sp14" id="span2"></span></div>
+            <div class="modal-header">
+                <button type="button" class="close close1" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">订单详细信息</h4>
+            </div>
+            <div class="modal-body">
+                <div class="tab-pane active" id="home">
+                    <div class="row data-type">
+                        <div class="col-md-2 title">订单号</div>
+                        <div class="col-md-10 data">
+                            <div class="order" id="orderId">
+                                123456789
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 div12">
+                            <div class="col-md-2 div11">
+                                <span class="sp11">商品信息</span>
+                            </div>
+                            <div id="orderDetail" class="data">
+                                <p>123456</p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 title">状态</div>
+                        <div class="col-md-10 data">
+                            <div class="order" id="orderStatus">
+                                123456789
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 title">支付方式</div>
+                        <div class="col-md-10 data">
+                            <div class="order" id="payMethod">
+                                翼支付
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 title">实付金额</div>
+                        <div class="col-md-10 data">
+                            <div class="input-group order" id="price">
+                                ¥4555
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 title">收货人姓名</div>
+                        <div class="col-md-10 data">
+                            <div class="order" id="receiverName">
+                                翼支付
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 title">收货人电话</div>
+                        <div class="col-md-10 data">
+                            <div class="order" id="receiverMobile">
+                                翼支付
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 title">收货地址</div>
+                        <div class="col-md-10 data">
+                            <div class="order" id="receiverAddress">
+                                翼支付
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 title">创建时间</div>
+                        <div class="col-md-10 data">
+                            <div class="order" id="createTime">
+                                翼支付
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 title">支付时间</div>
+                        <div class="col-md-10 data">
+                            <div class="order" id="paymentTime">
+                                翼支付
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 title">发货时间</div>
+                        <div class="col-md-10 data">
+                            <div class="order" id="sendTime">
+                                翼支付
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 title">成功时间</div>
+                        <div class="col-md-10 data">
+                            <div class="order" id="endTime">
+                                翼支付
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 title">关闭时间</div>
+                        <div class="col-md-10 data">
+                            <div class="order" id="closeTime">
+                                翼支付
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer d9">
+                <button type="button" class="bu5" data-dismiss="modal">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 
 </html>

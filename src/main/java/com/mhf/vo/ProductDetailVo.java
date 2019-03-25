@@ -11,6 +11,7 @@ public class ProductDetailVo implements Serializable {
     private Integer id;
     private Integer categoryId;
     private Integer parentCategoryId;
+    private String category;
     private String name;
     private String subtitle;
     private String imageHost;
@@ -24,6 +25,14 @@ public class ProductDetailVo implements Serializable {
     private String updateTime;
     private String color1;
     private String color2;
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
     public String getColor1() {
         return color1;

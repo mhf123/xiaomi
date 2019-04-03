@@ -339,8 +339,10 @@ public class ProductServiceImpl implements IProductService {
         List<ProductListVo> productListVos = Lists.newArrayList();
         if (products != null && products.size() > 0) {
             for (Product product : products) {
-                ProductListVo productListVo = toProductListVo(product);
-                productListVos.add(productListVo);
+                if (product.getStatus() == 1) {
+                    ProductListVo productListVo = toProductListVo(product);
+                    productListVos.add(productListVo);
+                }
             }
         }
 

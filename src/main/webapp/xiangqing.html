@@ -1,12 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>米迦商城-商品详情</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -37,6 +34,18 @@
          * 网页加载完成后加载数据
          */
         $(document).ready(function () {
+            $.ajax({
+                type: "post",
+                url: "/user/getUser",
+                success: function (data) {
+                    if (data.status == 0) {
+                        $("#dl").text(data.data.username);
+                    }else {
+                        $("#dl").text("你好，请登录");
+                    }
+                },
+                dataType: "JSON"
+            })
             //获取url参数
             name = getUrlParam("name");
             //加载商品数据
@@ -152,8 +161,7 @@
                         //遍历当前版本所有颜色
                         for (i = 1; i <= $(".d4-2-4-1").length; i++) {
                             //如果此版本的颜色中有上一次选中的颜色，则选中此颜色
-                            if (color == $(".d4-2-4-1:nth-of-type(" + i + ")")
-                                .text()) {
+                            if (color == $(".d4-2-4-1:nth-of-type(" + i + ")").text()) {
                                 //给颜色全局变量赋值为上一次选中颜色
                                 color = $(".d4-2-4-1:nth-of-type(" + i + ")").text();
                                 //所有颜色变回原来样式
@@ -264,10 +272,10 @@
          */
         function cart(th) {
             //判断是否登录
-            if ("${current_user}" == "") {
+            if ($("#dl").text() == "你好，请登录") {
                 var t = confirm("你还未登录，是否前往登录？")
                 if (t == true) {
-                    window.location.href = "denglu1.jsp";
+                    window.location.href = "denglu1.html";
                 }
             }
             else {
@@ -294,7 +302,7 @@
 
                                 var t = confirm("加入购物车成功，是否前往购物车结算？")
                                 if (t == true) {
-                                    window.location.href = "gouwuche.jsp";
+                                    window.location.href = "gouwuche.html";
                                 }
                             } else {
                                 alert(data.msg);
@@ -315,24 +323,24 @@
          */
 
         function on2() {
-            if ("${current_user}" == "") {
+            if ($("#dl").text() == "你好，请登录") {
                 var t = confirm("你还未登录，是否前往登录？")
                 if (t == true) {
-                    window.location.href = "denglu1.jsp";
+                    window.location.href = "denglu1.html";
                 }
             }
             else
-                window.location.href = "gouwuche.jsp";
+                window.location.href = "gouwuche.html";
         }
 
         /**
          * 如果未登录，则用户确认后转到登录界面
          */
         function on1() {
-            if ("${current_user}" == "") {
+            if ($("#dl").text() == "你好，请登录") {
                 //隐藏下拉菜单
                 $("ul").hide();
-                window.location.href = "denglu1.jsp";
+                window.location.href = "denglu1.html";
             }
         }
 
@@ -415,7 +423,7 @@
                 url: "/user/logout",
                 success: function (data) {
                     if (data.status == 0) {
-                        location.href = "zhuye.jsp";
+                        location.href = "zhuye.html";
                     } else {
                         alert("退出登录失败！")
                     }
@@ -430,7 +438,7 @@
         function search(th) {
             var searchContent = $(th).prev().val();
             if (searchContent != "") {
-                location.href = "category.jsp?searchContent=" + encodeURI(searchContent);
+                location.href = "category.html?searchContent=" + encodeURI(searchContent);
             }
         }
 
@@ -438,10 +446,10 @@
          * 点击我的订单
          */
         function orderList() {
-            if ("${current_user}" == "") {
-                location.href = "denglu1.jsp";
+            if ($("#dl").text() == "你好，请登录") {
+                location.href = "denglu1.html";
             } else {
-                location.href = "orderList.jsp";
+                location.href = "orderList.html";
             }
         }
     </script>
@@ -451,7 +459,7 @@
 <div class="container-fluid">
     <div class="d1 row">
         <div class="d1-1">
-            <a href="index.jsp" class="a1">小米商城&nbsp;</a> <span class="sp1">|&nbsp;</span>
+            <a href="zhuye.html" class="a1">米迦商城&nbsp;</a> <span class="sp1">|&nbsp;</span>
             <a href="" class="a1">MIUI&nbsp;</a> <span class="sp1">|&nbsp;</span>
             <a href="" class="a1">loT&nbsp;</a> <span class="sp1">|&nbsp;</span>
             <a href="" class="a1">云服务&nbsp;</a> <span class="sp1">|&nbsp;</span>
@@ -467,10 +475,7 @@
                 <button class="bu1" onclick="on1()" id="dLabel" type="button" value="${current_user.username}"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span id="dl">
-                        <c:if test="${!empty current_user}">${current_user.username}</c:if>
-                        <c:if test="${empty current_user}">
-                            你好，请登录
-                        </c:if>
+
                     </span>
                     <span class="caret"></span>
                 </button>
@@ -478,7 +483,7 @@
                     <li><a class="a2" href="#">个人中心</a></li>
                     <li><a class="a2" href="#">评价晒单</a></li>
                     <li><a class="a2" href="#">我的喜欢</a></li>
-                    <li><a class="a2" href="#">小米账户</a></li>
+                    <li><a class="a2" href="#">米迦账户</a></li>
                     <li><a class="a2" onclick="logout()">退出登录</a></li>
                 </ul>
             </div>
@@ -622,7 +627,7 @@
         <h3>特别说明</h3>
         <img src="img/xiangqing/xiangqing2-1.png"/>
     </div>
-    <%--添加收货地址模态框--%>
+    <!--添加收货地址模态框-->
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -649,7 +654,56 @@
         </div>
     </div>
     <hr/>
-    <%@include file="bottom.jsp" %>
+    <div class="d77">
+        <div class="d7">
+            <div class="d7-1">
+                <span class="sp11">帮助中心</span>
+                <hr/>
+                <a class="a6" href="">账户管理</a> <br/> <a class="a6" href="">购物指南</a>
+                <br/> <a class="a6" href="">订单操作</a>
+            </div>
+            <div class="d7-1">
+                <span class="sp11">服务支持</span>
+                <hr/>
+                <a class="a6" href="">售后政策</a> <br/> <a class="a6" href="">自助服务</a>
+                <br/> <a class="a6" href="">相关下载</a>
+            </div>
+            <div class="d7-1">
+                <span class="sp11">帮助中心</span>
+                <hr/>
+                <a class="a6" href="">账户管理</a> <br/> <a class="a6" href="">购物指南</a>
+                <br/> <a class="a6" href="">订单操作</a>
+            </div>
+            <div class="d7-1">
+                <span class="sp11">线下门店</span>
+                <hr/>
+                <a class="a6" href="">小米之家</a> <br/> <a class="a6" href="">服务网点</a>
+                <br/> <a class="a6" href="">授权体验店</a>
+            </div>
+            <div class="d7-1">
+                <span class="sp11">关于小米</span>
+                <hr/>
+                <a class="a6" href="">了解小米</a> <br/> <a class="a6" href="">加入小米</a>
+                <br/> <a class="a6" href="">投资者关系</a>
+            </div>
+            <div class="d7-1">
+                <span class="sp11">关注我们</span>
+                <hr/>
+                <a class="a6" href="">新浪微博</a> <br/> <a class="a6" href="">官方微信</a>
+                <br/> <a class="a6" href="">联系我们</a>
+            </div>
+            <div class="d7-2">
+                <span class="sp11">特色服务</span>
+                <hr/>
+                <a class="a6" href="">F 码通道</a> <br/> <a class="a6" href="">礼物码</a>
+                <br/> <a class="a6" href="">防伪查询</a>
+            </div>
+        </div>
+        <div class="d8">
+            <hr/>
+            <span class="sp15">探索黑科技，小米为发烧而生！</span>
+        </div>
+    </div>
 </div>
 </body>
 <script>

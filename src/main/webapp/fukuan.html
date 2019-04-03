@@ -1,18 +1,16 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>米迦商城-订单支付</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" type="text/css" href="css/bottom.css"/>
     <link rel="stylesheet" type="text/css" href="css/fukuan.css"/>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="css/bottom.css"/>
     <script src="js/jquery-3.3.1.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/bootstrap.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/zhuye.js" type="text/javascript" charset="utf-8"></script>
@@ -29,6 +27,19 @@
          * 网页加载完成后
          */
         $(document).ready(function () {
+            //获取用户登录信息
+            $.ajax({
+                type: "post",
+                url: "/user/getUser",
+                success: function (data) {
+                    if (data.status == 0) {
+                        $("#dl").text(data.data.username);
+                    }else {
+                        $("#dl").text("你好，请登录");
+                    }
+                },
+                dataType: "JSON"
+            })
             //获取订单号
             orderNo = getUrlParam("orderNo");
             //加载订单数据
@@ -85,7 +96,7 @@
         function refreshCount() {
             if ($("#span4").text() == "0分钟") {
                 alert("您的订单因超时未支付已被取消！");
-                location.href = "orderList.jsp";
+                location.href = "orderList.html";
             }
             var date = new Date(time);
             var date1 = new Date();
@@ -119,7 +130,7 @@
             if ($("#dl").text() == "你好，请登录") {
                 //隐藏下拉菜单
                 $("ul").hide();
-                window.location.href = "denglu1.jsp";
+                window.location.href = "denglu1.html";
             }
         }
 
@@ -147,18 +158,18 @@
         function zf(th) {
             var way = $(th).val();
             if (way == "支付宝") {
-                location.href = "zhifubao.jsp?orderNo=" + orderNo;
+                location.href = "zhifubao.html?orderNo=" + orderNo;
             }
         }
 
         /**
          * 点击我的订单
          */
-        function orderList(){
-            if ("${current_user}" == "") {
-                location.href="denglu1.jsp";
-            }else {
-                location.href="orderList.jsp";
+        function orderList() {
+            if ($("#dl").text() == "你好，请登录") {
+                location.href = "denglu1.html";
+            } else {
+                location.href = "orderList.html";
             }
         }
     </script>
@@ -179,11 +190,8 @@
                 <button class="bu1" id="dLabel" onclick="on1()" type="button" data-toggle="dropdown"
                         aria-haspopup="true"
                         aria-expanded="false">
-                   <span id="dl">
-                        <c:if test="${!empty current_user}">${current_user.username}</c:if>
-                        <c:if test="${empty current_user}">
-                            你好，请登录
-                        </c:if>
+                    <span id="dl">
+
                     </span>
                     <span class="caret"></span>
                 </button>
@@ -285,7 +293,56 @@
             </div>
         </div>
     </div>
-    <%@include file="bottom.jsp" %>
+    <div class="d77">
+        <div class="d7">
+            <div class="d7-1">
+                <span class="sp11">帮助中心</span>
+                <hr/>
+                <a class="a6" href="">账户管理</a> <br/> <a class="a6" href="">购物指南</a>
+                <br/> <a class="a6" href="">订单操作</a>
+            </div>
+            <div class="d7-1">
+                <span class="sp11">服务支持</span>
+                <hr/>
+                <a class="a6" href="">售后政策</a> <br/> <a class="a6" href="">自助服务</a>
+                <br/> <a class="a6" href="">相关下载</a>
+            </div>
+            <div class="d7-1">
+                <span class="sp11">帮助中心</span>
+                <hr/>
+                <a class="a6" href="">账户管理</a> <br/> <a class="a6" href="">购物指南</a>
+                <br/> <a class="a6" href="">订单操作</a>
+            </div>
+            <div class="d7-1">
+                <span class="sp11">线下门店</span>
+                <hr/>
+                <a class="a6" href="">小米之家</a> <br/> <a class="a6" href="">服务网点</a>
+                <br/> <a class="a6" href="">授权体验店</a>
+            </div>
+            <div class="d7-1">
+                <span class="sp11">关于小米</span>
+                <hr/>
+                <a class="a6" href="">了解小米</a> <br/> <a class="a6" href="">加入小米</a>
+                <br/> <a class="a6" href="">投资者关系</a>
+            </div>
+            <div class="d7-1">
+                <span class="sp11">关注我们</span>
+                <hr/>
+                <a class="a6" href="">新浪微博</a> <br/> <a class="a6" href="">官方微信</a>
+                <br/> <a class="a6" href="">联系我们</a>
+            </div>
+            <div class="d7-2">
+                <span class="sp11">特色服务</span>
+                <hr/>
+                <a class="a6" href="">F 码通道</a> <br/> <a class="a6" href="">礼物码</a>
+                <br/> <a class="a6" href="">防伪查询</a>
+            </div>
+        </div>
+        <div class="d8">
+            <hr/>
+            <span class="sp15">探索黑科技，小米为发烧而生！</span>
+        </div>
+    </div>
 </div>
 </body>
 

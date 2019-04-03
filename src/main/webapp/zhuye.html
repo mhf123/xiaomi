@@ -1,15 +1,13 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>欢迎来到米迦商城</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <link rel="stylesheet" type="text/css" href="css/bottom.css"/>
     <link rel="stylesheet" type="text/css" href="css/bottom.css"/>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
     <script src="js/jquery-3.3.1.js" type="text/javascript" charset="utf-8"></script>
@@ -23,6 +21,18 @@
          * 网页加载完成后加载数据
          */
         $(document).ready(function () {
+            $.ajax({
+                type: "post",
+                url: "/user/getUser",
+                success: function (data) {
+                    if (data.status == 0) {
+                        $("#dl").text(data.data.username);
+                    }else {
+                        $("#dl").text("你好，请登录");
+                    }
+                },
+                dataType: "JSON"
+            })
             //修改购物车按钮中购物车数量颜色
             $("#d").hover(function () {
                 $("#num").css({"background-color": "#FF6700"});
@@ -65,13 +75,6 @@
                 },
                 dataType: "JSON"
             })
-
-            //判断是否登录
-            if ("${current_user}" != "") {
-                $("#dl").text("${current_user.username}");
-            } else {
-                $("#dl").text("你好，请登录");
-            }
         })
 
         /**
@@ -138,10 +141,10 @@
          * 如果未登录，则转到登录界面
          */
         function on1() {
-            if ("${current_user}" == "") {
+            if ($("#dl").text() == "你好，请登录") {
                 //隐藏下拉菜单
                 $("ul").hide();
-                window.location.href = "denglu1.jsp";
+                window.location.href = "denglu1.html";
             }
         }
 
@@ -190,7 +193,7 @@
         function search(th) {
             var searchContent = $(th).prev().val();
             if (searchContent != "") {
-                location.href = "category.jsp?searchContent=" + encodeURI(searchContent);
+                location.href = "category.html?searchContent=" + encodeURI(searchContent);
             }
         }
 
@@ -199,7 +202,7 @@
          * 跳转商品详情
          */
         function xiangqing(th) {
-            var hr = "xiangqing.jsp?name=" + encodeURI($(th).text());
+            var hr = "xiangqing.html?name=" + encodeURI($(th).text());
             window.location.href = hr;
         }
 
@@ -207,14 +210,14 @@
          * 点击购物车，如果未登录，则用户确认后转到登录界面
          */
         function on2() {
-            if ("${current_user}" == "") {
+            if ($("#dl").text() == "你好，请登录") {
                 var t = confirm("你还未登录，是否前往登录？")
                 if (t == true) {
-                    window.location.href = "denglu1.jsp";
+                    window.location.href = "denglu1.html";
                 }
             }
             else
-                window.location.href = "gouwuche.jsp";
+                window.location.href = "gouwuche.html";
         }
 
         /**
@@ -226,9 +229,9 @@
                 url: "/user/logout",
                 success: function (data) {
                     if (data.status == 0) {
-                        location.href = "zhuye.jsp";
+                        location.href = "zhuye.html";
                     } else {
-                        alert("退出登录失败！")
+                        alert("退出登录失败！" + data.msg)
                     }
                 },
                 dataType: "JSON"
@@ -239,10 +242,10 @@
          * 点击我的订单
          */
         function orderList() {
-            if ("${current_user}" == "") {
-                location.href = "denglu1.jsp";
+            if ($("#dl").text() == "你好，请登录") {
+                location.href = "denglu1.html";
             } else {
-                location.href = "orderList.jsp";
+                location.href = "orderList.html";
             }
         }
 
@@ -250,7 +253,7 @@
          * 点击轮播图
          */
         function onxq(name) {
-            location.href = "xiangqing.jsp?name=" + name;
+            location.href = "xiangqing.html?name=" + name;
         }
     </script>
 </head>
@@ -264,7 +267,7 @@
     <!--2-->
     <div class="d1 row">
         <div class="d1-1">
-            <a href="index.jsp" class="a1">小米商城&nbsp;</a> <span class="sp1">|&nbsp;</span>
+            <a href="zhuye.html" class="a1">米迦商城&nbsp;</a> <span class="sp1">|&nbsp;</span>
             <a href="" class="a1">MIUI&nbsp;</a> <span class="sp1">|&nbsp;</span>
             <a href="" class="a1">loT&nbsp;</a> <span class="sp1">|&nbsp;</span>
             <a href="" class="a1">云服务&nbsp;</a> <span class="sp1">|&nbsp;</span>
@@ -286,7 +289,7 @@
                     <li><a class="a2" href="#">个人中心</a></li>
                     <li><a class="a2" href="#">评价晒单</a></li>
                     <li><a class="a2" href="#">我的喜欢</a></li>
-                    <li><a class="a2" href="#">小米账户</a></li>
+                    <li><a class="a2" href="#">米迦账户</a></li>
                     <li><a class="a2" onclick="logout()">退出登录</a></li>
                 </ul>
             </div>
@@ -423,10 +426,59 @@
         </div>
     </div>
     <div class="d6">
-        <a href=""><img src="img/zhuye/zhuye5.png"/></a>
+        <a style="cursor:pointer" onclick="onxq('小米8 SE')"><img src="img/zhuye/zhuye5.png"/></a>
     </div>
     <hr/>
-    <%@include file="bottom.jsp" %>
+    <div class="d77">
+        <div class="d7">
+            <div class="d7-1">
+                <span class="sp11">帮助中心</span>
+                <hr/>
+                <a class="a6" href="">账户管理</a> <br/> <a class="a6" href="">购物指南</a>
+                <br/> <a class="a6" href="">订单操作</a>
+            </div>
+            <div class="d7-1">
+                <span class="sp11">服务支持</span>
+                <hr/>
+                <a class="a6" href="">售后政策</a> <br/> <a class="a6" href="">自助服务</a>
+                <br/> <a class="a6" href="">相关下载</a>
+            </div>
+            <div class="d7-1">
+                <span class="sp11">帮助中心</span>
+                <hr/>
+                <a class="a6" href="">账户管理</a> <br/> <a class="a6" href="">购物指南</a>
+                <br/> <a class="a6" href="">订单操作</a>
+            </div>
+            <div class="d7-1">
+                <span class="sp11">线下门店</span>
+                <hr/>
+                <a class="a6" href="">小米之家</a> <br/> <a class="a6" href="">服务网点</a>
+                <br/> <a class="a6" href="">授权体验店</a>
+            </div>
+            <div class="d7-1">
+                <span class="sp11">关于小米</span>
+                <hr/>
+                <a class="a6" href="">了解小米</a> <br/> <a class="a6" href="">加入小米</a>
+                <br/> <a class="a6" href="">投资者关系</a>
+            </div>
+            <div class="d7-1">
+                <span class="sp11">关注我们</span>
+                <hr/>
+                <a class="a6" href="">新浪微博</a> <br/> <a class="a6" href="">官方微信</a>
+                <br/> <a class="a6" href="">联系我们</a>
+            </div>
+            <div class="d7-2">
+                <span class="sp11">特色服务</span>
+                <hr/>
+                <a class="a6" href="">F 码通道</a> <br/> <a class="a6" href="">礼物码</a>
+                <br/> <a class="a6" href="">防伪查询</a>
+            </div>
+        </div>
+        <div class="d8">
+            <hr/>
+            <span class="sp15">探索黑科技，小米为发烧而生！</span>
+        </div>
+    </div>
     <div class="d9">
         <a class="a7 tooltip-test" data-toggle="tooltip"
            data-placement="left" title="个人中心" href="">
@@ -437,7 +489,7 @@
             <span class="glyphicon glyphicon-headphones"></span>
         </a>
         <a class="a7 tooltip-test" data-toggle="tooltip" data-placement="left"
-           title="购物车" href="gouwuche.jsp">
+           title="购物车" href="gouwuche.html">
             <span class="glyphicon glyphicon-shopping-cart"></span>
         </a>
     </div>

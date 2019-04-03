@@ -1,11 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 
 	<head>
 		<meta charset="utf-8" />
-		<title></title>
+		<title>米迦商城-手机登录</title>
 		<link rel="stylesheet" type="text/css" href="css/denglu3.css" />
 		<script src="js/jquery-3.3.1.js"></script>
 		<script type="text/javascript">
@@ -130,18 +128,12 @@
                             if (data.status == 1) {
                                 alert(data.msg + "！");
                             } else if (data.status == 0) {
-                                location.href = "zhuye.jsp";
+                                location.href = "zhuye.html";
                             } else {
                                 alert("登录失败！"+data.msg);
                             }
-                            // if(s == "false")
-                            // 	$("#dd").html("用户名或密码错误！")
-                            // else
-                            // 	window.location.href = "IndexServlet";
                         }
-
                     })
-
                 }
             }
 		</script>
@@ -157,9 +149,9 @@
 		<div class="d2">
 			<div class="d2-1">
 				<div class="d2-1-1">
-					<a id="a1" href="">账号登录</a>
+					<a id="a1" href="denglu1.html">账号登录</a>
 					<span id="sp1">|</span>
-					<a id="a2" href="">扫码登录</a>
+					<a id="a2" href="">手机登录</a>
 				</div>
 				<div class="d2-1-2">
 					<div id="fo1">
@@ -176,7 +168,7 @@
 			    		<br/><br/>
 			    		<button class="b1" type="button" onclick="denglu()">立即登录</button>
 			    		<br/>
-			    		<a id="a3" href="denglu1.jsp ">用户名密码登录</a>
+			    		<a id="a3" href="denglu1.html ">用户名密码登录</a>
 			    	</div>
 			    </div>
 			    <div class="d2-1-3 ">

@@ -42,6 +42,7 @@
     position: relative;
     top: 10px;
     left: 75px;
+    color: #FF6700;
 }
 
 #a3 {
@@ -197,4 +198,8 @@
 #div1{
     height: 18px;
     width: 305px;
+}
+
+.d1{
+    height: 90px;
 }

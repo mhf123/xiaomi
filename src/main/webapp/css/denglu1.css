@@ -1,140 +1,146 @@
-        #img1 {
-        	margin-left: 120px;
-        }
-        
-        #img2 {
-        	margin-left: 55px;
-        }
-        
-        #img3 {
-        	position: absolute;
-        	top: 20px;
-        	right: 200px;
-        	animation: img1 2s;
-        }
-        
-        @keyframes img1 {
-        	from {
-        		right: 0px;
-        	}
-        	to {
-        		right: 200px;
-        	}
-        }
-        
-        #a1 {
-        	text-decoration: none;
-        	color: gray;
-        	font-size: 150%;
-        	position: relative;
-        	top: 10px;
-        	left: 55px;
-        }
-        
-        #a2 {
-        	text-decoration: none;
-        	color: gray;
-        	font-size: 150%;
-        	position: relative;
-        	top: 10px;
-        	left: 75px;
-        }
-        
-        #a3 {
-        	color: #EF5B00;
-        	font-size: 80%;
-        	text-decoration: none;
-        }
-        
-        .a6 {
-        	color: #8B8B7A;
-        	text-decoration: none;
-        	font-size: 80%;
-        }
-        
-        #a1:hover {
-        	color: #F77700;
-        }
-        
-        #a2:hover {
-        	color: #F77700;
-        }
-        
-        #a4:hover {
-        	color: #F77700;
-        	;
-        }
-        
-        #a5:hover {
-        	color: #F77700;
-        	;
-        }
-        
-        #sp1 {
-        	color: #A8A8A8;
-        	font-size: 190%;
-        	position: relative;
-        	top: 10px;
-        	left: 65px;
-        }
-        
-        .sp2 {
-        	color: #A8A8A8;
-        }
-        
-        #sp3 {
-        	color: #A8A8A8;
-        	position: relative;
-        	left: 120px;
-        }
-        
-        #fo1 {
-        	margin-top: 20px;
-        	margin-left: 20px;
-        	border: silver;
-        }
-        #dd{
-        	height: 10px;
-        	margin-left: 20px;
-        	color: red;
-        }
-        .d2 {
-        	background-image: url(../img/denglu1.png);
-        	background-color: #FA0001;
-        	width: 1340px;
-        	height: 525px;
-        	display: flex;
-        	background-repeat: no-repeat;
-        }
-        
-        .d2-1 {
-        	width: 350px;
-        	height: 450px;
-        	background-color: white;
-        	margin-top: 45px;
-        	margin-left: 900px;
-        }
-        
-        .d2-1-1 {
-        	width: 350px;
-        	height: 60px;
-        	background-color: #FFFCF5;
-        }
-        
-        .in1 {
-        	width: 300px;
-        	height: 40px;
-        }
-        
-        .b1 {
-        	background-color: #FF6700;
-        	width: 302px;
-        	height: 50px;
-        	color: white;
-        	font-size: 120%;
-        	border: 1px #CCCCCC solid;
-        	transition-duration: 0.3s;
-        }
-        .b1:hover {
-        	background-color: #EF5B00;        	
-        }
+#img1 {
+    margin-left: 120px;
+}
+
+#img2 {
+    margin-left: 55px;
+}
+
+#img3 {
+    position: absolute;
+    top: 20px;
+    right: 200px;
+    animation: img1 2s;
+}
+
+@keyframes img1 {
+    from {
+        right: 0px;
+    }
+    to {
+        right: 200px;
+    }
+}
+
+#a1 {
+    text-decoration: none;
+    color: gray;
+    font-size: 150%;
+    position: relative;
+    top: 10px;
+    left: 55px;
+    color: #FF6700;
+}
+
+#a2 {
+    text-decoration: none;
+    color: gray;
+    font-size: 150%;
+    position: relative;
+    top: 10px;
+    left: 75px;
+}
+
+#a3 {
+    color: #EF5B00;
+    font-size: 80%;
+    text-decoration: none;
+}
+
+.a6 {
+    color: #8B8B7A;
+    text-decoration: none;
+    font-size: 80%;
+}
+
+#a1:hover {
+    color: #F77700;
+}
+
+#a2:hover {
+    color: #F77700;
+}
+
+#a4:hover {
+    color: #F77700;;
+}
+
+#a5:hover {
+    color: #F77700;;
+}
+
+#sp1 {
+    color: #A8A8A8;
+    font-size: 190%;
+    position: relative;
+    top: 10px;
+    left: 65px;
+}
+
+.sp2 {
+    color: #A8A8A8;
+}
+
+#sp3 {
+    color: #A8A8A8;
+    position: relative;
+    left: 120px;
+}
+
+#fo1 {
+    margin-top: 20px;
+    margin-left: 20px;
+    border: silver;
+}
+
+#dd {
+    height: 10px;
+    margin-left: 20px;
+    color: red;
+}
+
+.d2 {
+    background-image: url(../img/denglu1.png);
+    background-color: #FA0001;
+    width: 1340px;
+    height: 525px;
+    display: flex;
+    background-repeat: no-repeat;
+}
+
+.d2-1 {
+    width: 350px;
+    height: 450px;
+    background-color: white;
+    margin-top: 45px;
+    margin-left: 900px;
+}
+
+.d2-1-1 {
+    width: 350px;
+    height: 60px;
+    background-color: #FFFCF5;
+}
+
+.in1 {
+    width: 300px;
+    height: 40px;
+}
+
+.b1 {
+    background-color: #FF6700;
+    width: 302px;
+    height: 50px;
+    color: white;
+    font-size: 120%;
+    border: 1px #CCCCCC solid;
+    transition-duration: 0.3s;
+}
+
+.b1:hover {
+    background-color: #EF5B00;
+}
+
+.d1{
+    height: 90px;
+}

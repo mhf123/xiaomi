@@ -51,21 +51,37 @@
                 },
                 dataType: "JSON"
             })
-            //获取搜索内容
+            //获取搜索内容或类别Id
             searchContent = getUrlParam("searchContent");
-            //搜索
-            $("#search").val(searchContent);
-            $.ajax({
-                type: "post",
-                url: "/product/list",
-                data: {
-                    "keyword": searchContent
-                },
-                success: function (data) {
-                    categoryList(data);
-                    productList(data);
-                },
-            })
+            categoryId = getUrlParam("categoryId");
+            if (searchContent != undefined){
+                //搜索
+                $("#search").val(searchContent);
+                $.ajax({
+                    type: "post",
+                    url: "/product/list",
+                    data: {
+                        "keyword": searchContent
+                    },
+                    success: function (data) {
+                        categoryList(data);
+                        productList(data);
+                    },
+                })
+            }else if(categoryId != undefined){
+                $.ajax({
+                    type: "post",
+                    url: "/product/list",
+                    data: {
+                        "categoryId": categoryId
+                    },
+                    success: function (data) {
+                        categoryList2(data);
+                        productList(data);
+                    },
+                })
+            }
+
 
         })
 
@@ -142,13 +158,64 @@
          * 搜索
          */
         function search(searchContent, categoryId, orderBy) {
-            if (categoryId == undefined || categoryId == "") {
+            if (searchContent == undefined || searchContent == ""){
                 if (orderBy == undefined || orderBy == "") {
                     $.ajax({
                         type: "post",
                         url: "/product/list",
                         data: {
-                            "keyword": searchContent
+                            "categoryId": categoryId
+                        },
+                        success: function (data) {
+                            productList(data);
+                        },
+                    })
+                } else {
+                    $.ajax({
+                        type: "post",
+                        url: "/product/list",
+                        data: {
+                            "categoryId": categoryId,
+                            "orderBy": orderBy
+                        },
+                        success: function (data) {
+                            productList(data);
+                        },
+                    })
+                }
+            }else {
+                if (categoryId == undefined || categoryId == "") {
+                    if (orderBy == undefined || orderBy == "") {
+                        $.ajax({
+                            type: "post",
+                            url: "/product/list",
+                            data: {
+                                "keyword": searchContent
+                            },
+                            success: function (data) {
+                                productList(data);
+                            },
+                        })
+                    } else {
+                        $.ajax({
+                            type: "post",
+                            url: "/product/list",
+                            data: {
+                                "keyword": searchContent,
+                                "orderBy": orderBy
+                            },
+                            success: function (data) {
+                                productList(data);
+                            },
+                        })
+                    }
+                } else if (orderBy == undefined || orderBy == "") {
+                    $.ajax({
+                        type: "post",
+                        url: "/product/list",
+                        data: {
+                            "keyword": searchContent,
+                            "categoryId": categoryId
                         },
                         success: function (data) {
                             productList(data);
@@ -160,40 +227,15 @@
                         url: "/product/list",
                         data: {
                             "keyword": searchContent,
-                            "orderBy": orderBy,
+                            "categoryId": categoryId,
+                            "orderBy": orderBy
                         },
                         success: function (data) {
                             productList(data);
                         },
                     })
                 }
-            } else if (orderBy == undefined || orderBy == "") {
-                $.ajax({
-                    type: "post",
-                    url: "/product/list",
-                    data: {
-                        "keyword": searchContent,
-                        "categoryId": categoryId,
-                    },
-                    success: function (data) {
-                        productList(data);
-                    },
-                })
-            } else {
-                $.ajax({
-                    type: "post",
-                    url: "/product/list",
-                    data: {
-                        "keyword": searchContent,
-                        "categoryId": categoryId,
-                        "orderBy": orderBy,
-                    },
-                    success: function (data) {
-                        productList(data);
-                    },
-                })
             }
-
         }
 
         /**
@@ -210,10 +252,20 @@
             }
             str += "<p class='p3'>分类：</p>" +
                 "<button class='bu5'>" +
-                "    全部" +
+                "全部" +
                 "</button>" +
-                str1 +
-                "</div>"
+                str1;
+            $("#category").html(str);
+            //初始化和修改点击分类、品牌和排序方式的颜色
+            initialize();
+        }
+
+        function categoryList2(data) {
+            //显示分类列表
+            var str = "<p class='p3'>分类：</p>"+
+                      "<button class='bu5' value='" + data.data.list[1][0].id + "'>" +
+                          data.data.list[1][0].name +
+                      "</button>";
             $("#category").html(str);
             //初始化和修改点击分类、品牌和排序方式的颜色
             initialize();
@@ -309,7 +361,9 @@
 
         //鼠标点击事件
         function xiala2(th) {
-            $("#search").val($(th).text());
+            var search = $(th).text();
+            $("#search").val(search);
+            location.href = "category.html?searchContent=" + search;
             $("#div1").hide();
         }
 
@@ -337,11 +391,20 @@
                 //获取搜索提示的数据并输出
                 success: function (data) {
                     if (data.status == 0) {
-                        if (data.data.list.length > 0)
+                        if (data.data.list.length > 0){
                             $("#div1").css("border", "1px solid #A6A6A6");
-                        for (var i = 0; i < data.data.list.length; i++)
-                            str += "<div style='line-height:30px' onmousemove='xiala1(this)' onclick='xiala2(this)' onmouseout='xiala3(this)'>" +
-                                data.data.list[i].name + "</div>";
+                        }
+                        if (data.data.list.length <= 8){
+                            for (var i = 0; i < data.data.list.length; i++){
+                                str += "<div style='line-height:30px' onmousemove='xiala1(this)' onclick='xiala2(this)' onmouseout='xiala3(this)'>"
+                                    + data.data.list[i].name + "</div>";
+                            }
+                        }else {
+                            for (var i = 0; i < 8; i++){
+                                str += "<div style='line-height:30px' onmousemove='xiala1(this)' onclick='xiala2(this)' onmouseout='xiala3(this)'>"
+                                    + data.data.list[i].name + "</div>";
+                            }
+                        }
                         $("#div1").html(str);
                     }
                 },
@@ -401,7 +464,7 @@
     <!--2-->
     <div class="d1 row">
         <div class="d1-1">
-            <a href="zhuye.html" class="a1">小米商城&nbsp;</a> <span class="sp1">|&nbsp;</span>
+            <a href="zhuye.html" class="a1">米迦商城&nbsp;</a> <span class="sp1">|&nbsp;</span>
             <a href="" class="a1">MIUI&nbsp;</a> <span class="sp1">|&nbsp;</span>
             <a href="" class="a1">loT&nbsp;</a> <span class="sp1">|&nbsp;</span>
             <a href="" class="a1">云服务&nbsp;</a> <span class="sp1">|&nbsp;</span>

@@ -8,9 +8,9 @@
     <script type="text/javascript">
         //发送输入的用户名密码到后台进行验证
         function denglu() {
-
             var val1 = $("#text1").val();
             var val2 = $("#pass1").val();
+
             if (val1 == "") {
                 $("#dd").html("请输入用户名！");
             } else if (val2 == "") {
@@ -29,12 +29,15 @@
                             $("#dd").html("未知错误！");
                         }
                     }
-
                 })
             }
-
         }
-
+        //回车登录
+        $(document).keyup(function(event){
+            if (event.keyCode == 13){
+                denglu();
+            }
+        });
     </script>
 </head>
 

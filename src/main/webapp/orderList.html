@@ -336,7 +336,9 @@
 
         //鼠标点击事件
         function xiala2(th) {
-            $("#search").val($(th).text());
+            var search = $(th).text();
+            $("#search").val(search);
+            location.href = "category.html?searchContent=" + search;
             $("#div1").hide();
         }
 
@@ -364,11 +366,20 @@
                 //获取搜索提示的数据并输出
                 success: function (data) {
                     if (data.status == 0) {
-                        if (data.data.list.length > 0)
+                        if (data.data.list.length > 0){
                             $("#div1").css("border", "1px solid #A6A6A6");
-                        for (var i = 0; i < data.data.list.length; i++)
-                            str += "<div style='line-height:30px' onmousemove='xiala1(this)' onclick='xiala2(this)' onmouseout='xiala3(this)'>"
-                                + data.data.list[i].name + "</div>";
+                        }
+                        if (data.data.list.length <= 8){
+                            for (var i = 0; i < data.data.list.length; i++){
+                                str += "<div style='line-height:30px' onmousemove='xiala1(this)' onclick='xiala2(this)' onmouseout='xiala3(this)'>"
+                                    + data.data.list[i].name + "</div>";
+                            }
+                        }else {
+                            for (var i = 0; i < 8; i++){
+                                str += "<div style='line-height:30px' onmousemove='xiala1(this)' onclick='xiala2(this)' onmouseout='xiala3(this)'>"
+                                    + data.data.list[i].name + "</div>";
+                            }
+                        }
                         $("#div1").html(str);
                     }
                 },

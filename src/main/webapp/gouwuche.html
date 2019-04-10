@@ -202,18 +202,34 @@
         /**
          * 删除勾选的购物车商品
          */
-        function del() {
+        function del(th) {
             //获取已选中商品的productIds
             var productIds = new Array();
             $("input[name = 'cart']:checked").each(function () {
                 productIds.push($(this).val());
             })
             if (productIds == ""){
-                alert("您未勾选任何商品！");
+                var t0 = confirm("确认移除当前商品吗？");
+                if (t0 == true) {
+                    var productId = $(th).val();
+                    productIds.push(productId);
+                    $.ajax({
+                        type: "post",
+                        url: "/cart/deleteProduct/" + productIds,
+                        success: function (data) {
+                            if (data.status == 0) {
+                                list(data);
+                            } else {
+                                alert("移除商品失败！" + data.msg);
+                            }
+                        },
+                        dataType: "json"
+                    })
+                }
                 return;
             }
             //弹出删除确认框
-            var t = confirm("确认移除已勾选的商品吗？");
+            var t = confirm("确认移除已勾选的所有商品吗？");
             if (t == true) {
                 $.ajax({
                     type: "post",
@@ -222,7 +238,7 @@
                         if (data.status == 0) {
                             list(data);
                         } else {
-                            alert("移除购物车商品失败！" + data.msg);
+                            alert("移除商品失败！" + data.msg);
                         }
                     },
                     dataType: "json"
@@ -391,6 +407,27 @@
                 location.href="orderList.html";
             }
         }
+
+        /**
+         * 广告商品加入购物车
+         */
+        function addCart(productId) {
+            $.ajax({
+                type: "post",
+                url: "/cart/add/" + productId + "/1",
+                //获取操作结果
+                success: function (data) {
+                    //如果操作成功，则弹出加入成功提示框
+                    if (data.status == 0) {
+                        alert("加入购物车成功");
+                        window.location.href = "gouwuche.html";
+                    } else {
+                        alert("加入购物车失败" + data.msg);
+                    }
+                },
+                dataType: "json"
+            })
+        }
     </script>
 </head>
 
@@ -503,38 +540,38 @@
             <div class="d3-3-2">
             </div>
             <div class="d3-3-1">
-                <a href=""><img class="img2" src="img/gouwuche/gouwuche2-2.png"/></a>
+                <a href="xiangqing.html?name=小米Play"><img class="img2" src="img/gouwuche/小米Play.png"/></a>
                 <br/><br/>
-                <h5>红米6A 全网通版</h5>
-                <h5 class="hh4">599元</h5>
-                <button class="bu5" onclick="alert('已成功加入购物车')">加入购物车</button>
+                <h5>小米Play</h5>
+                <h5 class="hh4">1099元</h5>
+                <button class="bu5" onclick="addCart(41)">加入购物车</button>
             </div>
             <div class="d3-3-2">
             </div>
             <div class="d3-3-1">
-                <a href=""><img class="img2" src="img/gouwuche/gouwuche2-3.png"/></a>
+                <a href="xiangqing.html?name=Redmi Note7 Pro"><img class="img2" src="img/gouwuche/Redmi%20Note7%20Pro.jpg"/></a>
                 <br/><br/>
-                <h5>红米6 全网通版</h5>
-                <h5 class="hh4">999元</h5>
-                <button class="bu5" onclick="alert('已成功加入购物车')">加入购物车</button>
+                <h5>Redmi Note7 Pro</h5>
+                <h5 class="hh4">1599元</h5>
+                <button class="bu5" onclick="addCart(116)">加入购物车</button>
             </div>
             <div class="d3-3-2">
             </div>
             <div class="d3-3-1">
-                <a href=""><img class="img2" src="img/gouwuche/gouwuche2-4.png"/></a>
+                <a href="xiangqing.html?name=小米笔记本Air"><img class="img2" src="img/gouwuche/小米笔记本Air.jpg"/></a>
                 <br/><br/>
-                <h5>千兆网口多功能转接器</h5>
-                <h5 class="hh4">199元</h5>
-                <button class="bu5" onclick="alert('已成功加入购物车')">加入购物车</button>
+                <h5>小米笔记本Air</h5>
+                <h5 class="hh4">3599元</h5>
+                <button class="bu5" onclick="addCart(44)">加入购物车</button>
             </div>
             <div class="d3-3-2">
             </div>
             <div class="d3-3-1">
-                <a href=""><img class="img2" src="img/gouwuche/gouwuche2-5.png"/></a>
+                <a href="xiangqing.html?name=小米AI音箱"><img class="img2" src="img/gouwuche/小米AI音箱.jpg"/></a>
                 <br/><br/>
-                <h5>13.3"小米笔记本</h5>
-                <h5 class="hh4">5199元</h5>
-                <button class="bu5" onclick="alert('已成功加入购物车')">加入购物车</button>
+                <h5>小米AI音箱</h5>
+                <h5 class="hh4">299元</h5>
+                <button class="bu5" onclick="addCart(100)">加入购物车</button>
             </div>
         </div>
     </div>

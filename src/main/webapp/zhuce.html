@@ -145,7 +145,6 @@
                                     setTimeout(function () {
                                         code = "";//10分钟后清除验证码。如果不清除，过时间后，输入收到的验证码依然有效
                                     },1000*60*10)
-
                                 }
                             }, 1000);
                         } else {
@@ -192,11 +191,17 @@
                                 alert("注册失败，"+data.msg);
                             }
                         }
-
                     })
                 }
             }
         }
+
+        //回车注册
+        $(document).keyup(function (event) {
+            if (event.keyCode == 13) {
+                zhuce();
+            }
+        });
     </script>
 </head>
 
